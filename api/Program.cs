@@ -24,7 +24,7 @@ app.UseOpenApi(conf =>
     conf.Path = "openapi/v1.json";
 });
 app.MapControllers();
-await app.GenerateTypeScriptClient("/generated-client.ts");
+await app.GenerateTypeScriptClient("/../client/src/generated-client.ts");
 app.MapScalarApiReference();
 
 app.Run();

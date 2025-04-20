@@ -9,24 +9,29 @@ namespace ten.tests;
 
 [TestFixture]
 public class ApiTests
-    : WebApplicationFactory<Program>
 {
-    private HttpClient _httpClient;
-    private IServiceProvider _scopedServiceProvider;
-
     [SetUp]
     public void Setup()
     {
-        _httpClient = CreateClient();
-        _scopedServiceProvider = Services.CreateScope().ServiceProvider;
+        var factory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services => { services.DefaultTestConfig(); });
+            });
+
+        _httpClient = factory.CreateClient();
+        _scopedServiceProvider = factory.Services.CreateScope().ServiceProvider;
     }
 
-
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    [TearDown]
+    public void TearDown()
     {
-        builder.ConfigureServices(services => { services.DefaultTestConfig(); });
+        _httpClient?.Dispose();
     }
 
+    private HttpClient _httpClient;
+    private IServiceProvider _scopedServiceProvider;
+    
     [Test]
     public async Task GetDeviceLogsTest()
     {

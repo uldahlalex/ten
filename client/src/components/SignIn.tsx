@@ -15,8 +15,8 @@ export default function SignIn() {
                 <button className="btn btn-primary" onClick={() =>
                     authClient.register({email: Math.random() * 123 + "@gmail.com", password: "123456"}).then(r => {
                         toast("welcome!")
-                        localStorage.setItem('jwt', r.jwt);
-                        setJwt(r.jwt)
+                        localStorage.setItem('jwt', r);
+                        setJwt(r)
                     })}>Click to register as a test user</button>
                 :
                 <>                <h1 className=" textarea-xl">you are already signed in.</h1>

@@ -11,7 +11,7 @@ export default function useInitializeData() {
     useEffect(() => {
         if (jwt == null || jwt.length < 1)
             return;
-        weatherStationClient.getLogs(jwt).then(r => {
+        weatherStationClient.getDeviceLogs(jwt).then(r => {
             setDeviceLogs(r || []);
         })
     }, [jwt])

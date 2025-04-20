@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Hosting;
+using api;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using NUnit.Framework;
-using Startup.Tests.TestUtils;
 
-namespace ten.tests;
+namespace tests;
 
 [TestFixture]
 public class ApiTests

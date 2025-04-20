@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using ten;
 
-namespace Application;
+namespace api;
 
 public static class AppOptionsExtensions
 {

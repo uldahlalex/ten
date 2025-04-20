@@ -1,10 +1,10 @@
-using Application;
-using Infrastructure.Postgres.Scaffolding;
+using api;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-using ten;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<ISecurityService, SecurityService>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocument(conf =>
@@ -26,5 +26,6 @@ app.UseOpenApi(conf =>
 app.MapControllers();
 await app.GenerateTypeScriptClient("/../client/src/generated-client.ts");
 app.MapScalarApiReference();
+app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.Run();

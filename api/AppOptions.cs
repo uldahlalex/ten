@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 // ReSharper disable InconsistentNaming
 
-namespace ten;
+namespace api;
 
 public sealed class AppOptions
 {

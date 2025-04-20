@@ -1,12 +1,9 @@
-using System.Net.Http.Json;
-using System.Text.Json;
-using Infrastructure.Postgres.Scaffolding;
+using api;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PgCtx;
 
-
-namespace Startup.Tests.TestUtils;
+namespace tests;
 
 public static class ApiTestSetupUtilities
 {

@@ -1,4 +1,5 @@
-using api.Entities;
+using Core.Domain.Entities;
+using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api;

@@ -1,4 +1,5 @@
 using api;
+using Infrastructure.Postgres.Scaffolding;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 

@@ -1,7 +1,9 @@
-﻿using api.Entities;
+﻿using System;
+using System.Collections.Generic;
+using Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace api;
+namespace Infrastructure.Postgres.Scaffolding;
 
 public partial class MyDbContext : DbContext
 {

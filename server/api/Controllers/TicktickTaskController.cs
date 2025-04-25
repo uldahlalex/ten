@@ -1,21 +1,21 @@
-using Core.Domain.Entities;
+using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api;
 
 [ApiController]
-public class MyControllerClass(MyDbContext ctx, ISecurityService securityService) : ControllerBase
+public class TicktickTaskController(MyDbContext ctx, ISecurityService securityService) : ControllerBase
 {
 
     public const string GetDeviceLogsRoute = nameof(GetDeviceLogs);
     
     [HttpGet]
     [Route(nameof(GetDeviceLogsRoute))]
-    public ActionResult<List<Devicelog>> GetDeviceLogs([FromHeader]string authorization)
+    public ActionResult<List<Tickticktask>> GetDeviceLogs([FromHeader]string authorization)
     {
         var requester = securityService.VerifyJwtOrThrow(authorization);
-        var result = ctx.Devicelogs.ToList();
+        var result = ctx.Tickticktasks.ToList();
         return Ok(result);
     }
 }

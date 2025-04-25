@@ -1,4 +1,4 @@
-using Core.Domain.Entities;
+using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,10 +21,10 @@ public class AuthController(ISecurityService securityService, MyDbContext dbCont
         dbContext.Users.Add(new User
         {
             Email = dto.Email,
-            Hash = securityService.Hash(dto.Password + salt),
+            PasswordHash = securityService.Hash(dto.Password + salt),
             Role = nameof(User),
             Salt = salt,
-            Id = uid
+            UserId = uid
         });
         dbContext.SaveChanges();
         

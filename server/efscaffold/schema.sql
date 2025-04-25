@@ -17,7 +17,7 @@ CREATE TABLE ticktick.lists (
                                 FOREIGN KEY (user_id) REFERENCES ticktick.users(user_id)
 );
 
-CREATE TABLE ticktick.tasks (
+CREATE TABLE ticktick.tickticktask (
                                 task_id SERIAL PRIMARY KEY,
                                 list_id INTEGER NOT NULL,
                                 title VARCHAR(255) NOT NULL,
@@ -43,12 +43,12 @@ CREATE TABLE ticktick.task_tags (
                                     tag_id INTEGER NOT NULL,
                                     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                                     PRIMARY KEY (task_id, tag_id),
-                                    FOREIGN KEY (task_id) REFERENCES ticktick.tasks(task_id),
+                                    FOREIGN KEY (task_id) REFERENCES ticktick.tickticktask(task_id),
                                     FOREIGN KEY (tag_id) REFERENCES ticktick.tags(tag_id)
 );
 
 -- Create indexes for better query performance
-CREATE INDEX idx_tasks_list_id ON ticktick.tasks(list_id);
-CREATE INDEX idx_tasks_due_date ON ticktick.tasks(due_date);
+CREATE INDEX idx_tasks_list_id ON ticktick.tickticktask(list_id);
+CREATE INDEX idx_tasks_due_date ON ticktick.tickticktask(due_date);
 CREATE INDEX idx_lists_user_id ON ticktick.lists(user_id);
 CREATE INDEX idx_tags_user_id ON ticktick.tags(user_id);

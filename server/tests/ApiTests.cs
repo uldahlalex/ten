@@ -9,6 +9,10 @@ namespace tests;
 [TestFixture]
 public class ApiTests
 {
+    
+    private HttpClient _httpClient;
+    private IServiceProvider _scopedServiceProvider;
+
     [SetUp]
     public void Setup()
     {
@@ -28,9 +32,7 @@ public class ApiTests
         _httpClient?.Dispose();
     }
 
-    private HttpClient _httpClient;
-    private IServiceProvider _scopedServiceProvider;
-    
+ 
     [Test]
     public async Task GetDeviceLogsTest()
     {

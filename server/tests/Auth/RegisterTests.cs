@@ -1,6 +1,4 @@
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 using api;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,10 +9,6 @@ namespace tests.Auth;
 [TestFixture]
 public class RegisterTests
 {
-    
-    private HttpClient _httpClient;
-    private IServiceProvider _scopedServiceProvider;
-
     [SetUp]
     public void Setup()
     {
@@ -34,22 +28,25 @@ public class RegisterTests
         _httpClient?.Dispose();
     }
 
+    private HttpClient _httpClient;
+    private IServiceProvider _scopedServiceProvider;
+
 
     [Test]
     public async Task WhenUserRegistersWithValidCredentials_TheyGetValidJwtBack()
     {
-        var reqDto = new AuthRequestDto()
+        var reqDto = new AuthRequestDto
         {
             Email = new Random().NextDouble() * 100 + "@email.com",
             Password = new Random().NextDouble() * 10293809213 + ""
         };
         var response = await _httpClient.PostAsJsonAsync(AuthController.RegisterRoute, reqDto);
-        
+
         if (!response.IsSuccessStatusCode)
             throw new Exception("Did not get success status code");
 
         var jwt = await response.Content.ReadAsStringAsync();
-        _scopedServiceProvider.GetRequiredService<ISecurityService>().VerifyJwtOrThrow(jwt); //throws if JWT issued is invalid
+        _scopedServiceProvider.GetRequiredService<ISecurityService>()
+            .VerifyJwtOrThrow(jwt); //throws if JWT issued is invalid
     }
-    
 }

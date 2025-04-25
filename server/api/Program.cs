@@ -1,8 +1,8 @@
 using api;
+using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-
 
 public class Program
 {
@@ -22,6 +22,7 @@ public class Program
         {
             ctx.UseNpgsql(appOptions.DbConnectionString);
         });
+        builder.Services.AddSingleton<IDefaultSeeder, DefaultSeeder>();
 
         var app = builder.Build();
 
@@ -33,7 +34,17 @@ public class Program
         await app.GenerateTypeScriptClient("/../client/src/generated-client.ts");
         app.MapScalarApiReference();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-
+        using (var scope = app.Services.CreateScope())
+        {
+            if (!app.Environment.IsProduction())
+            {
+                
+                 var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+           
+                 await scope.ServiceProvider.GetRequiredService<IDefaultSeeder>().CreateEnvironment(ctx);
+                  
+            }
+                 }
         app.Run();
 
     }

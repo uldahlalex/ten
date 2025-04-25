@@ -36,7 +36,7 @@ public class ApiTests
     [Test]
     public async Task GetDeviceLogsTest()
     {
-        var req = await _httpClient.GetAsync(TicktickTaskController.GetDeviceLogsRoute);
+        var req = await _httpClient.GetAsync(TicktickTaskController.GetTasksRoute);
         if (req.IsSuccessStatusCode)
             throw new Exception("Did not get success status code");
         

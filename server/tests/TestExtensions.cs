@@ -1,3 +1,6 @@
+using System.Net.Http.Json;
+using System.Text.Json;
+using api;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +52,20 @@ public static class ApiTestSetupUtilities
         if (descriptor != null)
             services.Remove(descriptor);
     }
-
+    public static async Task<string> TestRegisterAndAddJwt(this HttpClient httpClient)
+    {
+        var registerDto = new AuthRequestDto
+        {
+            Email = new Random().NextDouble() * 123 + "@gmail.com",
+            Password = new Random().NextDouble() * 123 + "@gmail.com"
+        };
+        var signIn = await httpClient.PostAsJsonAsync(
+            AuthController.RegisterRoute, registerDto);
+        var jwt = await signIn.Content
+            .ReadAsStringAsync();
+        httpClient.DefaultRequestHeaders.Add("Authorization", jwt);
+        return jwt;
+    }
     
 }
+

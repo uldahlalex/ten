@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using api;
@@ -42,8 +43,7 @@ public class RegisterTests
             Email = new Random().NextDouble() * 100 + "@email.com",
             Password = new Random().NextDouble() * 10293809213 + ""
         };
-        var response = await _httpClient.PostAsync(AuthController.RegisterRoute
-            , new StringContent(JsonSerializer.Serialize(reqDto), Encoding.UTF8, "application/json"));
+        var response = await _httpClient.PostAsJsonAsync(AuthController.RegisterRoute, reqDto);
         
         if (!response.IsSuccessStatusCode)
             throw new Exception("Did not get success status code");

@@ -9,7 +9,6 @@ public partial class UserDto
 
     public string Email { get; set; } = null!;
 
-    public string Username { get; set; } = null!;
 
     public string Salt { get; set; } = null!;
 
@@ -29,7 +28,6 @@ public partial class UserDto
         {
             UserId = user.UserId,
             Email = user.Email,
-            Username = user.Username,
             Salt = user.Salt,
             PasswordHash = user.PasswordHash,
             Role = user.Role,

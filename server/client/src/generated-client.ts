@@ -66,8 +66,8 @@ export class TicktickTaskClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getDeviceLogs(authorization: string | undefined): Promise<Tickticktask[]> {
-        let url_ = this.baseUrl + "/GetDeviceLogsRoute";
+    getTasks(authorization: string | undefined): Promise<TickticktaskDto[]> {
+        let url_ = this.baseUrl + "/GetTasksRoute";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -79,17 +79,17 @@ export class TicktickTaskClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetDeviceLogs(_response);
+            return this.processGetTasks(_response);
         });
     }
 
-    protected processGetDeviceLogs(response: Response): Promise<Tickticktask[]> {
+    protected processGetTasks(response: Response): Promise<TickticktaskDto[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Tickticktask[];
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto[];
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -97,7 +97,49 @@ export class TicktickTaskClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Tickticktask[]>(null as any);
+        return Promise.resolve<TickticktaskDto[]>(null as any);
+    }
+
+    createTask(dto: CreateTaskRequestDto): Promise<FileResponse> {
+        let url_ = this.baseUrl + "/CreateTaskRoute";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateTask(_response);
+        });
+    }
+
+    protected processCreateTask(response: Response): Promise<FileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse>(null as any);
     }
 }
 
@@ -106,56 +148,39 @@ export interface AuthRequestDto {
     password?: string;
 }
 
-export interface Tickticktask {
+export interface TickticktaskDto {
     taskId?: string;
+    listId?: string;
+    title?: string;
+    description?: string;
+    dueDate: Date;
+    priority?: number;
+    completed: boolean;
+    createdAt: Date;
+    completedAt: Date;
+    taskTags: TaskTagDto[];
+}
+
+export interface TaskTagDto {
+    taskId?: string;
+    tagId?: string;
+    createdAt?: Date;
+}
+
+export interface CreateTaskRequestDto {
     listId?: string;
     title?: string;
     description?: string;
     dueDate?: Date;
     priority?: number;
-    completed?: boolean;
-    createdAt?: Date;
-    completedAt?: Date;
-    list?: Tasklist;
-    taskTags?: TaskTag[];
+    taskTagsDtos?: TaskTagDto[];
 }
 
-export interface Tasklist {
-    listId?: string;
-    userId?: string;
-    name?: string;
-    createdAt?: Date;
-    tickticktasks?: Tickticktask[];
-    user?: User;
-}
-
-export interface User {
-    userId?: string;
-    email?: string;
-    username?: string;
-    salt?: string;
-    passwordHash?: string;
-    role?: string;
-    createdAt?: Date;
-    tags?: Tag[];
-    tasklists?: Tasklist[];
-}
-
-export interface Tag {
-    tagId?: string;
-    name?: string;
-    userId?: string;
-    createdAt?: Date;
-    taskTags?: TaskTag[];
-    user?: User;
-}
-
-export interface TaskTag {
-    taskId?: string;
-    tagId?: string;
-    createdAt?: Date;
-    tag?: Tag;
-    task?: Tickticktask;
+export interface FileResponse {
+    data: Blob;
+    status: number;
+    fileName?: string;
+    headers?: { [name: string]: any };
 }
 
 export class ApiException extends Error {

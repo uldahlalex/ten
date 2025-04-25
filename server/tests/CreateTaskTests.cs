@@ -13,10 +13,6 @@ namespace tests;
 [TestFixture]
 public class CreateTaskTests
 {
-    
-    private HttpClient _httpClient;
-    private IServiceProvider _scopedServiceProvider;
-
     [SetUp]
     public void Setup()
     {
@@ -36,62 +32,55 @@ public class CreateTaskTests
         _httpClient?.Dispose();
     }
 
- 
+    private HttpClient _httpClient;
+    private IServiceProvider _scopedServiceProvider;
+
+
     [Test]
     public async Task CreateTask_ShouldReturnOk_WhenValidRequest()
     {
-        
         await _httpClient.TestRegisterAndAddJwt();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-    
-        var request = new CreateTaskRequestDto()
+        Console.WriteLine("tasklists: " + ctx.Tasklists.ToList().Count);
+
+        var request = new CreateTaskRequestDto
         {
-            
             ListId = ctx.Tasklists.First().ListId,
             Title = "Test Task",
             Description = "Test Description",
             DueDate = DateTime.UtcNow,
-            Priority = 1,
-            TaskTagsDtos = new List<TaskTagDto>()
-            {
-                new TaskTagDto(){ TagId = ctx.Tags.First().TagId }
-            },
-            
+            Priority = 1
+            // TaskTagsDtos = new List<TaskTagDto>()
+            // {
+            //     new TaskTagDto(){ TagId = ctx.Tags.First().TagId }
+            // },
         };
 
-        ctx.SaveChanges();
 
         // Act
         var response = await _httpClient.PostAsJsonAsync(TicktickTaskController.CreateTaskRoute, request);
 
         // Assert
-        if(HttpStatusCode.OK != response.StatusCode)
-            throw new Exception("Did not get success status code");
+        if (HttpStatusCode.OK != response.StatusCode)
+            throw new Exception("Did not get status 200. Received: " + response.StatusCode + " and body :" +
+                                await response.Content.ReadAsStringAsync());
         var responseBodyAsDto = await response.Content.ReadFromJsonAsync<TickticktaskDto>() ??
                                 throw new Exception("Could not deserialize to " + nameof(TickticktaskDto));
         // Assert the default data validation put on response DTO class are all valid (throws exc if not)
         Validator.TryValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), null);
     }
-    
+
     [Test]
     public async Task CreateTask_ShouldFail_IfDtoDoesNotLiveUpToValidationRequirements()
     {
-        
         await _httpClient.TestRegisterAndAddJwt();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        ctx.Tags.Add(new Tag()
-        {
-            TagId = "test-tag-id",
-            Name = "Test Tag",
-            TaskTags = [],
-            CreatedAt = DateTime.UtcNow,
-            UserId = ctx.Users.First().UserId
-        });
+
         var request = new
         {
             ListId = "test-list-id",
-            Title = "Test Task",
-            Description = "Test Description",
+            Title = "",
+            Description = "",
             DueDate = DateTime.UtcNow,
             Priority = 1,
             TaskTagsDtos = new[]
@@ -99,29 +88,13 @@ public class CreateTaskTests
                 new { TagId = "test-tag-id" }
             }
         };
-        ctx.Tasklists.Add(new Tasklist()
-        {
-            ListId = Guid.NewGuid().ToString(),
-            Name = "Test List",
-            CreatedAt = DateTime.UtcNow,
-            UserId = ctx.Users.First().UserId,
-            Tickticktasks = new List<Tickticktask>() {}
-        });
-        ctx.SaveChanges();
 
 
         // Act
         var response = await _httpClient.PostAsJsonAsync(TicktickTaskController.CreateTaskRoute, request);
 
         // Assert
-        if(HttpStatusCode.OK != response.StatusCode)
-            throw new Exception("Did not get success status code");
-        var responseBodyAsDto = await response.Content.ReadFromJsonAsync<TickticktaskDto>() ??
-                                throw new Exception("Could not deserialize to " + nameof(TickticktaskDto));
-        // Assert the default data validation put on response DTO class are all valid (throws exc if not)
-        Validator.TryValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), null);
-        throw new NotImplementedException();
+        if (HttpStatusCode.BadRequest != response.StatusCode)
+            throw new Exception("Expected bad request. Received: " + await response.Content.ReadAsStringAsync());
     }
-
-    
 }

@@ -11,7 +11,7 @@ public class IsGuidAttribute : ValidationAttribute
 
     public override bool IsValid(object value)
     {
-        return value is string stringValue && 
+        return value is string stringValue &&
                Regex.IsMatch(stringValue, _pattern);
     }
 }

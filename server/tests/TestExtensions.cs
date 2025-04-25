@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using System.Text.Json;
 using api;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.EntityFrameworkCore;
@@ -33,15 +32,12 @@ public static class ApiTestSetupUtilities
 
         if (mockProxyConfig)
         {
-           
         }
 
         if (customSeeder is not null)
         {
-           
         }
 
-     
 
         return services;
     }
@@ -52,6 +48,7 @@ public static class ApiTestSetupUtilities
         if (descriptor != null)
             services.Remove(descriptor);
     }
+
     public static async Task<string> TestRegisterAndAddJwt(this HttpClient httpClient)
     {
         var registerDto = new AuthRequestDto
@@ -66,6 +63,4 @@ public static class ApiTestSetupUtilities
         httpClient.DefaultRequestHeaders.Add("Authorization", jwt);
         return jwt;
     }
-    
 }
-

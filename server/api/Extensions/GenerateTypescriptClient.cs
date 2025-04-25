@@ -20,8 +20,7 @@ public static class GenerateTypescriptClient
                 NullValue = TypeScriptNullValue.Undefined,
                 TypeScriptVersion = 5.2m,
                 GenerateCloneMethod = false,
-                MarkOptionalProperties = true,
-                
+                MarkOptionalProperties = true
             }
         };
 
@@ -29,7 +28,7 @@ public static class GenerateTypescriptClient
         var generator = new TypeScriptClientGenerator(document, settings);
         var code = generator.GenerateFile();
 
-  
+
         var outputPath = Path.Combine(Directory.GetCurrentDirectory() + path);
         Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 

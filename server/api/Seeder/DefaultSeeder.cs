@@ -18,59 +18,52 @@ public class DefaultSeeder : IDefaultSeeder
         ctx.Tasklists.RemoveRange(ctx.Tasklists);
         ctx.Tags.RemoveRange(ctx.Tags);
         ctx.Users.RemoveRange(ctx.Users);
-        ctx.Users.Add(new User()
+        ctx.Users.Add(new User
         {
-            UserId = Guid.NewGuid().ToString(),
+            UserId = "test-user-id",
             CreatedAt = DateTime.UtcNow,
             Email = "test@user.dk",
             Role = "User",
             Salt = "6cbf8487-8f2c-48bc-a15c-33d88eae8b9e",
-            PasswordHash = "TJlSDc2mvpBmYKoi+2hnIOFx6ykf/V6JpmU7irhpoRcDT3KKUMwH7BWL/WlDTGrL11ud+5Q1BNxBEy3ZD1RRuQ==",
-
-
+            PasswordHash = "TJlSDc2mvpBmYKoi+2hnIOFx6ykf/V6JpmU7irhpoRcDT3KKUMwH7BWL/WlDTGrL11ud+5Q1BNxBEy3ZD1RRuQ=="
         });
         ctx.SaveChanges();
 
-        var taskList = new List<Tasklist>()
+        var taskList = new List<Tasklist>
         {
-            new Tasklist()
+            new()
             {
-                UserId = ctx.Users.First().UserId,
-                ListId = Guid.NewGuid().ToString(),
+                UserId = "test-user-id",
+                ListId = "test-list-id",
                 Name = "Test List",
                 CreatedAt = DateTime.UtcNow,
-                Tickticktasks = new List<Tickticktask>()
+                Tickticktasks = new List<Tickticktask>
                 {
-                    new Tickticktask()
+                    new()
                     {
-                        TaskId = Guid.NewGuid().ToString(),
+                        TaskId = "test-task-id",
                         Title = "Test Task",
                         Description = "Test Description",
                         DueDate = DateTime.UtcNow,
                         Priority = 1,
-                        CreatedAt = DateTime.UtcNow,
-
+                        CreatedAt = DateTime.UtcNow
                     }
                 }
             }
         };
         ctx.Tasklists.AddRange(taskList);
         ctx.SaveChanges();
-            var Tags = new List<Tag>()
-            {
-                new Tag()
-                {
-                    
-                    TagId = "test-tag-id",
-                    Name = "Test Tag",
-                    CreatedAt = DateTime.UtcNow,
-                    UserId = ctx.Users.First().UserId,
-                }
-            };
-        ctx.Tags.AddRange(Tags);
+
+        ctx.Tags.Add(new Tag
+        {
+            TagId = "test-tag-id",
+            Name = "Test Tag",
+            CreatedAt = DateTime.UtcNow,
+            UserId = ctx.Users.First().UserId
+        });
         ctx.SaveChanges();
 
-    ctx.TaskTags.Add(new TaskTag()
+        ctx.TaskTags.Add(new TaskTag
         {
             CreatedAt = DateTime.UtcNow,
             TagId = ctx.Tags.First().TagId,

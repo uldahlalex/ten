@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace efscaffold.Entities;
 
-namespace efscaffold.Entities;
-
-public partial class Tasklist
+public class Tasklist
 {
     public string ListId { get; set; } = null!;
 

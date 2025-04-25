@@ -1,3 +1,5 @@
 Aktuelt:
 
+- ci/cd
+
 - endpoints og tests til mest gængse features før ui bygning

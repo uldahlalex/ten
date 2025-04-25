@@ -1,7 +1,6 @@
 using api;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using NUnit.Framework;
 
 namespace tests;
@@ -9,10 +8,6 @@ namespace tests;
 [TestFixture]
 public class ApiTests
 {
-    
-    private HttpClient _httpClient;
-    private IServiceProvider _scopedServiceProvider;
-
     [SetUp]
     public void Setup()
     {
@@ -32,14 +27,15 @@ public class ApiTests
         _httpClient?.Dispose();
     }
 
- 
+    private HttpClient _httpClient;
+    private IServiceProvider _scopedServiceProvider;
+
+
     [Test]
     public async Task GetDeviceLogsTest()
     {
         var req = await _httpClient.GetAsync(TicktickTaskController.GetTasksRoute);
         if (req.IsSuccessStatusCode)
             throw new Exception("Did not get success status code");
-        
     }
-    
 }

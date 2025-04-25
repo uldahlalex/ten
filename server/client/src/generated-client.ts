@@ -56,7 +56,7 @@ export class AuthClient {
     }
 }
 
-export class MyControllerClassClient {
+export class TicktickTaskClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -66,7 +66,7 @@ export class MyControllerClassClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getDeviceLogs(authorization: string | undefined): Promise<Devicelog[]> {
+    getDeviceLogs(authorization: string | undefined): Promise<Tickticktask[]> {
         let url_ = this.baseUrl + "/GetDeviceLogsRoute";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -83,13 +83,13 @@ export class MyControllerClassClient {
         });
     }
 
-    protected processGetDeviceLogs(response: Response): Promise<Devicelog[]> {
+    protected processGetDeviceLogs(response: Response): Promise<Tickticktask[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Devicelog[];
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Tickticktask[];
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -97,7 +97,7 @@ export class MyControllerClassClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Devicelog[]>(null as any);
+        return Promise.resolve<Tickticktask[]>(null as any);
     }
 }
 
@@ -106,12 +106,56 @@ export interface AuthRequestDto {
     password?: string;
 }
 
-export interface Devicelog {
-    deviceid?: string;
-    value?: number;
-    id?: string;
-    unit?: string;
-    timestamp?: Date;
+export interface Tickticktask {
+    taskId?: string;
+    listId?: string;
+    title?: string;
+    description?: string;
+    dueDate?: Date;
+    priority?: number;
+    completed?: boolean;
+    createdAt?: Date;
+    completedAt?: Date;
+    list?: Tasklist;
+    taskTags?: TaskTag[];
+}
+
+export interface Tasklist {
+    listId?: string;
+    userId?: string;
+    name?: string;
+    createdAt?: Date;
+    tickticktasks?: Tickticktask[];
+    user?: User;
+}
+
+export interface User {
+    userId?: string;
+    email?: string;
+    username?: string;
+    salt?: string;
+    passwordHash?: string;
+    role?: string;
+    createdAt?: Date;
+    tags?: Tag[];
+    tasklists?: Tasklist[];
+}
+
+export interface Tag {
+    tagId?: string;
+    name?: string;
+    userId?: string;
+    createdAt?: Date;
+    taskTags?: TaskTag[];
+    user?: User;
+}
+
+export interface TaskTag {
+    taskId?: string;
+    tagId?: string;
+    createdAt?: Date;
+    tag?: Tag;
+    task?: Tickticktask;
 }
 
 export class ApiException extends Error {

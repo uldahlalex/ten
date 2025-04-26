@@ -27,6 +27,10 @@ public class TicktickTaskController(MyDbContext ctx, ISecurityService securitySe
         [FromHeader] string authorization)
     {
         _ = securityService.VerifyJwtOrThrow(authorization);
+        
+        if(dto.DueDate < DateTime.UtcNow)
+            return BadRequest("Due date cannot be in the past");
+        
         var list = ctx.Tasklists.First(list => list.ListId == dto.ListId);
         var tags = dto.TaskTagsDtos.Select(taskTagDto =>
             ctx.TaskTags.First(tag => tag.TagId == taskTagDto.TagId)).ToList();

@@ -19,7 +19,8 @@ public class CreateTaskTests
         var factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
-                builder.ConfigureServices(services => { services.DefaultTestConfig(); });
+                builder.ConfigureServices(services => { services.DefaultTestConfig(
+                useTestContainer:false); });
             });
 
         _httpClient = factory.CreateClient();
@@ -48,12 +49,9 @@ public class CreateTaskTests
             ListId = ctx.Tasklists.First().ListId,
             Title = "Test Task",
             Description = "Test Description",
-            DueDate = DateTime.UtcNow,
+            DueDate = DateTime.Parse("2050-04-25T20:22:50.657021Z").ToUniversalTime(),
             Priority = 1
-            // TaskTagsDtos = new List<TaskTagDto>()
-            // {
-            //     new TaskTagDto(){ TagId = ctx.Tags.First().TagId }
-            // },
+   
         };
 
 
@@ -67,26 +65,29 @@ public class CreateTaskTests
         var responseBodyAsDto = await response.Content.ReadFromJsonAsync<TickticktaskDto>() ??
                                 throw new Exception("Could not deserialize to " + nameof(TickticktaskDto));
         // Assert the default data validation put on response DTO class are all valid (throws exc if not)
-        Validator.TryValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), null);
+        Validator.ValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), true);
     }
 
+    //Multi case test
     [Test]
-    public async Task CreateTask_ShouldFail_IfDtoDoesNotLiveUpToValidationRequirements()
+    [TestCase("", "asdsa", "2050-04-25T20:22:50.657021Z", 1)] //invalid title: empty
+    [TestCase("asdsad", "", "2050-04-25T20:22:50.657021Z", 1)] //invalid desc: empty
+    [TestCase("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 0)] //invalid priority: not in range
+    [TestCase("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 6)] //invalid priority: empty
+    [TestCase( "asdsad", "asdsad", "2000-04-25T20:22:50.657021Z", 1)] //invalid due date: it is in the past
+    public async Task CreateTask_ShouldBeRejects_IfDtoDoesNotLiveUpToValidationRequirements( string title, string description, string timestamp, int priority)
     {
         await _httpClient.TestRegisterAndAddJwt();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+ 
 
-        var request = new
+        var request = new CreateTaskRequestDto()
         {
-            ListId = "test-list-id",
-            Title = "",
-            Description = "",
-            DueDate = DateTime.UtcNow,
-            Priority = 1,
-            TaskTagsDtos = new[]
-            {
-                new { TagId = "test-tag-id" }
-            }
+            ListId = (ctx.Tasklists.FirstOrDefault() ?? throw new Exception("Could not find any task list")).ListId,
+            Title = title,
+            Description = description,
+            DueDate = DateTime.Parse(timestamp).ToUniversalTime(),
+            Priority = priority
         };
 
 
@@ -95,6 +96,7 @@ public class CreateTaskTests
 
         // Assert
         if (HttpStatusCode.BadRequest != response.StatusCode)
-            throw new Exception("Expected bad request. Received: " + await response.Content.ReadAsStringAsync());
+            throw new Exception("Expected bad request. Received: " + response.StatusCode + " and body :" +
+                                await response.Content.ReadAsStringAsync());
     }
 }

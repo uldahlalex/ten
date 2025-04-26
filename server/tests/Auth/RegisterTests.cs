@@ -15,7 +15,7 @@ public class RegisterTests
         var factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
-                builder.ConfigureServices(services => { services.DefaultTestConfig(); });
+                builder.ConfigureServices(services => { services.DefaultTestConfig(useTestContainer:false); });
             });
 
         _httpClient = factory.CreateClient();

@@ -23,11 +23,12 @@ public class Program
             { ctx.UseNpgsql(appOptions.DbConnectionString); });
         builder.Services.AddSingleton<IDefaultSeeder, DefaultSeeder>();
 
-        // Configure dynamic port allocation
-        builder.WebHost.UseUrls($"http://localhost:{DefaultPort}");
         builder.WebHost.ConfigureKestrel(options =>
         {
-            options.Listen(IPAddress.Loopback, 0); // 0 means use DefaultPort or find available port
+            options.Listen(IPAddress.Loopback, DefaultPort, listenOptions =>
+            {
+                listenOptions.UseConnectionLogging();
+            });
         });
     }
 

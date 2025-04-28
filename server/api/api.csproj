@@ -7,24 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JWT" Version="11.0.0"/>
-        <PackageReference Include="NSwag.CodeGeneration.TypeScript" Version="14.2.0"/>
-        <PackageReference Include="NSwag.AspNetCore" Version="14.3.0"/>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.1.13"/>
-
-
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.*" />
+        <PackageReference Include="JWT" Version="11.*" />
+        <PackageReference Include="NSwag.CodeGeneration.TypeScript" Version="14.*" />
+        <PackageReference Include="NSwag.AspNetCore" Version="14.*" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.*" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.*" />
     </ItemGroup>
-
 
     <ItemGroup>
-        <InternalsVisibleTo Include="../tests/tests.csproj"/>
-        <ProjectReference Include="../efscaffold/efscaffold.csproj"/>
+        <ProjectReference Include="../efscaffold/efscaffold.csproj" />
     </ItemGroup>
-
-
-    <ItemGroup>
-      <Folder Include="Validators\" />
-    </ItemGroup>
-
 
 </Project>

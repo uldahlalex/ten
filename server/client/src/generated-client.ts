@@ -103,8 +103,64 @@ export class TicktickTaskClient {
         this.baseUrl = baseUrl ?? "";
     }
 
+    getMyTasks(authorization: string | undefined, isCompleted: boolean | null | undefined, dueDateStart: Date | null | undefined, dueDateEnd: Date | null | undefined, minPriority: number | null | undefined, maxPriority: number | null | undefined, searchTerm: string | null | undefined, tagIds: string[] | null | undefined, listIds: string[] | null | undefined, orderBy: TaskOrderBy | null | undefined, isDescending: boolean | undefined): Promise<TickticktaskDto[]> {
+        let url_ = this.baseUrl + "/GetMyTasks?";
+        if (isCompleted !== undefined && isCompleted !== null)
+            url_ += "IsCompleted=" + encodeURIComponent("" + isCompleted) + "&";
+        if (dueDateStart !== undefined && dueDateStart !== null)
+            url_ += "DueDateStart=" + encodeURIComponent(dueDateStart ? "" + dueDateStart.toISOString() : "") + "&";
+        if (dueDateEnd !== undefined && dueDateEnd !== null)
+            url_ += "DueDateEnd=" + encodeURIComponent(dueDateEnd ? "" + dueDateEnd.toISOString() : "") + "&";
+        if (minPriority !== undefined && minPriority !== null)
+            url_ += "MinPriority=" + encodeURIComponent("" + minPriority) + "&";
+        if (maxPriority !== undefined && maxPriority !== null)
+            url_ += "MaxPriority=" + encodeURIComponent("" + maxPriority) + "&";
+        if (searchTerm !== undefined && searchTerm !== null)
+            url_ += "SearchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+        if (tagIds !== undefined && tagIds !== null)
+            tagIds && tagIds.forEach(item => { url_ += "TagIds=" + encodeURIComponent("" + item) + "&"; });
+        if (listIds !== undefined && listIds !== null)
+            listIds && listIds.forEach(item => { url_ += "ListIds=" + encodeURIComponent("" + item) + "&"; });
+        if (orderBy !== undefined && orderBy !== null)
+            url_ += "OrderBy=" + encodeURIComponent("" + orderBy) + "&";
+        if (isDescending === null)
+            throw new Error("The parameter 'isDescending' cannot be null.");
+        else if (isDescending !== undefined)
+            url_ += "IsDescending=" + encodeURIComponent("" + isDescending) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetMyTasks(_response);
+        });
+    }
+
+    protected processGetMyTasks(response: Response): Promise<TickticktaskDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TickticktaskDto[]>(null as any);
+    }
+
     getTasks(authorization: string | undefined): Promise<TickticktaskDto[]> {
-        let url_ = this.baseUrl + "/GetTasksRoute";
+        let url_ = this.baseUrl + "/GetTasks";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -138,7 +194,7 @@ export class TicktickTaskClient {
     }
 
     createTask(dto: CreateTaskRequestDto, authorization: string | undefined): Promise<TickticktaskDto> {
-        let url_ = this.baseUrl + "/CreateTaskRoute";
+        let url_ = this.baseUrl + "/CreateTask";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dto);
@@ -182,22 +238,26 @@ export interface AuthRequestDto {
 }
 
 export interface TickticktaskDto {
-    taskId?: string;
-    listId?: string;
+    taskId: string;
+    listId: string;
     title?: string;
     description?: string;
-    dueDate: Date;
+    dueDate?: Date;
     priority?: number;
     completed: boolean;
     createdAt: Date;
-    completedAt: Date;
-    taskTags: TaskTagDto[];
+    completedAt?: Date;
+    taskTags?: TaskTagDto[];
 }
 
 export interface TaskTagDto {
     taskId?: string;
     tagId?: string;
     createdAt?: Date;
+}
+
+export interface TaskOrderBy {
+    value?: string;
 }
 
 export interface CreateTaskRequestDto {

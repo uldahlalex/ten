@@ -3,6 +3,7 @@ using api;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PgCtx;
 
 namespace tests;
@@ -18,6 +19,7 @@ public static class ApiTestSetupUtilities
         Action? customSeeder = null
     )
     {
+ 
         if (useTestContainer)
         {
             var db = new PgCtxSetup<MyDbContext>();
@@ -63,4 +65,42 @@ public static class ApiTestSetupUtilities
         httpClient.DefaultRequestHeaders.Add("Authorization", jwt);
         return jwt;
     }
+
+  
+        public static string ToQueryString(this TaskQueryParams queryParams)
+        {
+            var queryParts = new List<string>();
+
+            if (queryParams.IsCompleted.HasValue)
+                queryParts.Add($"{nameof(TaskQueryParams.IsCompleted)}={queryParams.IsCompleted.Value}");
+
+            if (queryParams.DueDateStart.HasValue)
+                queryParts.Add($"{nameof(TaskQueryParams.DueDateStart)}={Uri.EscapeDataString(queryParams.DueDateStart.Value.ToString("O"))}");
+
+            if (queryParams.DueDateEnd.HasValue)
+                queryParts.Add($"{nameof(TaskQueryParams.DueDateEnd)}={Uri.EscapeDataString(queryParams.DueDateEnd.Value.ToString("O"))}");
+
+            if (queryParams.MinPriority.HasValue)
+                queryParts.Add($"{nameof(TaskQueryParams.MinPriority)}={queryParams.MinPriority.Value}");
+
+            if (queryParams.MaxPriority.HasValue)
+                queryParts.Add($"{nameof(TaskQueryParams.MaxPriority)}={queryParams.MaxPriority.Value}");
+
+            if (!string.IsNullOrEmpty(queryParams.SearchTerm))
+                queryParts.Add($"{nameof(TaskQueryParams.SearchTerm)}={Uri.EscapeDataString(queryParams.SearchTerm)}");
+
+            if (queryParams.TagIds?.Any() == true)
+                queryParts.Add($"{nameof(TaskQueryParams.TagIds)}={string.Join(",", queryParams.TagIds.Select(Uri.EscapeDataString))}");
+
+            if (queryParams.ListIds?.Any() == true)
+                queryParts.Add($"{nameof(TaskQueryParams.ListIds)}={string.Join(",", queryParams.ListIds.Select(Uri.EscapeDataString))}");
+
+            if (queryParams.OrderBy != null)
+                queryParts.Add($"{nameof(TaskQueryParams.OrderBy)}={Uri.EscapeDataString(queryParams.OrderBy.Value)}");
+            
+            queryParts.Add($"{nameof(TaskQueryParams.IsDescending)}={queryParams.IsDescending}");
+
+            return queryParts.Any() ? "?" + string.Join("&", queryParts) : "";
+        }
+    
 }

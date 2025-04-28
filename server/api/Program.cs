@@ -20,7 +20,12 @@ public class Program
 
         var app = builder.Build();
 
-        app.UseOpenApi(conf => { conf.Path = "openapi/v1.json"; });
+        app.UseOpenApi(conf => { conf.Path = "/openapi/v1.json"; });
+        app.UseSwaggerUi(conf =>
+        {
+            conf.Path = "/swagger";
+            conf.DocumentPath = "/openapi/v1.json";
+        });
         app.MapControllers();
         await app.GenerateTypeScriptClient("/../client/src/generated-client.ts");
         app.MapScalarApiReference();
@@ -32,6 +37,7 @@ public class Program
                 var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
 
                 await scope.ServiceProvider.GetRequiredService<IDefaultSeeder>().CreateEnvironment(ctx);
+                
             }
         }
 

@@ -42,7 +42,6 @@ public class CreateTaskTests
     {
         await _httpClient.TestRegisterAndAddJwt();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        Console.WriteLine("tasklists: " + ctx.Tasklists.ToList().Count);
 
         var request = new CreateTaskRequestDto
         {

@@ -20,7 +20,7 @@ public class CreateTaskTests
             .WithWebHostBuilder(builder =>
             {
                 builder.ConfigureServices(services => { services.DefaultTestConfig(
-                useTestContainer:false); });
+                useTestContainer:true); });
             });
 
         _httpClient = factory.CreateClient();
@@ -65,6 +65,8 @@ public class CreateTaskTests
                                 throw new Exception("Could not deserialize to " + nameof(TickticktaskDto));
         // Assert the default data validation put on response DTO class are all valid (throws exc if not)
         Validator.ValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), true);
+        var lookup = ctx.Tickticktasks.First(t => t.TaskId == responseBodyAsDto.TaskId);
+        Validator.ValidateObject(lookup, new ValidationContext(lookup), true);
     }
 
     //Multi case test

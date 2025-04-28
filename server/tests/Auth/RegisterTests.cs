@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using api;
+using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -48,5 +49,7 @@ public class RegisterTests
         var jwt = await response.Content.ReadAsStringAsync();
         _scopedServiceProvider.GetRequiredService<ISecurityService>()
             .VerifyJwtOrThrow(jwt); //throws if JWT issued is invalid
+        _ = _scopedServiceProvider.GetRequiredService<MyDbContext>().Users.First(u => u.Email == reqDto.Email); //throws if not found
+
     }
 }

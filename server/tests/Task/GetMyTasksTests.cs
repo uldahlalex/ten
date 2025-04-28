@@ -1,11 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
 using api;
+using api.Seeder;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
-using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 using NUnit.Framework;
 using tests;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -13,24 +15,42 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 [TestFixture]
 public class GetTasksTests
 {
-    private HttpClient _httpClient;
-    private IServiceProvider _scopedServiceProvider;
-
     [SetUp]
     public async Task Setup()
     {
         var factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
-                builder.ConfigureServices(services =>
-                {
-                    services.DefaultTestConfig(useTestContainer: false);
-                });
+                builder.ConfigureServices(services => { services.DefaultTestConfig(
+                    useTestContainer:true); });
             });
 
         _httpClient = factory.CreateClient();
         _scopedServiceProvider = factory.Services.CreateScope().ServiceProvider;
-        await _httpClient.TestRegisterAndAddJwt();
+                var dbContext = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+        var connection = dbContext.Database.GetConnectionString();
+        Console.WriteLine($"Database connection string: {connection}");
+
+        // Method 2: Get it from DbContextOptions
+        var dbOptions = _scopedServiceProvider.GetRequiredService<DbContextOptions<MyDbContext>>();
+        var extension = dbOptions.Extensions.OfType<NpgsqlOptionsExtension>().FirstOrDefault();
+        if (extension != null)
+        {
+            Console.WriteLine($"Connection string from options: {extension.ConnectionString}");
+        }
+        
+        // Ensure database is created and seeded
+        await dbContext.Database.EnsureCreatedAsync();
+        
+        // Run seeder explicitly
+        var seeder = _scopedServiceProvider.GetRequiredService<IDefaultSeeder>();
+        await seeder.CreateEnvironment(dbContext);
+        
+        // Verify data exists
+        var taskCount = await dbContext.Tickticktasks.CountAsync();
+        Console.WriteLine($"Number of tasks in database: {taskCount}");
+        
+    
     }
 
     [TearDown]
@@ -39,29 +59,48 @@ public class GetTasksTests
         _httpClient?.Dispose();
     }
 
+    private HttpClient _httpClient;
+    private IServiceProvider _scopedServiceProvider;
+
+
     [Test]
     public async Task GetTasks_ShouldReturnAllTasks_WhenNoFiltersApplied()
     {
-        // Arrange
-        var query = new TaskQueryParams();
+        // Log current user
+        await _httpClient.TestRegisterAndAddJwt();
+        var jwt = _httpClient.DefaultRequestHeaders.Authorization?.ToString();
+        var securityService = _scopedServiceProvider.GetRequiredService<ISecurityService>();
+        var userId = securityService.VerifyJwtOrThrow(jwt!).Id;
+        Console.WriteLine($"Test running as user: {userId}");
 
-        // Act
+        // Verify user has tasks
+        var dbContext = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+        var userTaskCount = await dbContext.Tickticktasks
+            .Where(t => t.List.UserId == userId)
+            .CountAsync();
+        Console.WriteLine($"User has {userTaskCount} tasks in database");
+
+        // Your existing test code
+        var query = new TaskQueryParams();
         var response = await _httpClient.GetAsync(
-            "GetMyTasks");
+            TicktickTaskController.GetMyTasksRoute + query.ToQueryString());
         
-        // Assert
+        // Log response
+        var content = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"Response content: {content}");
+        
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var tasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
-        Console.WriteLine(JsonSerializer.Serialize(tasks));
         Assert.That(tasks, Is.Not.Null);
         Assert.That(tasks!.Count, Is.GreaterThan(0));
     }
-
     [Test]
     public async Task GetTasks_ShouldFilterByCompletion()
     {
         // Arrange
         var query = new TaskQueryParams { IsCompleted = true };
+        await _httpClient.TestRegisterAndAddJwt();
+
 
         // Act
         var response = await _httpClient.GetAsync(
@@ -83,16 +122,16 @@ public class GetTasksTests
             DueDateStart = DateTime.UtcNow.AddDays(-7),
             DueDateEnd = DateTime.UtcNow.AddDays(7)
         };
+        await _httpClient.TestRegisterAndAddJwt();
+
 
         // Act
-        var response = await _httpClient.GetAsync(
+        var response = await _httpClient.GetFromJsonAsync<List<TickticktaskDto>>(
             TicktickTaskController.GetMyTasksRoute + query.ToQueryString());
-        
-        // Assert
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        var tasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
-        Assert.That(tasks, Is.Not.Null);
-        Assert.That(tasks!.All(t => 
+
+        if (response.Count == 0)
+            throw new Exception("Did not get any tasks");
+        Assert.That(response!.All(t => 
             t.DueDate >= query.DueDateStart && 
             t.DueDate <= query.DueDateEnd), Is.True);
     }
@@ -106,6 +145,8 @@ public class GetTasksTests
             MinPriority = 2,
             MaxPriority = 3
         };
+        await _httpClient.TestRegisterAndAddJwt();
+
 
         // Act
         var response = await _httpClient.GetAsync(
@@ -123,6 +164,7 @@ public class GetTasksTests
     {
         // Arrange
         var query = new TaskQueryParams { SearchTerm = "project" };
+        await _httpClient.TestRegisterAndAddJwt();
 
         // Act
         var response = await _httpClient.GetAsync(
@@ -144,6 +186,8 @@ public class GetTasksTests
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var tagId = ctx.Tags.First().TagId;
         var query = new TaskQueryParams { TagIds = new List<string> { tagId } };
+        await _httpClient.TestRegisterAndAddJwt();
+
 
         // Act
         var response = await _httpClient.GetAsync(
@@ -152,7 +196,7 @@ public class GetTasksTests
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         List<TickticktaskDto> tasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>() ?? throw new Exception("Failed to deserialize tasks");
-        var tasksAsJsonText = System.Text.Json.JsonSerializer.Serialize(tasks);
+        var tasksAsJsonText = JsonSerializer.Serialize(tasks);
         Console.WriteLine(tasksAsJsonText);
         Assert.That(tasks, Is.Not.Null);
         Assert.That(tasks!.Count, Is.GreaterThan(0));
@@ -165,6 +209,8 @@ public class GetTasksTests
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var listId = ctx.Tasklists.First().ListId;
         var query = new TaskQueryParams { ListIds = new List<string> { listId } };
+        await _httpClient.TestRegisterAndAddJwt();
+
 
         // Act
         var response = await _httpClient.GetAsync(
@@ -193,6 +239,8 @@ public class GetTasksTests
             OrderBy = orderBy,
             IsDescending = isDescending
         };
+
+        await _httpClient.TestRegisterAndAddJwt();
 
 
         // Act
@@ -240,6 +288,7 @@ public class GetTasksTests
             OrderBy = TaskOrderBy.Priority,
             IsDescending = true
         };
+        await _httpClient.TestRegisterAndAddJwt();
 
         // Act
         var response = await _httpClient.GetAsync(

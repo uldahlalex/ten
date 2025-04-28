@@ -3,7 +3,6 @@ using api;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using PgCtx;
 
 namespace tests;
@@ -19,11 +18,10 @@ public static class ApiTestSetupUtilities
         Action? customSeeder = null
     )
     {
- 
         if (useTestContainer)
         {
             var db = new PgCtxSetup<MyDbContext>();
-            RemoveExistingService<DbContextOptions<MyDbContext>>(services);
+            RemoveExistingService<MyDbContext>(services);
             services.AddDbContext<MyDbContext>(opt =>
             {
                 opt.UseNpgsql(db._postgres.GetConnectionString());

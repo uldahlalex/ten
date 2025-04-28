@@ -1,3 +1,4 @@
+using System.Text.Json;
 using api.Mappers;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace api;
 
 [ApiController]
-public class TicktickTaskController(MyDbContext ctx, ISecurityService securityService) : ControllerBase
+public class TicktickTaskController(MyDbContext ctx, ISecurityService securityService, ILogger<TicktickTaskController> logger) : ControllerBase
 {
     public const string GetMyTasksRoute = nameof(GetMyTasks);
     [HttpGet]
@@ -93,6 +94,8 @@ public class TicktickTaskController(MyDbContext ctx, ISecurityService securitySe
          var dtos =   query
             .Select(task => task.ToDto())
             .ToList();
+         
+         logger.LogInformation(JsonSerializer.Serialize(dtos));
         
         return Ok(dtos);
     }

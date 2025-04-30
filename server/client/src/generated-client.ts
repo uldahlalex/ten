@@ -103,34 +103,35 @@ export class TicktickTaskClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getMyTasks(authorization: string | undefined, isCompleted: boolean | null | undefined, dueDateStart: Date | null | undefined, dueDateEnd: Date | null | undefined, minPriority: number | null | undefined, maxPriority: number | null | undefined, searchTerm: string | null | undefined, tagIds: string[] | null | undefined, listIds: string[] | null | undefined, orderBy: TaskOrderBy | null | undefined, isDescending: boolean | undefined): Promise<TickticktaskDto[]> {
+    /**
+     * @param authorization (optional) 
+     * @param sort (optional) sort
+     * @param thenSort (optional) then sort
+     * @param pageSize (optional) page size
+     * @param page (optional) page
+     */
+    getMyTasks(authorization: string | undefined, sort: string | undefined, thenSort: string | undefined, pageSize: number | undefined, page: number | undefined): Promise<TickticktaskDto> {
         let url_ = this.baseUrl + "/GetMyTasks?";
-        if (isCompleted !== undefined && isCompleted !== null)
-            url_ += "IsCompleted=" + encodeURIComponent("" + isCompleted) + "&";
-        if (dueDateStart !== undefined && dueDateStart !== null)
-            url_ += "DueDateStart=" + encodeURIComponent(dueDateStart ? "" + dueDateStart.toISOString() : "") + "&";
-        if (dueDateEnd !== undefined && dueDateEnd !== null)
-            url_ += "DueDateEnd=" + encodeURIComponent(dueDateEnd ? "" + dueDateEnd.toISOString() : "") + "&";
-        if (minPriority !== undefined && minPriority !== null)
-            url_ += "MinPriority=" + encodeURIComponent("" + minPriority) + "&";
-        if (maxPriority !== undefined && maxPriority !== null)
-            url_ += "MaxPriority=" + encodeURIComponent("" + maxPriority) + "&";
-        if (searchTerm !== undefined && searchTerm !== null)
-            url_ += "SearchTerm=" + encodeURIComponent("" + searchTerm) + "&";
-        if (tagIds !== undefined && tagIds !== null)
-            tagIds && tagIds.forEach(item => { url_ += "TagIds=" + encodeURIComponent("" + item) + "&"; });
-        if (listIds !== undefined && listIds !== null)
-            listIds && listIds.forEach(item => { url_ += "ListIds=" + encodeURIComponent("" + item) + "&"; });
-        if (orderBy !== undefined && orderBy !== null)
-            url_ += "OrderBy=" + encodeURIComponent("" + orderBy) + "&";
-        if (isDescending === null)
-            throw new Error("The parameter 'isDescending' cannot be null.");
-        else if (isDescending !== undefined)
-            url_ += "IsDescending=" + encodeURIComponent("" + isDescending) + "&";
+        if (sort === null)
+            throw new Error("The parameter 'sort' cannot be null.");
+        else if (sort !== undefined)
+            url_ += "sort=" + encodeURIComponent("" + sort) + "&";
+        if (thenSort === null)
+            throw new Error("The parameter 'thenSort' cannot be null.");
+        else if (thenSort !== undefined)
+            url_ += "thenSort=" + encodeURIComponent("" + thenSort) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (page === null)
+            throw new Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
-            method: "GET",
+            method: "POST",
             headers: {
                 "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Accept": "application/json"
@@ -142,13 +143,13 @@ export class TicktickTaskClient {
         });
     }
 
-    protected processGetMyTasks(response: Response): Promise<TickticktaskDto[]> {
+    protected processGetMyTasks(response: Response): Promise<TickticktaskDto> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto[];
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -156,7 +157,7 @@ export class TicktickTaskClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<TickticktaskDto[]>(null as any);
+        return Promise.resolve<TickticktaskDto>(null as any);
     }
 
     getTasks(authorization: string | undefined): Promise<TickticktaskDto[]> {
@@ -254,10 +255,6 @@ export interface TaskTagDto {
     taskId?: string;
     tagId?: string;
     createdAt?: Date;
-}
-
-export interface TaskOrderBy {
-    value?: string;
 }
 
 export interface CreateTaskRequestDto {

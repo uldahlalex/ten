@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace tests.Auth;
 
 [TestFixture]
-public class RegisterTests
+public class RegisterTestsSuccess
 {
     [SetUp]
     public void Setup()

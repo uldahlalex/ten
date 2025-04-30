@@ -2,8 +2,9 @@ using System.Net;
 using System.Text.Json;
 using api;
 using api.Seeder;
-using EfSchemaCompare;
 using Infrastructure.Postgres.Scaffolding;
+using LightQuery.NSwag;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -20,14 +21,20 @@ public class Program
         var thisAssembly = typeof(Program).Assembly;
 
         builder.Services.AddControllers().AddApplicationPart(thisAssembly);  
-        builder.Services.AddOpenApiDocument(conf => { });
+        builder.Services.AddOpenApiDocument(conf =>
+        {
+            
+            conf.OperationProcessors.Add(new LightQueryOperationsProcessor());
+
+        });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
         builder.Services.AddDbContext<MyDbContext>(ctx => 
             { ctx.UseNpgsql(appOptions.DbConnectionString); });
         builder.Services.AddScoped<IDefaultSeeder, DefaultSeeder>();
-
-        builder.WebHost.ConfigureKestrel(options =>
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+         builder.WebHost.ConfigureKestrel(options =>
         {
             options.Listen(IPAddress.Loopback, DefaultPort, listenOptions =>
             {
@@ -38,6 +45,8 @@ public class Program
 
     public static void ConfigureApp(WebApplication app)
     {
+        app.UseExceptionHandler();
+
         app.UseOpenApi(conf => { conf.Path = "/openapi/v1.json"; });
         app.UseSwaggerUi(conf =>
         {
@@ -48,7 +57,7 @@ public class Program
         app.GenerateTypeScriptClient("/../client/src/generated-client.ts").Wait();
         app.MapScalarApiReference();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-        
+
         using (var scope = app.Services.CreateScope())
         {
             if (!app.Environment.IsProduction())
@@ -60,6 +69,23 @@ public class Program
             }
         }
         app.MapGet("/helloworld", () => "Hello World!");
+        app.Use(async (context, next) =>
+        {
+            await next();
+
+            if (context.Response.StatusCode == 404)
+            {
+                context.Response.ContentType = "application/json";
+                var problemDetails = new ProblemDetails
+                {
+                    Title = "Not Found",
+                    Detail = $"The route {context.Request.Path} does not exist",
+                    Status = StatusCodes.Status404NotFound
+                };
+
+                await context.Response.WriteAsJsonAsync(problemDetails);
+            }
+        });
     }
 
     public static async Task Main(string[] args)

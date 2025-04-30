@@ -58,3 +58,4 @@ CREATE INDEX idx_tasks_list_id ON ticktick.tickticktask (list_id);
 CREATE INDEX idx_tasks_due_date ON ticktick.tickticktask (due_date);
 CREATE INDEX idx_lists_user_id ON ticktick.tasklist (user_id);
 CREATE INDEX idx_tags_user_id ON ticktick.tags (user_id);
+CREATE INDEX IX_task_tags_tag_id ON ticktick.tasktag (tag_id);

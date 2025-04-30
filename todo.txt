@@ -1,0 +1,9 @@
+Aktuelt:
+
+- egen "webappfactory" færdiggør
+
+- væk fra query params og bare brug post til filtre osv
+
+- ci/cd
+
+- endpoints og tests til mest gængse features før ui bygning

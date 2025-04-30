@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using api;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -13,34 +14,48 @@ namespace tests;
 [TestFixture]
 public class CreateTaskTests
 {
-    [SetUp]
-    public void Setup()
-    {
-        var factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services => { services.DefaultTestConfig(
-                useTestContainer:true); });
-            });
+    
+    private WebApplication _app = null!;
+    private HttpClient _client = null!;
+    private IServiceProvider _scopedServiceProvider = null!;
+    private string _baseUrl = null!;
 
-        _httpClient = factory.CreateClient();
-        _scopedServiceProvider = factory.Services.CreateScope().ServiceProvider;
+    [OneTimeSetUp]
+    public async Task Setup()
+    {
+        var builder = WebApplication.CreateBuilder();
+        
+        Program.ConfigureServices(builder);
+        
+        _app = builder.Build();
+        Program.ConfigureApp(_app);
+        
+        await _app.StartAsync();
+        _baseUrl = _app.Urls.First() + "/";
+        Console.WriteLine($"Test API running at: {_baseUrl}");
+        _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
+
+        
+        _client = new HttpClient();
     }
 
-    [TearDown]
-    public void TearDown()
+    [OneTimeTearDown]
+    public async Task TearDown()
     {
-        _httpClient?.Dispose();
+        _client.Dispose();
+        if (_app != null)
+        {
+            await _app.StopAsync();
+            await _app.DisposeAsync();
+        }
     }
-
-    private HttpClient _httpClient;
-    private IServiceProvider _scopedServiceProvider;
 
 
     [Test]
     public async Task CreateTask_ShouldReturnOk_WhenValidRequest()
     {
-        await _httpClient.TestRegisterAndAddJwt();
+        Console.WriteLine(_baseUrl);
+        await _client.TestRegisterAndAddJwt(_baseUrl);
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
 
         var request = new CreateTaskRequestDto
@@ -55,7 +70,7 @@ public class CreateTaskTests
 
 
         // Act
-        var response = await _httpClient.PostAsJsonAsync(TicktickTaskController.CreateTaskRoute, request);
+        var response = await _client.PostAsJsonAsync(_baseUrl + TicktickTaskController.CreateTaskRoute, request);
 
         // Assert
         if (HttpStatusCode.OK != response.StatusCode)
@@ -78,7 +93,7 @@ public class CreateTaskTests
     [TestCase( "asdsad", "asdsad", "2000-04-25T20:22:50.657021Z", 1)] //invalid due date: it is in the past
     public async Task CreateTask_ShouldBeRejects_IfDtoDoesNotLiveUpToValidationRequirements( string title, string description, string timestamp, int priority)
     {
-        await _httpClient.TestRegisterAndAddJwt();
+        await _client.TestRegisterAndAddJwt(_baseUrl);
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
  
 
@@ -93,7 +108,7 @@ public class CreateTaskTests
 
 
         // Act
-        var response = await _httpClient.PostAsJsonAsync(TicktickTaskController.CreateTaskRoute, request);
+        var response = await _client.PostAsJsonAsync(_baseUrl + TicktickTaskController.CreateTaskRoute, request);
 
         // Assert
         if (HttpStatusCode.BadRequest != response.StatusCode)

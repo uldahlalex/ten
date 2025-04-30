@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.*"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.*">
+        <PackageReference Include="EfCore.SchemaCompare" Version="9.*" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.*"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.*">
             <IncludeAssets>all</IncludeAssets>
         </PackageReference>
     </ItemGroup>

@@ -1,6 +1,9 @@
-﻿namespace efscaffold.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Tag
+namespace efscaffold.Entities;
+
+public partial class Tag
 {
     public string TagId { get; set; } = null!;
 

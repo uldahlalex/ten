@@ -1,5 +1,7 @@
-﻿using efscaffold.Entities;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using efscaffold.Entities;
 
 namespace Infrastructure.Postgres.Scaffolding;
 
@@ -46,6 +48,8 @@ public partial class MyDbContext : DbContext
             entity.HasKey(e => new { e.TaskId, e.TagId }).HasName("task_tags_pkey");
 
             entity.ToTable("task_tags", "ticktick");
+
+            entity.HasIndex(e => e.TaskId, "idx_task_tags_task_id");
 
             entity.Property(e => e.TaskId).HasColumnName("task_id");
             entity.Property(e => e.TagId).HasColumnName("tag_id");

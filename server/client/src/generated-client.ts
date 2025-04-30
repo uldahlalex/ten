@@ -103,71 +103,18 @@ export class TicktickTaskClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    /**
-     * @param authorization (optional) 
-     * @param sort (optional) sort
-     * @param thenSort (optional) then sort
-     * @param pageSize (optional) page size
-     * @param page (optional) page
-     */
-    getMyTasks(authorization: string | undefined, sort: string | undefined, thenSort: string | undefined, pageSize: number | undefined, page: number | undefined): Promise<TickticktaskDto> {
-        let url_ = this.baseUrl + "/GetMyTasks?";
-        if (sort === null)
-            throw new Error("The parameter 'sort' cannot be null.");
-        else if (sort !== undefined)
-            url_ += "sort=" + encodeURIComponent("" + sort) + "&";
-        if (thenSort === null)
-            throw new Error("The parameter 'thenSort' cannot be null.");
-        else if (thenSort !== undefined)
-            url_ += "thenSort=" + encodeURIComponent("" + thenSort) + "&";
-        if (pageSize === null)
-            throw new Error("The parameter 'pageSize' cannot be null.");
-        else if (pageSize !== undefined)
-            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
-        if (page === null)
-            throw new Error("The parameter 'page' cannot be null.");
-        else if (page !== undefined)
-            url_ += "page=" + encodeURIComponent("" + page) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "POST",
-            headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetMyTasks(_response);
-        });
-    }
-
-    protected processGetMyTasks(response: Response): Promise<TickticktaskDto> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TickticktaskDto>(null as any);
-    }
-
-    getTasks(authorization: string | undefined): Promise<TickticktaskDto[]> {
+    getTasks(authorization: string | undefined, parameters: GetTasksFilterAndOrderParameters): Promise<TickticktaskDto[]> {
         let url_ = this.baseUrl + "/GetTasks";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(parameters);
+
         let options_: RequestInit = {
-            method: "GET",
+            body: content_,
+            method: "POST",
             headers: {
                 "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -255,6 +202,19 @@ export interface TaskTagDto {
     taskId?: string;
     tagId?: string;
     createdAt?: Date;
+}
+
+export interface GetTasksFilterAndOrderParameters {
+    isCompleted?: boolean | undefined;
+    dueDateStart?: Date | undefined;
+    dueDateEnd?: Date | undefined;
+    minPriority?: number | undefined;
+    maxPriority?: number | undefined;
+    searchTerm?: string | undefined;
+    tagIds?: string[] | undefined;
+    listIds?: string[] | undefined;
+    orderBy?: string | undefined;
+    isDescending?: boolean;
 }
 
 export interface CreateTaskRequestDto {

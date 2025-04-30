@@ -20,7 +20,14 @@ public class Program
 
         var thisAssembly = typeof(Program).Assembly;
 
-        builder.Services.AddControllers().AddApplicationPart(thisAssembly);  
+        builder.Services.AddControllers()
+        // .AddJsonOptions(opts =>
+        // {
+        //     opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        .AddApplicationPart(thisAssembly);  
+        // //refernce handler no ciruclar references
+
+        
         builder.Services.AddOpenApiDocument(conf =>
         {
             

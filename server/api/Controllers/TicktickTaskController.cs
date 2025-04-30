@@ -11,37 +11,26 @@ namespace api;
 public class TicktickTaskController(MyDbContext ctx, 
     ISecurityService securityService, ILogger<TicktickTaskController> logger) : Controller
 {
-    public const string GetMyTasksRoute = nameof(GetMyTasks);
-    [HttpPost]
-    [LightQuery]
-    [Route(GetMyTasksRoute)]
-    public async Task<ActionResult<TickticktaskDto>> GetMyTasks(
-        
-        [FromHeader]string authorization)
-    {
-        var userId = securityService.VerifyJwtOrThrow(authorization).Id;
-        var tasks = ctx.Tickticktasks;
 
-
-        var dtos = tasks
-            .Select(task => task.ToDto());
-         logger.LogInformation(JsonSerializer.Serialize(dtos));
-        
-        return Ok(dtos);
-    }
     
     public const string GetTasksRoute = nameof(GetTasks);
 
     public const string CreateTaskRoute = nameof(CreateTask);
 
-    [HttpGet]
+    [HttpPost]
     [Route(GetTasksRoute)]
-    public ActionResult<List<TickticktaskDto>> GetTasks([FromHeader] string authorization)
+    public ActionResult<List<TickticktaskDto>> GetTasks(
+        [FromHeader] string authorization,
+        [FromBody]GetTasksFilterAndOrderParameters parameters)
     {
-        _ = securityService.VerifyJwtOrThrow(authorization);
-        var result = ctx.Tickticktasks
-            //here i just do DbSet.ApplyFiltering() where the input object comes from the http request maybe
-            .Select(task => task.ToDto()).ToList();
+        var userClaims = securityService.VerifyJwtOrThrow(authorization);
+        var baseQuery = ctx.Tickticktasks;
+    
+        var specification = new TaskSpecification(parameters);
+        var result = baseQuery
+                .ApplySpecification(specification)
+                .Select(task => task.ToDto())
+                .ToList();
         return Ok(result);
     }
 

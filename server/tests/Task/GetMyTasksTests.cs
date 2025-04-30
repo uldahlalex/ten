@@ -60,7 +60,7 @@ public class GetTasksTests
         var allTasksAsDtos = ctx.Tickticktasks.Select(d => d.ToDto()).ToList();
         // var query = new GetTasksFilterAndOrderParameters();
         var response = await _client.PostAsJsonAsync(_baseUrl + 
-            TicktickTaskController.GetMyTasksRoute, new {});
+            TicktickTaskController.GetTasksRoute, new {});
         
         // Log response
         var content = await response.Content.ReadAsStringAsync();

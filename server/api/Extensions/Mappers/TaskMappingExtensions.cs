@@ -8,7 +8,6 @@ public static class TaskMappingExtensions
     {
         var task = new Tickticktask
         {
-            TaskId = dto.ListId,
             ListId = dto.ListId,
             Title = dto.Title,
             Description = dto.Description,
@@ -16,12 +15,32 @@ public static class TaskMappingExtensions
             Priority = dto.Priority,
             CreatedAt = DateTime.UtcNow,
             Completed = false,
-            CompletedAt = DateTime.MinValue,
+            CompletedAt = null,
             List = list,
             TaskTags = tags
         };
         return task;
     }
+    
+    public static Tickticktask ToEntity(this UpdateTaskRequestDto dto, List<TaskTag> tags, Tasklist list)
+    {
+        var task = new Tickticktask
+        {
+            TaskId = dto.Id,
+            ListId = dto.ListId,
+            Title = dto.Title,
+            Description = dto.Description,
+            DueDate = dto.DueDate,
+            Priority = dto.Priority,
+            CreatedAt = DateTime.UtcNow,
+            Completed = false,
+            CompletedAt = null,
+            List = list,
+            TaskTags = tags
+        };
+        return task;
+    }
+
 
     public static TasklistDto ToDto(this Tasklist tasklist)
     {

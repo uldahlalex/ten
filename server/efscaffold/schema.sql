@@ -26,11 +26,11 @@ CREATE TABLE ticktick.tickticktask
     list_id      TEXT        NOT NULL,
     title        TEXT        NOT NULL,
     description  TEXT        NOT NULL,
-    due_date     TIMESTAMPTZ NOT NULL,
+    due_date     TIMESTAMPTZ DEFAULT NULL,
     priority     INTEGER     NOT NULL,
     completed    BOOLEAN     NOT NULL,
     created_at   TIMESTAMPTZ NOT NULL,
-    completed_at TIMESTAMPTZ NOT NULL,
+    completed_at TIMESTAMPTZ DEFAULT NULL,
     FOREIGN KEY (list_id) REFERENCES ticktick.tasklist (list_id)
 );
 
@@ -58,4 +58,3 @@ CREATE INDEX idx_tasks_list_id ON ticktick.tickticktask (list_id);
 CREATE INDEX idx_tasks_due_date ON ticktick.tickticktask (due_date);
 CREATE INDEX idx_lists_user_id ON ticktick.tasklist (user_id);
 CREATE INDEX idx_tags_user_id ON ticktick.tags (user_id);
-CREATE INDEX IX_task_tags_tag_id ON ticktick.tasktag (tag_id);

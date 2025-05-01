@@ -49,8 +49,6 @@ public partial class MyDbContext : DbContext
 
             entity.ToTable("task_tags", "ticktick");
 
-            entity.HasIndex(e => e.TaskId, "idx_task_tags_task_id");
-
             entity.Property(e => e.TaskId).HasColumnName("task_id");
             entity.Property(e => e.TagId).HasColumnName("tag_id");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");

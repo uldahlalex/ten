@@ -19,6 +19,7 @@ public class Program
 
 
         var thisAssembly = typeof(Program).Assembly;
+        builder.Services.AddScoped<ITaskService, TaskService>();
 
         builder.Services.AddControllers()
         // .AddJsonOptions(opts =>

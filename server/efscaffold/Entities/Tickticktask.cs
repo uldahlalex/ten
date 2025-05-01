@@ -13,7 +13,7 @@ public partial class Tickticktask
 
     public string Description { get; set; } = null!;
 
-    public DateTime DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
 
     public int Priority { get; set; }
 
@@ -21,7 +21,7 @@ public partial class Tickticktask
 
     public DateTime CreatedAt { get; set; }
 
-    public DateTime CompletedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
 
     public virtual Tasklist List { get; set; } = null!;
 

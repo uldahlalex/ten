@@ -206,15 +206,15 @@ export interface TaskTagDto {
 
 export interface GetTasksFilterAndOrderParameters {
     isCompleted?: boolean | undefined;
-    dueDateStart?: Date | undefined;
-    dueDateEnd?: Date | undefined;
+    earliestDueDate?: Date | undefined;
+    latestDueDate?: Date | undefined;
     minPriority?: number | undefined;
     maxPriority?: number | undefined;
     searchTerm?: string | undefined;
     tagIds?: string[] | undefined;
     listIds?: string[] | undefined;
     orderBy?: string | undefined;
-    isDescending?: boolean;
+    isDescending?: boolean | undefined;
 }
 
 export interface CreateTaskRequestDto {

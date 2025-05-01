@@ -1,12 +1,11 @@
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 using api;
-using efscaffold.Entities;
+using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NUnit.Framework;
 
 namespace tests;
@@ -26,6 +25,12 @@ public class CreateTaskTestsRejects
         var builder = WebApplication.CreateBuilder();
         
         Program.ConfigureServices(builder);
+
+        var descriptor = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(ISeeder));
+        if(descriptor!=null)
+            builder.Services.Remove(descriptor);
+   
+        builder.Services.AddScoped<ISeeder>(_ => new EmptyEnvironment());
         
         _app = builder.Build();
         Program.ConfigureApp(_app);
@@ -35,7 +40,7 @@ public class CreateTaskTestsRejects
         Console.WriteLine($"Test API running at: {_baseUrl}");
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
 
-        
+
         _client = new HttpClient();
         await _client.TestRegisterAndAddJwt(_baseUrl);
 
@@ -45,11 +50,10 @@ public class CreateTaskTestsRejects
     public async Task TearDown()
     {
         _client.Dispose();
-        if (_app != null)
-        {
+   
             await _app.StopAsync();
             await _app.DisposeAsync();
-        }
+        
     }
 
 
@@ -64,7 +68,6 @@ public class CreateTaskTestsRejects
     [TestCase( "asdsad", "asdsad", "2000-04-25T20:22:50.657021Z", 1)] //invalid due date: it is in the past
     public async Task CreateTask_ShouldBeRejects_IfDtoDoesNotLiveUpToValidationRequirements( string title, string description, string timestamp, int priority)
     {
-        await _client.TestRegisterAndAddJwt(_baseUrl);
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
  
 

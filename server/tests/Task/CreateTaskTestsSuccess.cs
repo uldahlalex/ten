@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 using api;
+using api.Seeder;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +25,10 @@ public class CreateTaskTestsSuccess
         var builder = WebApplication.CreateBuilder();
         
         Program.ConfigureServices(builder);
+        var descriptor = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(ISeeder));
+        if(descriptor!=null)
+            builder.Services.Remove(descriptor);
+        builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         
         _app = builder.Build();
         Program.ConfigureApp(_app);
@@ -37,17 +42,17 @@ public class CreateTaskTestsSuccess
         _client = new HttpClient();
         await _client.TestRegisterAndAddJwt(_baseUrl);
 
+
     }
 
     [OneTimeTearDown]
     public async Task TearDown()
     {
         _client.Dispose();
-        if (_app != null)
-        {
+     
             await _app.StopAsync();
             await _app.DisposeAsync();
-        }
+       
     }
 
 

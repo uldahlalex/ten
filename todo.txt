@@ -1,7 +1,5 @@
 Aktuelt:
-
-- tests
-
 - ci/cd
+    note: kræver den nuværende deployment at config secrets først? kan man også provision i cicd?
 
 - client app

@@ -10,7 +10,7 @@ using Scalar.AspNetCore;
 
 public class Program
 {
-    public static int DefaultPort { get; } = 5000;
+    public static int DefaultPort { get; } = 8080;
     public static string? FinalBaseUrl { get; private set; }
 
     public static void ConfigureServices(WebApplicationBuilder builder)
@@ -39,7 +39,7 @@ public class Program
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
         builder.Services.AddDbContext<MyDbContext>(ctx => 
             { ctx.UseNpgsql(appOptions.DbConnectionString); });
-        builder.Services.AddScoped<IDefaultSeeder, DefaultSeeder>();
+        builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
          builder.WebHost.ConfigureKestrel(options =>
@@ -73,7 +73,7 @@ public class Program
                 MyDbContext ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
                 var schema = ctx.Database.GenerateCreateScript();
                 File.WriteAllText("schema_according_to_dbcontext.sql", schema);
-                scope.ServiceProvider.GetRequiredService<IDefaultSeeder>().CreateEnvironment(ctx).Wait();
+                scope.ServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx).Wait();
             }
         }
         app.MapGet("/helloworld", () => "Hello World!");

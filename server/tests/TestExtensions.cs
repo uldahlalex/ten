@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using api;
 using Infrastructure.Postgres.Scaffolding;
@@ -11,11 +12,7 @@ public static class ApiTestSetupUtilities
 {
     public static IServiceCollection DefaultTestConfig(
         this IServiceCollection services,
-        bool useTestContainer = true,
-        bool mockProxyConfig = true,
-        bool makeWsClient = true,
-        bool makeMqttClient = true,
-        Action? customSeeder = null
+        bool useTestContainer = true
     )
     {
         if (useTestContainer)
@@ -29,16 +26,6 @@ public static class ApiTestSetupUtilities
                 opt.LogTo(_ => { });
             });
         }
-
-        if (mockProxyConfig)
-        {
-        }
-
-        if (customSeeder is not null)
-        {
-        }
-
-
         return services;
     }
 
@@ -57,7 +44,7 @@ public static class ApiTestSetupUtilities
             Password = new Random().NextDouble() * 123 + "@gmail.com"
         };
         var route = baseUrl +
-                    AuthController.RegisterRoute;
+                    nameof(AuthController.Register);
         var signIn = await httpClient.PostAsJsonAsync(route, registerDto);
         if (!signIn.IsSuccessStatusCode)
             throw new Exception("Sign up failed!: "+await signIn.Content.ReadAsStringAsync());
@@ -65,7 +52,7 @@ public static class ApiTestSetupUtilities
             .ReadAsStringAsync();
         if (string.IsNullOrEmpty(jwt))
             throw new Exception("No jwt!");
-        httpClient.DefaultRequestHeaders.Add("Authorization", jwt);
+        httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(jwt);
         return jwt;
     }
 

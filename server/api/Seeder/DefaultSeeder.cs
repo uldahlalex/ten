@@ -3,12 +3,34 @@ using Infrastructure.Postgres.Scaffolding;
 
 namespace api.Seeder;
 
-public interface IDefaultSeeder
+public interface ISeeder
 {
     Task CreateEnvironment(MyDbContext ctx);
 }
 
-public class DefaultSeeder : IDefaultSeeder
+public class EmptyEnvironment : ISeeder
+{
+    public async Task CreateEnvironment(MyDbContext ctx)
+    {
+        ctx.Database.EnsureCreated();
+        
+        // Clear existing data
+        ctx.TaskTags.RemoveRange(ctx.TaskTags);
+        ctx.Tickticktasks.RemoveRange(ctx.Tickticktasks);
+        ctx.Tasklists.RemoveRange(ctx.Tasklists);
+        ctx.Tags.RemoveRange(ctx.Tags);
+        ctx.Users.RemoveRange(ctx.Users);
+    }
+}
+
+/// <summary>
+/// Will seed the following data:
+/// 1 user (test@user.dk, password abc)
+/// lists: "Work", "Personal", "Shopping", "Health", "Learning","Project A", "Project B", "Maintenance", "Ideas", "Goals"
+/// tags: "urgent", "important", "can-wait", "bug", "feature", "documentation", "testing", "research", "meeting", "follow-up", "blocked", "in-progress", "review", "approved", "deployed"
+/// 15 tasks per list with random titles and descriptions and 1 tag each
+/// </summary>
+public class DefaultEnvironment : ISeeder
 {
     private static readonly string[] TaskTitles = {
         "Complete project documentation", "Review pull requests", "Setup development environment",
@@ -36,7 +58,6 @@ public class DefaultSeeder : IDefaultSeeder
         "blocked", "in-progress", "review", "approved", "deployed"
     };
 
-    private readonly Random _random = new Random();
 
     public async Task CreateEnvironment(MyDbContext ctx)
     {
@@ -67,7 +88,7 @@ public class DefaultSeeder : IDefaultSeeder
         {
             TagId = $"tag-{name}",
             Name = name,
-            CreatedAt = DateTime.UtcNow.AddDays(-_random.Next(1, 60)),
+            CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
             UserId = user.UserId
         }).ToList();
         ctx.Tags.AddRange(tags);
@@ -78,33 +99,27 @@ public class DefaultSeeder : IDefaultSeeder
         {
             ListId = $"list-{name}",
             Name = name,
-            CreatedAt = DateTime.UtcNow.AddDays(-_random.Next(1, 60)),
+            CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
             UserId = user.UserId
         }).ToList();
 
         foreach (var list in lists)
         {
-            var tasksCount = 15;
             var tasks = new List<Tickticktask>();
 
-            for (int i = 0; i < tasksCount; i++)
+            for (int i = 0; i < 15; i++)
             {
-                var createdAt = DateTime.UtcNow.AddDays(-_random.Next(1, 90));
-                var isCompleted = _random.Next(2) == 1;
-                var completedAt = isCompleted ? 
-                    createdAt.AddDays(_random.Next(1, 30)) : 
-                    DateTime.UtcNow;
-
+                var completed = i % 2 == 0;
                 var task = new Tickticktask
                 {
                     TaskId = $"task-{i}-list-{list.ListId}",
-                    Title = TaskTitles[_random.Next(TaskTitles.Length)],
-                    Description = TaskDescriptions[_random.Next(TaskDescriptions.Length)],
-                    DueDate = DateTime.UtcNow.AddDays(_random.Next(-30, 61)),
-                    Priority = _random.Next(1, 5),
-                    Completed = isCompleted,
-                    CreatedAt = createdAt,
-                    CompletedAt = completedAt,
+                    Title = TaskTitles[i % TaskTitles.Length],
+                    Description = TaskDescriptions[i % TaskDescriptions.Length],
+                    DueDate = DateTime.UtcNow.AddDays(i),
+                    Priority = 5 % (i+1),
+                    Completed = completed,
+                    CreatedAt = DateTime.UtcNow.AddDays(i),
+                    CompletedAt = completed ? DateTime.UtcNow.Subtract(TimeSpan.FromHours(i))  : null,
                     ListId = list.ListId
                 };
                 tasks.Add(task);
@@ -120,20 +135,18 @@ public class DefaultSeeder : IDefaultSeeder
         var allTasks = lists.SelectMany(l => l.Tickticktasks).ToList();
         var taskTags = new List<TaskTag>();
 
+        var taskIndex = 0;
         foreach (var task in allTasks)
         {
-            var tagCount = _random.Next(2, 5);
-            var selectedTags = tags.OrderBy(x => _random.Next()).Take(tagCount);
 
-            foreach (var tag in selectedTags)
-            {
-                taskTags.Add(new TaskTag
+         
+                task.TaskTags.Add(new TaskTag
                 {
                     TaskId = task.TaskId,
-                    TagId = tag.TagId,
-                    CreatedAt = task.CreatedAt.AddMinutes(_random.Next(1, 60))
+                    TagId = tags[taskIndex % tags.Count].TagId,
+                    CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
                 });
-            }
+                taskIndex++;
         }
 
         ctx.TaskTags.AddRange(taskTags);

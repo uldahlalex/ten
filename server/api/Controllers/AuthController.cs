@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
@@ -7,15 +8,13 @@ namespace api;
 [ApiController]
 public class AuthController(ISecurityService securityService, MyDbContext ctx) : ControllerBase
 {
-    public const string RegisterRoute = nameof(Register);
 
-    public const string LoginRoute = nameof(Login);
 
-    [Route(RegisterRoute)]
+    [Route(nameof(Register))]
     public async Task<ActionResult<string>> Register([FromBody] AuthRequestDto dto)
     {
         if (ctx.Users.Any(u => u.Email == dto.Email))
-            throw new Exception("Cannot register with email");
+            throw new ValidationException("Cannot register with email");
 
         var salt = Guid.NewGuid().ToString();
         var uid = Guid.NewGuid().ToString();
@@ -34,14 +33,14 @@ public class AuthController(ISecurityService securityService, MyDbContext ctx) :
     }
 
     [HttpPost]
-    [Route(LoginRoute)]
+    [Route(nameof(Login))]
     public async Task<ActionResult<string>> Login([FromBody] AuthRequestDto dto)
     {
         var user = ctx.Users.FirstOrDefault(u => u.Email == dto.Email);
         if (user == null)
-            throw new Exception("User not found");
+            throw new ValidationException("User not found");
         if (user.PasswordHash != securityService.Hash(dto.Password + user.Salt))
-            throw new Exception("Invalid password");
+            throw new ValidationException("Invalid password");
         return Ok(securityService.GenerateJwt(user.UserId));
     }
 }

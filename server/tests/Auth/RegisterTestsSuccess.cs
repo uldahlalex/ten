@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
 using api;
+using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -10,27 +12,52 @@ namespace tests.Auth;
 [TestFixture]
 public class RegisterTestsSuccess
 {
-    [SetUp]
-    public void Setup()
-    {
-        var factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services => { services.DefaultTestConfig(useTestContainer:false); });
-            });
+    
+    
+    private WebApplication _app = null!;
+    private HttpClient _client = null!;
+    private IServiceProvider _scopedServiceProvider = null!;
+    private string _baseUrl = null!;
 
-        _httpClient = factory.CreateClient();
-        _scopedServiceProvider = factory.Services.CreateScope().ServiceProvider;
+    [OneTimeSetUp]
+    public async Task Setup()
+    {
+        var builder = WebApplication.CreateBuilder();
+        
+        Program.ConfigureServices(builder);
+
+        var descriptor = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(ISeeder));
+        if(descriptor!=null)
+            builder.Services.Remove(descriptor);
+   
+        builder.Services.AddScoped<ISeeder>(_ => new EmptyEnvironment());
+        
+        _app = builder.Build();
+        Program.ConfigureApp(_app);
+        
+        await _app.StartAsync();
+        _baseUrl = _app.Urls.First() + "/";
+        Console.WriteLine($"Test API running at: {_baseUrl}");
+        _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
+
+
+        _client = new HttpClient();
+        await _client.TestRegisterAndAddJwt(_baseUrl);
+
     }
 
-    [TearDown]
-    public void TearDown()
+    [OneTimeTearDown]
+    public async Task TearDown()
     {
-        _httpClient?.Dispose();
+        _client.Dispose();
+   
+        await _app.StopAsync();
+        await _app.DisposeAsync();
+        
     }
 
-    private HttpClient _httpClient;
-    private IServiceProvider _scopedServiceProvider;
+
+
 
 
     [Test]
@@ -41,10 +68,12 @@ public class RegisterTestsSuccess
             Email = new Random().NextDouble() * 100 + "@email.com",
             Password = new Random().NextDouble() * 10293809213 + ""
         };
-        var response = await _httpClient.PostAsJsonAsync(AuthController.RegisterRoute, reqDto);
+        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Register), reqDto);
 
         if (!response.IsSuccessStatusCode)
-            throw new Exception("Did not get success status code");
+            throw new Exception("Did not get success status code. " +
+                                $"Status code: {response.StatusCode}, " +
+                                $"Response: {await response.Content.ReadAsStringAsync()}");
 
         var jwt = await response.Content.ReadAsStringAsync();
         _scopedServiceProvider.GetRequiredService<ISecurityService>()

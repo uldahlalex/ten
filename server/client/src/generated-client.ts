@@ -103,8 +103,8 @@ export class TicktickTaskClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getTasks(authorization: string | undefined, parameters: GetTasksFilterAndOrderParameters): Promise<TickticktaskDto[]> {
-        let url_ = this.baseUrl + "/GetTasks";
+    getMyTasks(authorization: string | undefined, parameters: GetTasksFilterAndOrderParameters): Promise<TickticktaskDto[]> {
+        let url_ = this.baseUrl + "/GetMyTasks";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(parameters);
@@ -120,11 +120,11 @@ export class TicktickTaskClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetTasks(_response);
+            return this.processGetMyTasks(_response);
         });
     }
 
-    protected processGetTasks(response: Response): Promise<TickticktaskDto[]> {
+    protected processGetMyTasks(response: Response): Promise<TickticktaskDto[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -180,7 +180,7 @@ export class TicktickTaskClient {
     }
 
     updateTask(dto: UpdateTaskRequestDto, authorization: string | undefined): Promise<TickticktaskDto> {
-        let url_ = this.baseUrl + "/CreateTask";
+        let url_ = this.baseUrl + "/UpdateTask";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dto);
@@ -215,6 +215,112 @@ export class TicktickTaskClient {
             });
         }
         return Promise.resolve<TickticktaskDto>(null as any);
+    }
+
+    deleteTask(authorization: string | undefined, taskId: string | undefined): Promise<TickticktaskDto> {
+        let url_ = this.baseUrl + "/DeleteTask?";
+        if (taskId === null)
+            throw new Error("The parameter 'taskId' cannot be null.");
+        else if (taskId !== undefined)
+            url_ += "taskId=" + encodeURIComponent("" + taskId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteTask(_response);
+        });
+    }
+
+    protected processDeleteTask(response: Response): Promise<TickticktaskDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TickticktaskDto>(null as any);
+    }
+
+    getMyTags(authorization: string | undefined): Promise<TagDto[]> {
+        let url_ = this.baseUrl + "/GetMyTags";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetMyTags(_response);
+        });
+    }
+
+    protected processGetMyTags(response: Response): Promise<TagDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TagDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TagDto[]>(null as any);
+    }
+
+    getMyLists(authorization: string | undefined): Promise<TasklistDto[]> {
+        let url_ = this.baseUrl + "/GetMyLists";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetMyLists(_response);
+        });
+    }
+
+    protected processGetMyLists(response: Response): Promise<TasklistDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TasklistDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TasklistDto[]>(null as any);
     }
 }
 
@@ -267,11 +373,39 @@ export interface CreateTaskRequestDto {
 export interface UpdateTaskRequestDto {
     id?: string;
     listId?: string;
+    completed?: boolean;
     title?: string;
     description?: string;
     dueDate?: Date | undefined;
     priority?: number;
     taskTagsDtos?: TaskTagDto[];
+}
+
+export interface TagDto {
+    tagId?: string;
+    name?: string;
+    userId?: string;
+    createdAt?: Date;
+}
+
+export interface TasklistDto {
+    listId?: string;
+    userId?: string;
+    name?: string;
+    createdAt?: Date;
+    tickticktasks?: TickticktaskDto[];
+    user?: UserDto;
+}
+
+export interface UserDto {
+    userId?: string;
+    email?: string;
+    salt?: string;
+    passwordHash?: string;
+    role?: string;
+    createdAt?: Date;
+    tags?: TagDto[];
+    tasklists?: TasklistDto[];
 }
 
 export class ApiException extends Error {

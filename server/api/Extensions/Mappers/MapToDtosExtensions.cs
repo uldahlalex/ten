@@ -2,44 +2,8 @@ using efscaffold.Entities;
 
 namespace api.Mappers;
 
-public static class TaskMappingExtensions
+public static class MapToDtosExtensions
 {
-    public static Tickticktask ToEntity(this CreateTaskRequestDto dto, List<TaskTag> tags, Tasklist list)
-    {
-        var task = new Tickticktask
-        {
-            ListId = dto.ListId,
-            Title = dto.Title,
-            Description = dto.Description,
-            DueDate = dto.DueDate,
-            Priority = dto.Priority,
-            CreatedAt = DateTime.UtcNow,
-            Completed = false,
-            CompletedAt = null,
-            List = list,
-            TaskTags = tags
-        };
-        return task;
-    }
-    
-    // public static Tickticktask ToEntity(this UpdateTaskRequestDto dto, List<TaskTag> tags, Tasklist list)
-    // {
-    //     var task = new Tickticktask
-    //     {
-    //         TaskId = dto.Id,
-    //         ListId = dto.ListId,
-    //         Title = dto.Title,
-    //         Description = dto.Description,
-    //         DueDate = dto.DueDate,
-    //         Priority = dto.Priority,
-    //         Completed = false,
-    //         CompletedAt = null,
-    //         List = list,
-    //         TaskTags = tags
-    //     };
-    //     return task;
-    // }
-
 
     public static TasklistDto ToDto(this Tasklist entity)
     {

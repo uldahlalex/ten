@@ -1,4 +1,4 @@
-using System.Text;
+using System.ComponentModel.DataAnnotations;
 using api.Mappers;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
@@ -18,12 +18,12 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
         if (parameters.MinPriority != null)
         {
-            query = query.Where(t => t.Priority > parameters.MinPriority);
+            query = query.Where(t => t.Priority >= parameters.MinPriority);
         }
 
         if (parameters.MaxPriority != null)
         {
-            query = query.Where(t => t.Priority < parameters.MaxPriority);
+            query = query.Where(t => t.Priority <= parameters.MaxPriority);
         }
 
         if (parameters.IsCompleted != null)
@@ -77,13 +77,26 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     {
 
         if (dto.DueDate < DateTime.UtcNow)
-            throw new Exception("Due date cannot be in the past");
+            throw new ValidationException("Due date cannot be in the past");
         
         var list = ctx.Tasklists.First(list => list.ListId == dto.ListId);
         var tags = dto.TaskTagsDtos.Select(taskTagDto =>
             ctx.TaskTags.First(tag => tag.TagId == taskTagDto.TagId)).ToList();
 
-        var entity = dto.ToEntity(tags, list);
+        var entity = new Tickticktask
+            {
+                TaskId = Guid.NewGuid().ToString(),
+                ListId = dto.ListId,
+                Title = dto.Title,
+                Description = dto.Description,
+                DueDate = dto.DueDate,
+                Priority = dto.Priority,
+                CreatedAt = DateTime.UtcNow,
+                Completed = false,
+                CompletedAt = null,
+                List = list,
+                TaskTags = tags
+            };
 
         ctx.Tickticktasks.Add(entity);
         ctx.SaveChanges();
@@ -94,7 +107,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     public async Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, JwtClaims claims)
     {
         if (dto.DueDate < DateTime.UtcNow)
-            throw new Exception("Due date cannot be in the past");
+            throw new ValidationException("Due date cannot be in the past");
 
         var existing = ctx.Tickticktasks.First(t => t.TaskId == dto.Id);
         

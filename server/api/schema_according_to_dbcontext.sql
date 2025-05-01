@@ -42,11 +42,11 @@ CREATE TABLE ticktick.tickticktask (
     list_id text NOT NULL,
     title text NOT NULL,
     description text NOT NULL,
-    due_date timestamp with time zone NOT NULL,
+    due_date timestamp with time zone,
     priority integer NOT NULL,
     completed boolean NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    completed_at timestamp with time zone NOT NULL,
+    completed_at timestamp with time zone,
     CONSTRAINT tickticktask_pkey PRIMARY KEY (task_id),
     CONSTRAINT tickticktask_list_id_fkey FOREIGN KEY (list_id) REFERENCES ticktick.tasklist (list_id)
 );
@@ -63,9 +63,6 @@ CREATE TABLE ticktick.task_tags (
 
 
 CREATE INDEX idx_tags_user_id ON ticktick.tags (user_id);
-
-
-CREATE INDEX idx_task_tags_task_id ON ticktick.task_tags (task_id);
 
 
 CREATE INDEX "IX_task_tags_tag_id" ON ticktick.task_tags (tag_id);

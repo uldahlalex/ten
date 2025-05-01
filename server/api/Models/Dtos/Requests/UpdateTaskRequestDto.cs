@@ -8,6 +8,7 @@ public class UpdateTaskRequestDto
 {
     public string Id { get; set; } = null!;
     public string ListId { get; set; } = null!;
+    public bool Completed { get; set; } = false;
 
     [MinLength(1)] public string Title { get; set; } = null!;
 

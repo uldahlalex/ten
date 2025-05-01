@@ -79,7 +79,7 @@ public class CreateTaskTestsRejects
 
 
         // Act
-        var response = await _client.PostAsJsonAsync(_baseUrl + TicktickTaskController.CreateTaskRoute, request);
+        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateTask), request);
 
         // Assert
         if (HttpStatusCode.BadRequest != response.StatusCode)

@@ -1,10 +1,7 @@
 Aktuelt:
 
-- specification pattern
-    - alle er der mere eller mindre et problem med og der mangler ofte type-stærkheden samt openapi spec
-
-- væk fra query params og bare brug post til filtre osv
+- tests
 
 - ci/cd
 
-- endpoints og tests til mest gængse features før ui bygning
+- client app

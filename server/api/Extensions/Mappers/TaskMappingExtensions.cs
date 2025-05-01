@@ -22,36 +22,35 @@ public static class TaskMappingExtensions
         return task;
     }
     
-    public static Tickticktask ToEntity(this UpdateTaskRequestDto dto, List<TaskTag> tags, Tasklist list)
-    {
-        var task = new Tickticktask
-        {
-            TaskId = dto.Id,
-            ListId = dto.ListId,
-            Title = dto.Title,
-            Description = dto.Description,
-            DueDate = dto.DueDate,
-            Priority = dto.Priority,
-            CreatedAt = DateTime.UtcNow,
-            Completed = false,
-            CompletedAt = null,
-            List = list,
-            TaskTags = tags
-        };
-        return task;
-    }
+    // public static Tickticktask ToEntity(this UpdateTaskRequestDto dto, List<TaskTag> tags, Tasklist list)
+    // {
+    //     var task = new Tickticktask
+    //     {
+    //         TaskId = dto.Id,
+    //         ListId = dto.ListId,
+    //         Title = dto.Title,
+    //         Description = dto.Description,
+    //         DueDate = dto.DueDate,
+    //         Priority = dto.Priority,
+    //         Completed = false,
+    //         CompletedAt = null,
+    //         List = list,
+    //         TaskTags = tags
+    //     };
+    //     return task;
+    // }
 
 
-    public static TasklistDto ToDto(this Tasklist tasklist)
+    public static TasklistDto ToDto(this Tasklist entity)
     {
         var dto = new TasklistDto
         {
-            ListId = tasklist.ListId,
-            UserId = tasklist.UserId,
-            Name = tasklist.Name,
-            CreatedAt = tasklist.CreatedAt,
-            Tickticktasks = tasklist.Tickticktasks.Select(t => t.ToDto()).ToList(),
-            User = tasklist.User.ToDto()
+            ListId = entity.ListId,
+            UserId = entity.UserId,
+            Name = entity.Name,
+            CreatedAt = entity.CreatedAt,
+            Tickticktasks = entity.Tickticktasks.Select(t => t.ToDto()).ToList(),
+            User = entity.User.ToDto()
         };
         return dto;
     }
@@ -72,20 +71,20 @@ public static class TaskMappingExtensions
         return dto;
     }
 
-    public static TickticktaskDto ToDto(this Tickticktask tickticktask)
+    public static TickticktaskDto ToDto(this Tickticktask entity)
     {
         var dto = new TickticktaskDto
         {
-            TaskId = tickticktask.TaskId,
-            ListId = tickticktask.ListId,
-            Title = tickticktask.Title,
-            Description = tickticktask.Description,
-            DueDate = tickticktask.DueDate,
-            Priority = tickticktask.Priority,
-            Completed = tickticktask.Completed,
-            CreatedAt = tickticktask.CreatedAt,
-            CompletedAt = tickticktask.CompletedAt,
-            TaskTags = tickticktask.TaskTags.Select(t => t.ToDto()).ToList()
+            TaskId = entity.TaskId,
+            ListId = entity.ListId,
+            Title = entity.Title,
+            Description = entity.Description,
+            DueDate = entity.DueDate,
+            Priority = entity.Priority,
+            Completed = entity.Completed,
+            CreatedAt = entity.CreatedAt,
+            CompletedAt = entity.CompletedAt,
+            TaskTags = entity.TaskTags.Select(t => t.ToDto()).ToList()
         };
         return dto;
     }

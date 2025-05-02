@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using PgCtx;
 
 namespace tests;
@@ -19,8 +20,11 @@ public static class ApiTestSetupUtilities
         bool useTestContainer = false
     )
     {
-        
-        if (useTestContainer)
+        var appOptions = builder.Services
+            .BuildServiceProvider()
+            .GetRequiredService<IOptionsMonitor<AppOptions>>()
+            .CurrentValue;
+        if (useTestContainer || appOptions.RunsOn=="GitHub")
         {
             builder.Services.RemoveAll<MyDbContext>();
             builder.Services.AddDbContext<MyDbContext>(opt => opt.UseNpgsql(new PgCtxSetup<MyDbContext>()._postgres.GetConnectionString()));

@@ -3,7 +3,6 @@ using System.Text.Json;
 using api;
 using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
-using LightQuery.NSwag;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -16,23 +15,9 @@ public class Program
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<ISecurityService, SecurityService>();
-
-
-        var thisAssembly = typeof(Program).Assembly;
         builder.Services.AddScoped<ITaskService, TaskService>();
-
-        builder.Services.AddControllers()
-            // .AddJsonOptions(opts =>
-            // {
-            //     opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-            .AddApplicationPart(thisAssembly);
-        // //refernce handler no ciruclar references
-
-
-        builder.Services.AddOpenApiDocument(conf =>
-        {
-            conf.OperationProcessors.Add(new LightQueryOperationsProcessor());
-        });
+        builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
+        builder.Services.AddOpenApiDocument();
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
         builder.Services.AddDbContext<MyDbContext>(ctx => { ctx.UseNpgsql(appOptions.DbConnectionString); });
@@ -41,8 +26,8 @@ public class Program
         builder.Services.AddProblemDetails();
         builder.WebHost.ConfigureKestrel(options =>
         {
-            options.Listen(IPAddress.Loopback, DefaultPort,
-                listenOptions => { listenOptions.UseConnectionLogging(); });
+                options.Listen(IPAddress.Any, DefaultPort,
+                    listenOptions => { listenOptions.UseConnectionLogging(); });
         });
     }
 

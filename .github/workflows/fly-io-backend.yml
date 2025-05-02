@@ -9,13 +9,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      
-      - name: Set Fly Secrets
+
+      - name: Deploy and Configure Fly
         run: |
           cd server
-          flyctl secrets set APPOPTIONS__DbConnectionString="${{ secrets.DBCONNECTIONSTRING }}"
-          flyctl secrets set APPOPTIONS__JwtSecret="${{ secrets.JWT_SECRET }}"
-          flyctl deploy
-          fly scale count 1
+          # Set scale to 1 before deployment to ensure we never exceed 1 machine
+          flyctl scale count 1
+          # Set secrets
+          flyctl secrets set \
+            APPOPTIONS__DbConnectionString="${{ secrets.DBCONNECTIONSTRING }}" \
+            APPOPTIONS__JwtSecret="${{ secrets.JWT_SECRET }}"
+          # Deploy
+          flyctl deploy --ha=false
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_BACKEND }}

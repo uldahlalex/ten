@@ -24,6 +24,7 @@ public class CreateTaskTestsRejects
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
+        builder.Environment.EnvironmentName = "Testing";
         
         Program.ConfigureServices(builder);
 

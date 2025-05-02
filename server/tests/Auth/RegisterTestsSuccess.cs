@@ -24,7 +24,8 @@ public class RegisterTestsSuccess
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
-        
+        builder.Environment.EnvironmentName = "Testing";
+
         Program.ConfigureServices(builder);
 
         var descriptor = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(ISeeder));

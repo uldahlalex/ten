@@ -7,9 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="LightQuery" Version="2.4.1" />
-        <PackageReference Include="LightQuery.EntityFrameworkCore" Version="2.4.1" />
-        <PackageReference Include="LightQuery.NSwag" Version="2.4.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.*" />
         <PackageReference Include="JWT" Version="11.*" />
         <PackageReference Include="NSwag.CodeGeneration.TypeScript" Version="14.*" />

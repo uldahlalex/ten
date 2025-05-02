@@ -1,6 +1,7 @@
 Aktuelt:
 
-- tunit migration (for at få bedre logging, eksekvering, dokumentation, packaging, etc)
+status: når jeg kører seederen manuelt i starten af testen er det OK, så det eneste jeg kan konkludere er:
+- webapplikationens miljø (dev/prod/test) har været anderledes ved dotnet test versus riders runner og derfor er den ikke gået ind i scopet ved dotnet test
 
 - skal jeg smide testcontainers helt ud? Der er for mange små problemer
 

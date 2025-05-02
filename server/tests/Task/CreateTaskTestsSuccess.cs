@@ -2,11 +2,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 using api;
+using api.Seeder;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace tests;
 
@@ -23,7 +25,8 @@ public class CreateTaskTestsSuccess
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
         builder.DefaultTestConfig();
-        
+        // builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
+   
         _app = builder.Build();
          Program.ConfigureApp(_app);
         await _app.StartAsync();
@@ -41,10 +44,10 @@ public class CreateTaskTestsSuccess
     [Test]
     public async Task CreateTask_ShouldReturnOk_WhenValidRequest()
     {
+        var logger = _scopedServiceProvider.GetRequiredService<ILogger<string>>();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        Console.WriteLine(ctx.Database.GetConnectionString());
 
-
+        _scopedServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
         var request = new CreateTaskRequestDto
         {
             ListId = ctx.Tasklists.First().ListId,

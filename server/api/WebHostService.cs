@@ -15,22 +15,34 @@ public class ProductionPortAllocationService : IWebHostPortAllocationService
 public class TestPortAllocationService : IWebHostPortAllocationService
 {
     private readonly int _port;
+    private static readonly object _lock = new object();
+    private static readonly HashSet<int> _usedPorts = new HashSet<int>();
 
     public TestPortAllocationService()
     {
-        _port = FindAvailablePort(8080, 8180);
+        lock (_lock)
+        {
+            _port = FindAvailablePort(8081, 9000);
+        }
     }
 
-    public string GetBaseUrl() => $"http://127.0.0.1:{_port}";
+    public string GetBaseUrl() => $"http://localhost:{_port}";  // Using localhost instead of 127.0.0.1
 
     private static int FindAvailablePort(int start, int end)
     {
+        var ipAddress = IPAddress.Parse("127.0.0.1");
+        
         for (int port = start; port <= end; port++)
         {
+            if (_usedPorts.Contains(port))
+                continue;
+
             try
             {
-                using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                socket.Bind(new IPEndPoint(IPAddress.Loopback, port));
+                var listener = new TcpListener(ipAddress, port);
+                listener.Start();
+                listener.Stop();
+                _usedPorts.Add(port);
                 return port;
             }
             catch (SocketException)

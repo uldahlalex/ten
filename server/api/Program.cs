@@ -14,8 +14,7 @@ public class Program
 
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
-        builder.Logging.ClearProviders();
-        builder.Logging.AddConsole();
+
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
@@ -24,9 +23,10 @@ public class Program
         });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
+        var pgCtx = new PgCtxSetup<MyDbContext>();
         builder.Services.AddDbContext<MyDbContext>(ctx =>
         {
-            ctx.UseNpgsql(appOptions.DbConnectionString);
+            ctx.UseNpgsql(pgCtx._postgres.GetConnectionString());
         });
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

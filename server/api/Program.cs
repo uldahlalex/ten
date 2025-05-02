@@ -22,52 +22,27 @@ public class Program
         builder.Services.AddScoped<ITaskService, TaskService>();
 
         builder.Services.AddControllers()
-        // .AddJsonOptions(opts =>
-        // {
-        //     opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-        .AddApplicationPart(thisAssembly);  
+            // .AddJsonOptions(opts =>
+            // {
+            //     opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+            .AddApplicationPart(thisAssembly);
         // //refernce handler no ciruclar references
 
-        
+
         builder.Services.AddOpenApiDocument(conf =>
         {
-            
             conf.OperationProcessors.Add(new LightQueryOperationsProcessor());
-
         });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
-        builder.Services.AddDbContext<MyDbContext>(ctx => 
-            { ctx.UseNpgsql(appOptions.DbConnectionString); });
+        builder.Services.AddDbContext<MyDbContext>(ctx => { ctx.UseNpgsql(appOptions.DbConnectionString); });
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.WebHost.ConfigureKestrel(options =>
         {
-            var port = DefaultPort;
-            bool portFound = false;
-    
-            while (!portFound && port < DefaultPort + 100) // Limit the search to avoid infinite loop
-            {
-                try
-                {
-                    options.Listen(IPAddress.Any, port, listenOptions =>
-                    {
-                        listenOptions.UseConnectionLogging();
-                    });
-                    portFound = true;
-                    DefaultPort = port; // Update the DefaultPort to the one that was found
-                }
-                catch (IOException) // Port in use
-                {
-                    port++;
-                }
-            }
-
-            if (!portFound)
-            {
-                throw new Exception($"Could not find an available port between {DefaultPort} and {DefaultPort + 100}");
-            }
+            options.Listen(IPAddress.Loopback, DefaultPort,
+                listenOptions => { listenOptions.UseConnectionLogging(); });
         });
     }
 

@@ -1,5 +1,6 @@
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Seeder;
 
@@ -61,6 +62,9 @@ public class DefaultEnvironment : ISeeder
 
     public async Task CreateEnvironment(MyDbContext ctx)
     {
+        Console.WriteLine("now this runs");
+        Console.WriteLine(ctx.Database.GetConnectionString());
+        ctx.Database.EnsureDeleted();
         ctx.Database.EnsureCreated();
         
         // Clear existing data
@@ -151,5 +155,9 @@ public class DefaultEnvironment : ISeeder
 
         ctx.TaskTags.AddRange(taskTags);
         await ctx.SaveChangesAsync();
+        var count = ctx.Tickticktasks.Count();
+        Console.WriteLine(count);
+        if (count == 0)
+            throw new Exception("No tasks found in DB");
     }
 }

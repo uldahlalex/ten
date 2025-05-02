@@ -6,6 +6,7 @@ using api.Seeder;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
@@ -28,7 +29,7 @@ public class CreateTaskTestsSuccess
         builder.DefaultTestConfig();
         
         _app = builder.Build();
-        await Program.ConfigureApp(_app);
+         Program.ConfigureApp(_app);
         await _app.StartAsync();
         
         _baseUrl = _app.Urls.First() + "/";
@@ -53,6 +54,8 @@ public class CreateTaskTestsSuccess
     public async Task CreateTask_ShouldReturnOk_WhenValidRequest()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+        Console.WriteLine(ctx.Database.GetConnectionString());
+
 
         var request = new CreateTaskRequestDto
         {

@@ -28,7 +28,7 @@ public class GetTasksTests
         builder.DefaultTestConfig();
         
         _app = builder.Build();
-        await Program.ConfigureApp(_app);
+         Program.ConfigureApp(_app);
         await _app.StartAsync();
         
         _baseUrl = _app.Urls.First() + "/";

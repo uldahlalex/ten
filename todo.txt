@@ -1,6 +1,11 @@
 Aktuelt:
-- ci/cd
-    - when deploying with env vars these should be secrets
+
+når jeg kører dotnet test med testcontainers, starter container men der bliver ikke seedet (eller der er ikke data når der forespørges)
+dette indikerer:
+    - seederen kører slet ikke
+    - der er tidsintervals problem 
+    - hvorfor er den ok når jeg eksekverer med ide og ikke med dotnet test?
+    - "now this runs" logger ikke med dotnet test
 
 - testing always use testcontainer
 

@@ -5,6 +5,7 @@ using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using PgCtx;
 
@@ -33,8 +34,7 @@ public static class ApiTestSetupUtilities
                 opt.LogTo(_ => { });
             });
         }
-        var startingPortAllocatior = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(IWebHostPortAllocationService));
-        builder.Services.Remove(startingPortAllocatior);
+        builder.Services.RemoveAll<IWebHostPortAllocationService>();
         builder.Services.AddSingleton<IWebHostPortAllocationService, TestPortAllocationService>();
         return builder;
     }

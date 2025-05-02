@@ -4,6 +4,7 @@ using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PgCtx;
 using Scalar.AspNetCore;
 
 public class Program
@@ -21,15 +22,23 @@ public class Program
         });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
-        builder.Services.AddDbContext<MyDbContext>(ctx => { ctx.UseNpgsql(appOptions.DbConnectionString); });
+        var pgctx = new PgCtxSetup<MyDbContext>();
+        builder.Services.AddDbContext<MyDbContext>(ctx =>
+        {
+            ctx.UseNpgsql(pgctx._postgres.GetConnectionString());
+        });
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddSingleton<IWebHostPortAllocationService, ProductionPortAllocationService>();
+        
     }
 
-    public static async Task ConfigureApp(WebApplication app)
+    public static WebApplication ConfigureApp(WebApplication app)
     {
+        var portService = app.Services.GetRequiredService<IWebHostPortAllocationService>();
+        app.Urls.Clear();
+        app.Urls.Add(portService.GetBaseUrl());
         app.UseExceptionHandler();
         app.UseOpenApi(conf => { conf.Path = "/openapi/v1.json"; });
         app.UseSwaggerUi(conf =>
@@ -47,6 +56,8 @@ public class Program
             if (!app.Environment.IsProduction())
             {
                 MyDbContext ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+                Console.WriteLine(ctx.Database.GetConnectionString());
+
                 var schema = ctx.Database.GenerateCreateScript();
                 File.WriteAllText("schema_according_to_dbcontext.sql", schema);
                 scope.ServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx).Wait();
@@ -71,9 +82,7 @@ public class Program
             }
         });
 
-        // Configure ports
-        var portService = app.Services.GetRequiredService<IWebHostPortAllocationService>();
-        await portService.ConfigureUrlsAsync(app);
+        return app;
     }
 
     public static async Task Main(string[] args)
@@ -82,9 +91,8 @@ public class Program
         ConfigureServices(builder);
         
         var app = builder.Build();
-        await ConfigureApp(app);
+        ConfigureApp(app);
         
-        FinalBaseUrl = app.Urls.First();
-        await app.WaitForShutdownAsync();
+        await app.RunAsync();
     }
 }

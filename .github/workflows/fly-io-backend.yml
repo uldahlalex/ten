@@ -1,6 +1,5 @@
 name: Fly Deploy API
 on:
-  push:
   workflow_dispatch:
 
 jobs:

@@ -1,8 +1,7 @@
-import {DeviceLogsAtom} from "../atoms.ts";
-import {useAtom} from 'jotai';
+import {useState} from "react";
 export default function Dashboard() {
     
-    const [deviceLogs] = useAtom<DeviceLog>(DeviceLogsAtom);
+    const [deviceLogs] = useState<any[]>([]);
     
     return (
         <div className="flex flex-col items-center justify-center h-screen">

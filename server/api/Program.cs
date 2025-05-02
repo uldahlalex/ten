@@ -10,7 +10,7 @@ using Scalar.AspNetCore;
 
 public class Program
 {
-    public static int DefaultPort { get; } = 8080;
+    public static int DefaultPort { get; set; } = 8080;
     public static string? FinalBaseUrl { get; private set; }
 
     public static void ConfigureServices(WebApplicationBuilder builder)
@@ -42,12 +42,32 @@ public class Program
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
-         builder.WebHost.ConfigureKestrel(options =>
+        builder.WebHost.ConfigureKestrel(options =>
         {
-            options.Listen(IPAddress.Loopback, DefaultPort, listenOptions =>
+            var port = DefaultPort;
+            bool portFound = false;
+    
+            while (!portFound && port < DefaultPort + 100) // Limit the search to avoid infinite loop
             {
-                listenOptions.UseConnectionLogging();
-            });
+                try
+                {
+                    options.Listen(IPAddress.Any, port, listenOptions =>
+                    {
+                        listenOptions.UseConnectionLogging();
+                    });
+                    portFound = true;
+                    DefaultPort = port; // Update the DefaultPort to the one that was found
+                }
+                catch (IOException) // Port in use
+                {
+                    port++;
+                }
+            }
+
+            if (!portFound)
+            {
+                throw new Exception($"Could not find an available port between {DefaultPort} and {DefaultPort + 100}");
+            }
         });
     }
 

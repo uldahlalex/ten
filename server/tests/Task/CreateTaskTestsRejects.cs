@@ -5,6 +5,7 @@ using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 
@@ -31,7 +32,9 @@ public class CreateTaskTestsRejects
             builder.Services.Remove(descriptor);
    
         builder.Services.AddScoped<ISeeder>(_ => new EmptyEnvironment());
-        
+        var appoptions = builder.Services.BuildServiceProvider().GetRequiredService<IOptionsMonitor<AppOptions>>()
+            .CurrentValue;
+        builder.Services.DefaultTestConfig(useTestContainer: appoptions.RunsOn == "Github");
         _app = builder.Build();
         Program.ConfigureApp(_app);
         

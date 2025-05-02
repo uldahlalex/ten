@@ -7,6 +7,7 @@ using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using tests;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -29,7 +30,9 @@ public class GetTasksTests
         if(descriptor!=null)
             builder.Services.Remove(descriptor);
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
-        
+        var appoptions = builder.Services.BuildServiceProvider().GetRequiredService<IOptionsMonitor<AppOptions>>()
+            .CurrentValue;
+        builder.Services.DefaultTestConfig(useTestContainer: appoptions.RunsOn == "Github");
         _app = builder.Build();
         Program.ConfigureApp(_app);
         

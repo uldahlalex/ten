@@ -1,5 +1,6 @@
 Aktuelt:
 - ci/cd
-    note: kræver den nuværende deployment at config secrets først? kan man også provision i cicd?
+
+- testing always use testcontainer
 
 - client app

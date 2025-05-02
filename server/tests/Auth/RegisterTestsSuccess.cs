@@ -5,6 +5,7 @@ using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 
 namespace tests.Auth;
@@ -31,6 +32,9 @@ public class RegisterTestsSuccess
             builder.Services.Remove(descriptor);
    
         builder.Services.AddScoped<ISeeder>(_ => new EmptyEnvironment());
+        var appoptions = builder.Services.BuildServiceProvider().GetRequiredService<IOptionsMonitor<AppOptions>>()
+            .CurrentValue;
+        builder.Services.DefaultTestConfig(useTestContainer: appoptions.RunsOn == "Github");
         
         _app = builder.Build();
         Program.ConfigureApp(_app);

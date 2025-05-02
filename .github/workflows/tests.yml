@@ -15,5 +15,6 @@ jobs:
       - run: cd server/tests && dotnet test
         timeout-minutes: 10
         env:
+          APPOPTIONS__DbConnectionString: ${{secrets.DBCONNECTIONSTRING}}
           APPOPTIONS__JwtSecret: ${{secrets.JWT_SECRET}}
           APPOPTIONS__RunsOn: "GitHub"

@@ -1,13 +1,10 @@
-using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using api;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using PgCtx;
 
@@ -17,7 +14,7 @@ public static class ApiTestSetupUtilities
 {
     public static WebApplicationBuilder DefaultTestConfig(
         this WebApplicationBuilder builder,
-        bool useTestContainer = false
+        bool useTestContainer = true
     )
     {
         var appOptions = builder.Services
@@ -26,11 +23,18 @@ public static class ApiTestSetupUtilities
             .CurrentValue;
         if (useTestContainer || appOptions.RunsOn=="GitHub")
         {
-            builder.Services.RemoveAll<MyDbContext>();
-            builder.Services.AddDbContext<MyDbContext>(opt => opt.UseNpgsql(new PgCtxSetup<MyDbContext>()._postgres.GetConnectionString()));
+            var pgctx = new PgCtxSetup<MyDbContext>();
+            var startingDbCtx = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(MyDbContext));
+            builder.Services.Remove(startingDbCtx);
+            builder.Services.AddDbContext<MyDbContext>(opt =>
+            {
+                opt.UseNpgsql(pgctx._postgres.GetConnectionString());
+                opt.EnableSensitiveDataLogging();
+                opt.LogTo(_ => { });
+            });
         }
-  
-        builder.Services.RemoveAll<IWebHostPortAllocationService>();
+        var startingPortAllocatior = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(IWebHostPortAllocationService));
+        builder.Services.Remove(startingPortAllocatior);
         builder.Services.AddSingleton<IWebHostPortAllocationService, TestPortAllocationService>();
         return builder;
     }

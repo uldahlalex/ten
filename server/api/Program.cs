@@ -84,12 +84,6 @@ public class Program
         var app = builder.Build();
         await ConfigureApp(app);
         
-        // The port service will handle starting the app in production
-        if (!app.Environment.IsEnvironment("Testing"))
-        {
-            await app.StartAsync();
-        }
-        
         FinalBaseUrl = app.Urls.First();
         await app.WaitForShutdownAsync();
     }

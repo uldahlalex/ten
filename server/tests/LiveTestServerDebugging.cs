@@ -18,7 +18,7 @@ public class IntegrationTests
     {
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
-        builder.DefaultTestConfig();
+        builder.DefaultTestConfig(true);
         
         _app = builder.Build();
         await Program.ConfigureApp(_app);

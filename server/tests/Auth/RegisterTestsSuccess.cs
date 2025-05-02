@@ -1,16 +1,11 @@
 using System.Net.Http.Json;
 using api;
-using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using NUnit.Framework;
 
 namespace tests.Auth;
 
-[TestFixture]
 public class RegisterTestsSuccess
 {
     
@@ -20,7 +15,7 @@ public class RegisterTestsSuccess
     private IServiceProvider _scopedServiceProvider = null!;
     private string _baseUrl = null!;
 
-    [OneTimeSetUp]
+    [Before(Test)]
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
@@ -36,21 +31,7 @@ public class RegisterTestsSuccess
         _client = new HttpClient();
         await _client.TestRegisterAndAddJwt(_baseUrl);
     }
-
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        _client.Dispose();
-   
-        await _app.StopAsync();
-        await _app.DisposeAsync();
-        
-    }
-
-
-
-
-
+    
     [Test]
     public async Task WhenUserRegistersWithValidCredentials_TheyGetValidJwtBack()
     {

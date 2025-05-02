@@ -2,17 +2,13 @@ using System.Net;
 using System.Net.Http.Json;
 using api;
 using api.Mappers;
-using api.Seeder;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using NUnit.Framework;
 using tests;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-[TestFixture]
 public class GetTasksTests
 {
     private WebApplication _app = null!;
@@ -20,8 +16,8 @@ public class GetTasksTests
     private IServiceProvider _scopedServiceProvider = null!;
     private string _baseUrl = null!;
 
-    [OneTimeSetUp]
-    public async Task Setup()
+    [Before(Test)]
+    public void Setup()
     {
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
@@ -29,38 +25,34 @@ public class GetTasksTests
         
         _app = builder.Build();
          Program.ConfigureApp(_app);
-        await _app.StartAsync();
+         _app.StartAsync().GetAwaiter().GetResult();
+        
         
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = new HttpClient();
-        await _client.TestRegisterAndAddJwt(_baseUrl);
-    }
-
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        _client.Dispose();
-            await _app.StopAsync();
-            await _app.DisposeAsync();
-        
+        _client.TestRegisterAndAddJwt(_baseUrl).GetAwaiter().GetResult();
     }
 
 
 
     [Test]
-    public async Task GetTasks_ShouldReturnAllTasks_WhenNoFiltersApplied()
+    public void GetTasks_ShouldReturnAllTasks_WhenNoFiltersApplied()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+        var count = ctx.Tickticktasks.Count();
+        if (count == 0)
+            throw new Exception("There are no tasks starting out");
         var allTasksAsDtos = ctx.Tickticktasks.Select(d => d.ToDto()).ToList();
         var query = new GetTasksFilterAndOrderParameters();
-        
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query);
+
+        var response = _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query).GetAwaiter()
+            .GetResult();
         
         if(response.StatusCode != HttpStatusCode.OK)
-            throw new Exception("Did not get success status code. Received: "+response.StatusCode+ " with body: "+await response.Content.ReadAsStringAsync());
-        var tasksResponse = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
+            throw new Exception("Did not get success status code. Received: "+response.StatusCode+ " with body: "+ response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+        var tasksResponse = response.Content.ReadFromJsonAsync<List<TickticktaskDto>>().GetAwaiter().GetResult();
         if(tasksResponse!.Count != allTasksAsDtos.Count)
             throw new Exception("Did not get all tasks. Expected: "+JsonSerializer.Serialize(allTasksAsDtos) + " but got: "+JsonSerializer.Serialize(tasksResponse));
         

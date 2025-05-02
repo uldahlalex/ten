@@ -25,11 +25,13 @@ public static class ApiTestSetupUtilities
         if (useTestContainer || appOptions.RunsOn=="GitHub")
         {
             var pgctx = new PgCtxSetup<MyDbContext>();
+            Task.Delay(5000).GetAwaiter().GetResult();
             var startingDbCtx = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(MyDbContext));
             builder.Services.Remove(startingDbCtx);
             builder.Services.AddDbContext<MyDbContext>(opt =>
             {
                 opt.UseNpgsql(pgctx._postgres.GetConnectionString());
+                Console.WriteLine(pgctx._postgres.GetConnectionString());
                 opt.EnableSensitiveDataLogging();
                 opt.LogTo(_ => { });
             });

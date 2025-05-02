@@ -1,17 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using api;
-using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
 
 namespace tests;
 
-[TestFixture]
 public class CreateTaskTestsRejects
 {
     
@@ -20,7 +15,7 @@ public class CreateTaskTestsRejects
     private IServiceProvider _scopedServiceProvider = null!;
     private string _baseUrl = null!;
 
-    [OneTimeSetUp]
+    [Before(Test)]
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
@@ -37,26 +32,17 @@ public class CreateTaskTestsRejects
         await _client.TestRegisterAndAddJwt(_baseUrl);
     }
 
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        _client.Dispose();
-   
-            await _app.StopAsync();
-            await _app.DisposeAsync();
-        
-    }
 
 
   
 
     //Multi case test
     [Test]
-    [TestCase("", "asdsa", "2050-04-25T20:22:50.657021Z", 1)] //invalid title: empty
-    [TestCase("asdsad", "", "2050-04-25T20:22:50.657021Z", 1)] //invalid desc: empty
-    [TestCase("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 0)] //invalid priority: not in range
-    [TestCase("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 6)] //invalid priority: empty
-    [TestCase( "asdsad", "asdsad", "2000-04-25T20:22:50.657021Z", 1)] //invalid due date: it is in the past
+    [Arguments("", "asdsa", "2050-04-25T20:22:50.657021Z", 1)] //invalid title: empty
+    [Arguments("asdsad", "", "2050-04-25T20:22:50.657021Z", 1)] //invalid desc: empty
+    [Arguments("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 0)] //invalid priority: not in range
+    [Arguments("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 6)] //invalid priority: empty
+    [Arguments( "asdsad", "asdsad", "2000-04-25T20:22:50.657021Z", 1)] //invalid due date: it is in the past
     public async Task CreateTask_ShouldBeRejects_IfDtoDoesNotLiveUpToValidationRequirements( string title, string description, string timestamp, int priority)
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();

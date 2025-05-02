@@ -1,11 +1,7 @@
-using System.Net;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 using tests;
 
-[TestFixture]
 public class IntegrationTests
 {
     private WebApplication _app = null!;
@@ -13,7 +9,7 @@ public class IntegrationTests
     private IServiceProvider _scopedServiceProvider = null!;
     private string _baseUrl = null!;
 
-    [OneTimeSetUp]
+    [Before(Test)]
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
@@ -30,15 +26,6 @@ public class IntegrationTests
         await _client.TestRegisterAndAddJwt(_baseUrl);
     }
 
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        _client.Dispose();
-    
-            await _app.StopAsync();
-            await _app.DisposeAsync();
-        
-    }
 
  
     [Test]

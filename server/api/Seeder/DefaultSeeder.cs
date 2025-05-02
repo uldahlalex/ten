@@ -6,13 +6,14 @@ namespace api.Seeder;
 
 public interface ISeeder
 {
-    Task CreateEnvironment(MyDbContext ctx);
+    void CreateEnvironment(MyDbContext ctx);
 }
 
 public class EmptyEnvironment : ISeeder
 {
-    public async Task CreateEnvironment(MyDbContext ctx)
+    public void CreateEnvironment(MyDbContext ctx)
     {
+        ctx.Database.EnsureDeleted();//only use this if using testcontainers
         ctx.Database.EnsureCreated();
         
         // Clear existing data
@@ -60,11 +61,10 @@ public class DefaultEnvironment : ISeeder
     };
 
 
-    public async Task CreateEnvironment(MyDbContext ctx)
+    public void CreateEnvironment(MyDbContext ctx)
     {
-        Console.WriteLine("now this runs");
         Console.WriteLine(ctx.Database.GetConnectionString());
-        ctx.Database.EnsureDeleted();
+        // ctx.Database.EnsureDeleted();
         ctx.Database.EnsureCreated();
         
         // Clear existing data
@@ -85,7 +85,7 @@ public class DefaultEnvironment : ISeeder
             PasswordHash = "TJlSDc2mvpBmYKoi+2hnIOFx6ykf/V6JpmU7irhpoRcDT3KKUMwH7BWL/WlDTGrL11ud+5Q1BNxBEy3ZD1RRuQ=="
         };
         ctx.Users.Add(user);
-        await ctx.SaveChangesAsync();
+         ctx.SaveChanges();
 
         // Create tags
         var tags = TagNames.Select(name => new Tag
@@ -96,7 +96,7 @@ public class DefaultEnvironment : ISeeder
             UserId = user.UserId
         }).ToList();
         ctx.Tags.AddRange(tags);
-        await ctx.SaveChangesAsync();
+         ctx.SaveChanges();
 
         // Create lists with tasks
         var lists = ListNames.Select(name => new Tasklist
@@ -133,7 +133,7 @@ public class DefaultEnvironment : ISeeder
         }
 
         ctx.Tasklists.AddRange(lists);
-        await ctx.SaveChangesAsync();
+         ctx.SaveChanges();
 
         // Add random tags to tasks (2-4 tags per task)
         var allTasks = lists.SelectMany(l => l.Tickticktasks).ToList();
@@ -154,7 +154,7 @@ public class DefaultEnvironment : ISeeder
         }
 
         ctx.TaskTags.AddRange(taskTags);
-        await ctx.SaveChangesAsync();
+         ctx.SaveChanges();
         var count = ctx.Tickticktasks.Count();
         Console.WriteLine(count);
         if (count == 0)

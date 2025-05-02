@@ -2,18 +2,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 using api;
-using api.Seeder;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using NUnit.Framework;
 
 namespace tests;
 
-[TestFixture]
 public class CreateTaskTestsSuccess
 {
     private WebApplication _app = null!;
@@ -21,7 +17,7 @@ public class CreateTaskTestsSuccess
     private IServiceProvider _scopedServiceProvider = null!;
     private string _baseUrl = null!;
 
-    [OneTimeSetUp]
+    [Before(Test)]
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
@@ -38,15 +34,7 @@ public class CreateTaskTestsSuccess
         await _client.TestRegisterAndAddJwt(_baseUrl);
     }
 
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        _client.Dispose();
-     
-            await _app.StopAsync();
-            await _app.DisposeAsync();
-       
-    }
+ 
 
 
     

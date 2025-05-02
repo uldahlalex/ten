@@ -1,4 +1,4 @@
-name: Fly Deploy API
+name: Fly Deploy Frontend
 on:
   workflow_dispatch:
 

@@ -1,5 +1,6 @@
 Aktuelt:
 - ci/cd
+    - when deploying with env vars these should be secrets
 
 - testing always use testcontainer
 

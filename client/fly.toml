@@ -1,4 +1,4 @@
-app = 'compulsory25'
+app = 'compulsoryclient'
 primary_region = 'ams'
 
 [build]

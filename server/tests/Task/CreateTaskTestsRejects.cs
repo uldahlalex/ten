@@ -24,30 +24,17 @@ public class CreateTaskTestsRejects
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
-        builder.Environment.EnvironmentName = "Testing";
-        
         Program.ConfigureServices(builder);
-
-        var descriptor = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(ISeeder));
-        if(descriptor!=null)
-            builder.Services.Remove(descriptor);
-   
-        builder.Services.AddScoped<ISeeder>(_ => new EmptyEnvironment());
-        var appoptions = builder.Services.BuildServiceProvider().GetRequiredService<IOptionsMonitor<AppOptions>>()
-            .CurrentValue;
-        builder.Services.DefaultTestConfig(useTestContainer: appoptions.RunsOn == "Github");
-        _app = builder.Build();
-        Program.ConfigureApp(_app);
+        builder.DefaultTestConfig();
         
+        _app = builder.Build();
+        await Program.ConfigureApp(_app);
         await _app.StartAsync();
+        
         _baseUrl = _app.Urls.First() + "/";
-        Console.WriteLine($"Test API running at: {_baseUrl}");
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-
-
         _client = new HttpClient();
         await _client.TestRegisterAndAddJwt(_baseUrl);
-
     }
 
     [OneTimeTearDown]

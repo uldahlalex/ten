@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text.Json;
 using api;
 using api.Seeder;
@@ -17,24 +16,21 @@ public class Program
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
-        builder.Services.AddOpenApiDocument();
+        builder.Services.AddOpenApiDocument(conf =>
+        {
+        });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
         builder.Services.AddDbContext<MyDbContext>(ctx => { ctx.UseNpgsql(appOptions.DbConnectionString); });
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
-        builder.WebHost.ConfigureKestrel(options =>
-        {
-                options.Listen(IPAddress.Any, DefaultPort,
-                    listenOptions => { listenOptions.UseConnectionLogging(); });
-        });
+        builder.Services.AddSingleton<IWebHostPortAllocationService, ProductionPortAllocationService>();
     }
 
-    public static void ConfigureApp(WebApplication app)
+    public static async Task ConfigureApp(WebApplication app)
     {
         app.UseExceptionHandler();
-
         app.UseOpenApi(conf => { conf.Path = "/openapi/v1.json"; });
         app.UseSwaggerUi(conf =>
         {
@@ -74,6 +70,10 @@ public class Program
                 await context.Response.WriteAsJsonAsync(problemDetails);
             }
         });
+
+        // Configure ports
+        var portService = app.Services.GetRequiredService<IWebHostPortAllocationService>();
+        await portService.ConfigureUrlsAsync(app);
     }
 
     public static async Task Main(string[] args)
@@ -82,9 +82,14 @@ public class Program
         ConfigureServices(builder);
         
         var app = builder.Build();
-        ConfigureApp(app);
+        await ConfigureApp(app);
         
-        await app.StartAsync();
+        // The port service will handle starting the app in production
+        if (!app.Environment.IsEnvironment("Testing"))
+        {
+            await app.StartAsync();
+        }
+        
         FinalBaseUrl = app.Urls.First();
         await app.WaitForShutdownAsync();
     }

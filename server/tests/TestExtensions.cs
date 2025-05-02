@@ -1,40 +1,37 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using api;
 using Infrastructure.Postgres.Scaffolding;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PgCtx;
 
 namespace tests;
 
 public static class ApiTestSetupUtilities
 {
-    public static IServiceCollection DefaultTestConfig(
-        this IServiceCollection services,
-        bool useTestContainer = true
+    public static WebApplicationBuilder DefaultTestConfig(
+        this WebApplicationBuilder builder,
+        bool useTestContainer = false
     )
     {
+        
         if (useTestContainer)
         {
-            var db = new PgCtxSetup<MyDbContext>();
-            RemoveExistingService<MyDbContext>(services);
-            services.AddDbContext<MyDbContext>(opt =>
-            {
-                opt.UseNpgsql(db._postgres.GetConnectionString());
-                opt.EnableSensitiveDataLogging();
-                opt.LogTo(_ => { });
-            });
+            builder.Services.RemoveAll<MyDbContext>();
+            builder.Services.AddDbContext<MyDbContext>(opt => opt.UseNpgsql(new PgCtxSetup<MyDbContext>()._postgres.GetConnectionString()));
         }
-        return services;
+  
+        builder.Services.RemoveAll<IWebHostPortAllocationService>();
+        builder.Services.AddSingleton<IWebHostPortAllocationService, TestPortAllocationService>();
+        return builder;
     }
 
-    private static void RemoveExistingService<T>(IServiceCollection services)
-    {
-        var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(T));
-        if (descriptor != null)
-            services.Remove(descriptor);
-    }
+
 
     public static async Task<string> TestRegisterAndAddJwt(this HttpClient httpClient, string baseUrl)
     {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using tests;
 
 [TestFixture]
 public class IntegrationTests
@@ -16,46 +17,17 @@ public class IntegrationTests
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
-        builder.Environment.EnvironmentName = "Testing";
         Program.ConfigureServices(builder);
-    
-        builder.WebHost.ConfigureKestrel(options =>
-        {
-            var port = Program.DefaultPort;
-            bool portFound = false;
-
-            while (!portFound && port < Program.DefaultPort + 100)
-            {
-                try
-                {
-                    options.Listen(IPAddress.Loopback, port, listenOptions => 
-                    { 
-                        listenOptions.UseConnectionLogging(); 
-                    });
-                    portFound = true;
-                    Program.DefaultPort = port;
-                }
-                catch (IOException)
-                {
-                    port++;
-                }
-            }
-
-            if (!portFound)
-            {
-                throw new Exception($"Could not find an available port between {Program.DefaultPort} and {Program.DefaultPort + 100}");
-            }
-        });
-    
+        builder.DefaultTestConfig();
+        
         _app = builder.Build();
-        Program.ConfigureApp(_app);
-    
+        await Program.ConfigureApp(_app);
         await _app.StartAsync();
-        _baseUrl = _app.Urls.First();
-        Console.WriteLine($"Test API running at: {_baseUrl}");
+        
+        _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-
         _client = new HttpClient();
+        await _client.TestRegisterAndAddJwt(_baseUrl);
     }
 
     [OneTimeTearDown]

@@ -2,11 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 using api;
-using api.Seeder;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -15,9 +13,9 @@ namespace tests;
 public class CreateTaskTestsSuccess
 {
     private WebApplication _app = null!;
+    private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
-    private string _baseUrl = null!;
 
     [Before(Test)]
     public async Task Setup()
@@ -25,29 +23,25 @@ public class CreateTaskTestsSuccess
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
         builder.DefaultTestConfig();
-        // builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
-   
+
         _app = builder.Build();
-         Program.ConfigureApp(_app);
+        Program.ConfigureApp(_app);
         await _app.StartAsync();
-        
+
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = new HttpClient();
         await _client.TestRegisterAndAddJwt(_baseUrl);
     }
 
- 
 
-
-    
     [Test]
     public async Task CreateTask_ShouldReturnOk_WhenValidRequest()
     {
         var logger = _scopedServiceProvider.GetRequiredService<ILogger<string>>();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
 
-        _scopedServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
+        // _scopedServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
         var request = new CreateTaskRequestDto
         {
             ListId = ctx.Tasklists.First().ListId,
@@ -55,7 +49,6 @@ public class CreateTaskTestsSuccess
             Description = "Test Description",
             DueDate = DateTime.Parse("2050-04-25T20:22:50.657021Z").ToUniversalTime(),
             Priority = 1
-   
         };
 
 

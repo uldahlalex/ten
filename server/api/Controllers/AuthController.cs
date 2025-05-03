@@ -8,8 +8,6 @@ namespace api;
 [ApiController]
 public class AuthController(ISecurityService securityService, MyDbContext ctx) : ControllerBase
 {
-
-
     [Route(nameof(Register))]
     public async Task<ActionResult<string>> Register([FromBody] AuthRequestDto dto)
     {

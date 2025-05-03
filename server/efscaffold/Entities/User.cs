@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace efscaffold.Entities;
 
-namespace efscaffold.Entities;
-
-public partial class User
+public class User
 {
     public string UserId { get; set; } = null!;
 

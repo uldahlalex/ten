@@ -12,9 +12,9 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 public class GetTasksTests
 {
     private WebApplication _app = null!;
+    private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
-    private string _baseUrl = null!;
 
     [Before(Test)]
     public void Setup()
@@ -22,18 +22,17 @@ public class GetTasksTests
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
         builder.DefaultTestConfig();
-        
+
         _app = builder.Build();
-         Program.ConfigureApp(_app);
-         _app.StartAsync().GetAwaiter().GetResult();
-        
-        
+        Program.ConfigureApp(_app);
+        _app.StartAsync().GetAwaiter().GetResult();
+
+
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = new HttpClient();
         _client.TestRegisterAndAddJwt(_baseUrl).GetAwaiter().GetResult();
     }
-
 
 
     [Test]
@@ -49,74 +48,72 @@ public class GetTasksTests
 
         var response = _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query).GetAwaiter()
             .GetResult();
-        
-        if(response.StatusCode != HttpStatusCode.OK)
-            throw new Exception("Did not get success status code. Received: "+response.StatusCode+ " with body: "+ response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
-        var tasksResponse = response.Content.ReadFromJsonAsync<List<TickticktaskDto>>().GetAwaiter().GetResult();
-        if(tasksResponse!.Count != allTasksAsDtos.Count)
-            throw new Exception("Did not get all tasks. Expected: "+JsonSerializer.Serialize(allTasksAsDtos) + " but got: "+JsonSerializer.Serialize(tasksResponse));
-        
-    }
-    
 
-    
+        if (response.StatusCode != HttpStatusCode.OK)
+            throw new Exception("Did not get success status code. Received: " + response.StatusCode + " with body: " +
+                                response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+        var tasksResponse = response.Content.ReadFromJsonAsync<List<TickticktaskDto>>().GetAwaiter().GetResult();
+        if (tasksResponse!.Count != allTasksAsDtos.Count)
+            throw new Exception("Did not get all tasks. Expected: " + JsonSerializer.Serialize(allTasksAsDtos) +
+                                " but got: " + JsonSerializer.Serialize(tasksResponse));
+    }
+
+
     [Test]
     public async Task GetTasks_ShouldFilterByCompletion()
     {
         // Arrange
-        var query = new GetTasksFilterAndOrderParameters() { IsCompleted = true };
-        
+        var query = new GetTasksFilterAndOrderParameters { IsCompleted = true };
+
         // Act
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query);
-     
+
         var tasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
-        if(tasks.Count==0)
+        if (tasks.Count == 0)
             throw new Exception("There should be at least one task");
-        
-        if(tasks.Any(t => t.Completed == false))
+
+        if (tasks.Any(t => t.Completed == false))
             throw new Exception("There shoud not be any incompleted tasks");
     }
-    
+
     [Test]
     public async Task GetTasks_ShouldFilterByDateRange()
     {
         // Arrange
-        var query = new GetTasksFilterAndOrderParameters()
+        var query = new GetTasksFilterAndOrderParameters
         {
             EarliestDueDate = DateTime.UtcNow.AddDays(-7),
             LatestDueDate = DateTime.UtcNow.AddDays(7)
         };
-    
-    
+
+
         // Act
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks),query);
+        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query);
         var tasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
-          if(tasks.Any(t => t.DueDate > query.LatestDueDate || t.DueDate < query.EarliestDueDate))
-                throw new Exception("There should not be any tasks outside of the date range");
+        if (tasks.Any(t => t.DueDate > query.LatestDueDate || t.DueDate < query.EarliestDueDate))
+            throw new Exception("There should not be any tasks outside of the date range");
         if (tasks.Count != 80)
             throw new Exception("Expected exactly 80 tasks from the default seeder");
-        
-        
     }
-    
+
     [Test]
     public async Task GetTasks_ShouldFilterByPriorityRange()
     {
         // Arrange
-        var query = new GetTasksFilterAndOrderParameters()
+        var query = new GetTasksFilterAndOrderParameters
         {
             MinPriority = 2,
             MaxPriority = 3
         };
         await _client.TestRegisterAndAddJwt(_baseUrl);
-    
-    
+
+
         // Act
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks),query);
+        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query);
         var tasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
         if (tasks.Any(t => t.Priority < query.MinPriority))
             throw new Exception("There were priorities under the threshold");
-        if(tasks.Any(t => t.Priority > query.MaxPriority))
+        if (tasks.Any(t => t.Priority > query.MaxPriority))
             throw new Exception("There were priorities above the threshold");
         if (tasks.Count != 10)
             throw new Exception("Expected exactly 10 from the deafult seeder");

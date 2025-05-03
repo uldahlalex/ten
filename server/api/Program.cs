@@ -4,7 +4,6 @@ using api.Seeder;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PgCtx;
 using Scalar.AspNetCore;
 
 public class Program
@@ -14,25 +13,18 @@ public class Program
 
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
-
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
-        builder.Services.AddOpenApiDocument(conf =>
-        {
-        });
+        builder.Services.AddOpenApiDocument(conf => { });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
-        var pgCtx = new PgCtxSetup<MyDbContext>();
-        builder.Services.AddDbContext<MyDbContext>(ctx =>
-        {
-            ctx.UseNpgsql(pgCtx._postgres.GetConnectionString());
-        });
+        // var pgCtx = new PgCtxSetup<MyDbContext>();
+        builder.Services.AddDbContext<MyDbContext>(ctx => { ctx.UseNpgsql(appOptions.DbConnectionString); });
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddSingleton<IWebHostPortAllocationService, ProductionPortAllocationService>();
-        
     }
 
     public static WebApplication ConfigureApp(WebApplication app)
@@ -51,12 +43,15 @@ public class Program
         app.GenerateTypeScriptClient("/../client/src/generated-client.ts").Wait();
         app.MapScalarApiReference();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+        var environment = app.Environment.EnvironmentName;
+        app.Services.GetRequiredService<ILogger<Program>>().LogInformation("ENV: " + environment);
 
         using (var scope = app.Services.CreateScope())
         {
             if (!app.Environment.IsProduction())
             {
-                MyDbContext ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+                app.Services.GetRequiredService<ILogger<Program>>().LogInformation("INSIDE SCOPE");
+                var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
                 Console.WriteLine(ctx.Database.GetConnectionString());
 
                 var schema = ctx.Database.GenerateCreateScript();
@@ -64,6 +59,7 @@ public class Program
                 scope.ServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
             }
         }
+
         app.MapGet("/helloworld", () => "Hello World!");
         app.Use(async (context, next) =>
         {
@@ -90,10 +86,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder);
-        
+
         var app = builder.Build();
         ConfigureApp(app);
-        
+
         await app.RunAsync();
     }
 }

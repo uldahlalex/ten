@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace efscaffold.Entities;
+
 /// <summary>
-/// Data annotations on properties are used for validation in tests
+///     Data annotations on properties are used for validation in tests
 /// </summary>
 public class TickticktaskDto
 {
@@ -14,7 +15,7 @@ public class TickticktaskDto
 
     [MinLength(1)] public string Description { get; set; } = null!;
 
-    public DateTime ?DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
 
     [Range(1, 5)] public int Priority { get; set; }
 
@@ -22,7 +23,7 @@ public class TickticktaskDto
 
     [Required] public DateTime CreatedAt { get; set; }
 
-     public DateTime ?CompletedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
 
-     public virtual ICollection<TaskTagDto> TaskTags { get; set; } = new List<TaskTagDto>();
+    public virtual ICollection<TaskTagDto> TaskTags { get; set; } = new List<TaskTagDto>();
 }

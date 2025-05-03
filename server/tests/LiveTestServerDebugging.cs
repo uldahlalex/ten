@@ -5,21 +5,21 @@ using tests;
 public class IntegrationTests
 {
     private WebApplication _app = null!;
+    private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
-    private string _baseUrl = null!;
 
     [Before(Test)]
     public async Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
-        builder.DefaultTestConfig(true);
-        
+        builder.DefaultTestConfig();
+
         _app = builder.Build();
-         Program.ConfigureApp(_app);
+        Program.ConfigureApp(_app);
         await _app.StartAsync();
-        
+
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = new HttpClient();
@@ -27,7 +27,6 @@ public class IntegrationTests
     }
 
 
- 
     [Test]
     [Explicit]
     public async Task Waits()

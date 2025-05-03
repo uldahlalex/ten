@@ -5,24 +5,22 @@ using Microsoft.AspNetCore.Mvc;
 namespace api;
 
 [ApiController]
-public class TicktickTaskController( 
+public class TicktickTaskController(
     ISecurityService securityService,
     ITaskService taskService,
     ILogger<TicktickTaskController> logger) : Controller
 {
-
- 
     [HttpPost]
     [Route(nameof(GetMyTasks))]
     public async Task<ActionResult<List<TickticktaskDto>>> GetMyTasks(
         [FromHeader] string authorization,
-        [FromBody]GetTasksFilterAndOrderParameters parameters)
+        [FromBody] GetTasksFilterAndOrderParameters parameters)
     {
         var userClaims = securityService.VerifyJwtOrThrow(authorization);
         var result = await taskService.GetMyTasks(parameters, userClaims);
         return Ok(result);
     }
-    
+
     [HttpPost]
     [Route(nameof(CreateTask))]
     public async Task<ActionResult<TickticktaskDto>> CreateTask(
@@ -38,7 +36,7 @@ public class TicktickTaskController(
         logger.LogInformation(JsonSerializer.Serialize(result));
         return Ok(result);
     }
-    
+
     [HttpPatch]
     [Route(nameof(UpdateTask))]
     public async Task<ActionResult<TickticktaskDto>> UpdateTask(
@@ -49,7 +47,7 @@ public class TicktickTaskController(
         var result = await taskService.UpdateTask(dto, claims);
         return Ok(result);
     }
-    
+
     [HttpDelete]
     [Route(nameof(DeleteTask))]
     public async Task<ActionResult<TickticktaskDto>> DeleteTask(
@@ -59,7 +57,7 @@ public class TicktickTaskController(
         await taskService.DeleteTask(taskId, claims);
         return Ok();
     }
-    
+
     [HttpGet]
     [Route(nameof(GetMyTags))]
     public async Task<ActionResult<List<TagDto>>> GetMyTags(
@@ -69,7 +67,7 @@ public class TicktickTaskController(
         var result = await taskService.GetMyTags(claims);
         return Ok(result);
     }
-    
+
     [HttpGet]
     [Route(nameof(GetMyLists))]
     public async Task<ActionResult<List<TasklistDto>>> GetMyLists(
@@ -79,7 +77,4 @@ public class TicktickTaskController(
         var result = await taskService.GetMyLists(claims);
         return Ok(result);
     }
-
-    
-
 }

@@ -4,7 +4,6 @@ namespace api.Mappers;
 
 public static class MapToDtosExtensions
 {
-
     public static TasklistDto ToDto(this Tasklist entity)
     {
         var dto = new TasklistDto

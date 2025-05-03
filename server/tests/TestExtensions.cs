@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PgCtx;
 
@@ -19,29 +18,29 @@ public static class ApiTestSetupUtilities
         bool useTestContainer = true
     )
     {
+        builder.Environment.EnvironmentName = "Development";
         var appOptions = builder.Services
             .BuildServiceProvider()
             .GetRequiredService<IOptionsMonitor<AppOptions>>()
             .CurrentValue;
-        // if (useTestContainer || appOptions.RunsOn=="GitHub")
-        // {
-        //     var pgctx = new PgCtxSetup<MyDbContext>();
-        //     var startingDbCtx = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(MyDbContext));
-        //     builder.Services.Remove(startingDbCtx);
-        //     builder.Services.AddDbContext<MyDbContext>(opt =>
-        //     {
-        //         opt.UseNpgsql(pgctx._postgres.GetConnectionString());
-        //         Console.WriteLine(pgctx._postgres.GetConnectionString());
-        //         opt.EnableSensitiveDataLogging();
-        //         opt.LogTo(_ => { });
-        //     });
-        // }
-    
+        if (useTestContainer || appOptions.RunsOn == "GitHub")
+        {
+            var pgctx = new PgCtxSetup<MyDbContext>();
+            var startingDbCtx = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(MyDbContext));
+            builder.Services.Remove(startingDbCtx);
+            builder.Services.AddDbContext<MyDbContext>(opt =>
+            {
+                opt.UseNpgsql(pgctx._postgres.GetConnectionString());
+                Console.WriteLine(pgctx._postgres.GetConnectionString());
+                opt.EnableSensitiveDataLogging();
+                opt.LogTo(_ => { });
+            });
+        }
+
         builder.Services.RemoveAll<IWebHostPortAllocationService>();
         builder.Services.AddSingleton<IWebHostPortAllocationService, TestPortAllocationService>();
         return builder;
     }
-
 
 
     public static async Task<string> TestRegisterAndAddJwt(this HttpClient httpClient, string baseUrl)
@@ -55,7 +54,7 @@ public static class ApiTestSetupUtilities
                     nameof(AuthController.Register);
         var signIn = await httpClient.PostAsJsonAsync(route, registerDto);
         if (!signIn.IsSuccessStatusCode)
-            throw new Exception("Sign up failed!: "+await signIn.Content.ReadAsStringAsync());
+            throw new Exception("Sign up failed!: " + await signIn.Content.ReadAsStringAsync());
         var jwt = await signIn.Content
             .ReadAsStringAsync();
         if (string.IsNullOrEmpty(jwt))
@@ -63,7 +62,4 @@ public static class ApiTestSetupUtilities
         httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(jwt);
         return jwt;
     }
-
-  
-    
 }

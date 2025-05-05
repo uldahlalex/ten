@@ -13,13 +13,14 @@ export default function SignIn() {
         {
             (jwt == null || jwt.length < 1) ?
                 <button className="btn btn-primary" onClick={() =>
-                    authClient.register({email: Math.random() * 123 + "@gmail.com", password: "123456"}).then(r => {
+                    authClient.login({email: "test@user.dk", password: "abc"}).then(r => {
                         toast("welcome!")
                         localStorage.setItem('jwt', r);
                         setJwt(r)
-                    })}>Click to register as a test user</button>
+                    })}>Click to log in as a test user</button>
                 :
-                <>                <h1 className=" textarea-xl">you are already signed in.</h1>
+                <>          
+                    <h1 className=" textarea-xl">you are already signed in.</h1>
                     <button className="btn btn-secondary" onClick={() => {
                         localStorage.setItem('jwt', '');
                         setJwt('');

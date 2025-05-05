@@ -1,7 +1,6 @@
 import {Route, Routes, useNavigate} from "react-router";
 import useInitializeData from "../hooks/useInitializeData.tsx";
 import {DashboardRoute, SignInRoute} from '../routeConstants.ts';
-import Dock from "./Dock.tsx";
 import SignIn from "./SignIn.tsx";
 import {useEffect} from "react";
 import {useAtom} from "jotai";
@@ -30,7 +29,7 @@ export default function ApplicationRoutes() {
             <Route element={<Dashboard/>} path={DashboardRoute}/>
 
         </Routes>
-        <Dock/>
+        
 
     </>)
 }

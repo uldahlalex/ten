@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
 using JWT;
@@ -31,12 +32,16 @@ public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor) : ISecu
 
     public JwtClaims VerifyJwtOrThrow(string jwt)
     {
-        return new JwtBuilder()
+        if (string.IsNullOrEmpty(jwt))
+            throw new Exception("No JWT attached!");
+        var claims = new JwtBuilder()
             .WithAlgorithm(new HMACSHA256Algorithm())
             .WithSecret(optionsMonitor.CurrentValue.JwtSecret)
             .WithUrlEncoder(new JwtBase64UrlEncoder())
             .WithJsonSerializer(new JsonNetSerializer())
             .MustVerifySignature().Decode<JwtClaims>(jwt);
+        Validator.ValidateObject(claims, new ValidationContext(claims), true);
+        return claims;
     }
 
     public string Hash(string str)

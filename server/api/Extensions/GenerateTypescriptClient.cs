@@ -24,10 +24,8 @@ public static class GenerateTypescriptClient
             }
         };
 
-
         var generator = new TypeScriptClientGenerator(document, settings);
         var code = generator.GenerateFile();
-
 
         var outputPath = Path.Combine(Directory.GetCurrentDirectory() + path);
         Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);

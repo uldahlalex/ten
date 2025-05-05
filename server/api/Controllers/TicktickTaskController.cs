@@ -27,13 +27,10 @@ public class TicktickTaskController(
         [FromBody] CreateTaskRequestDto dto,
         [FromHeader] string authorization)
     {
-        logger.LogInformation("HERE IT IS 1");
 
         var claims = securityService.VerifyJwtOrThrow(authorization);
         var result = await taskService.CreateTask(dto, claims);
-        logger.LogInformation("HERE IT IS");
 
-        logger.LogInformation(JsonSerializer.Serialize(result));
         return Ok(result);
     }
 

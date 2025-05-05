@@ -12,8 +12,8 @@ public static class MapToDtosExtensions
             UserId = entity.UserId,
             Name = entity.Name,
             CreatedAt = entity.CreatedAt,
-            Tickticktasks = entity.Tickticktasks.Select(t => t.ToDto()).ToList(),
-            User = entity.User.ToDto()
+            Tickticktasks = entity.Tickticktasks?.Select(t => t.ToDto()).ToList(),
+            User = entity.User?.ToDto()
         };
         return dto;
     }

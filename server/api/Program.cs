@@ -40,7 +40,7 @@ public class Program
             conf.DocumentPath = "/openapi/v1.json";
         });
         app.MapControllers();
-        app.GenerateTypeScriptClient("/../client/src/generated-client.ts").Wait();
+        app.GenerateTypeScriptClient("/../../client/src/generated-client.ts").Wait();
         app.MapScalarApiReference();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         var environment = app.Environment.EnvironmentName;

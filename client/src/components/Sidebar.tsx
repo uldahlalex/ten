@@ -1,11 +1,13 @@
 import {useAtom} from "jotai";
-import {CurrentTasksDisplayView, ListsAtom} from "../atoms.ts";
+import {CurrentTasksDisplayView, JwtAtom, ListsAtom, TagsAtom} from "../atoms.ts";
 import {taskClient} from "../apiControllerClients.ts";
 
 export default function Sidebar() {
     
     
     const [lists, setLists] = useAtom(ListsAtom);
+    const [jwt, setJwt] = useAtom(JwtAtom)
+    const [tags] = useAtom(TagsAtom);
     const [, setTasks] = useAtom(CurrentTasksDisplayView)
     
     return (
@@ -19,7 +21,7 @@ export default function Sidebar() {
                 {
                     lists.map((list, index) =>  {
                     return(<li key={list.listId} onClick={() => {
-                        taskClient.getMyTasks(localStorage.getItem('jwt')!,  {
+                        taskClient.getMyTasks(jwt,  {
                             listIds: [list.listId!]
                         }).then(r => {
                             setTasks(r);
@@ -29,8 +31,25 @@ export default function Sidebar() {
                     </li>)}
                     )
                 }
-
+                <ol> Tags </ol>
+                    {
+                        tags.map((tag,  index) => {
+                            return(<li onClick={() => {
+                                const tasksForTag = taskClient.getMyTasks(jwt, {
+                                    tagIds: [tag.tagId!]
+                                }).then(r => {
+                                    setTasks(r);
+                                })
+                            }}>
+                                {
+                                    tag.name
+                                }
+                            </li>);
+                        })
+                    }
+              
             </div>
+            
         </>
     );
 }

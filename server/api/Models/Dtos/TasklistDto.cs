@@ -12,5 +12,4 @@ public class TasklistDto
 
     public virtual ICollection<TickticktaskDto> Tickticktasks { get; set; } = new List<TickticktaskDto>();
 
-    public virtual UserDto User { get; set; } = null!;
 }

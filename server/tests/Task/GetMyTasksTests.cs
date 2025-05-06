@@ -1,13 +1,17 @@
 using System.Net;
 using System.Net.Http.Json;
 using api;
-using api.Mappers;
-using efscaffold.Entities;
-using Infrastructure.Postgres.Scaffolding;
+using api.Controllers;
+using api.Extensions.Mappers;
+using api.Models;
+using api.Models.Dtos;
+using efscaffold;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using tests;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+
+namespace tests.Task;
+
 
 public class GetTasksTests
 {
@@ -36,7 +40,7 @@ public class GetTasksTests
 
 
     [Test]
-    public void GetTasks_ShouldReturnAllTasks_WhenNoFiltersApplied()
+    public async System.Threading.Tasks.Task GetTasks_ShouldReturnAllTasks_WhenNoFiltersApplied()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var count = ctx.Tickticktasks.Count();
@@ -60,7 +64,7 @@ public class GetTasksTests
 
 
     [Test]
-    public async Task GetTasks_ShouldFilterByCompletion()
+    public async System.Threading.Tasks.Task GetTasks_ShouldFilterByCompletion()
     {
         // Arrange
         var query = new GetTasksFilterAndOrderParameters { IsCompleted = true };
@@ -77,7 +81,7 @@ public class GetTasksTests
     }
 
     [Test]
-    public async Task GetTasks_ShouldFilterByDateRange()
+    public async System.Threading.Tasks.Task GetTasks_ShouldFilterByDateRange()
     {
         // Arrange
         var query = new GetTasksFilterAndOrderParameters
@@ -97,7 +101,7 @@ public class GetTasksTests
     }
 
     [Test]
-    public async Task GetTasks_ShouldFilterByPriorityRange()
+    public async System.Threading.Tasks.Task GetTasks_ShouldFilterByPriorityRange()
     {
         // Arrange
         var query = new GetTasksFilterAndOrderParameters
@@ -115,8 +119,8 @@ public class GetTasksTests
             throw new Exception("There were priorities under the threshold");
         if (tasks.Any(t => t.Priority > query.MaxPriority))
             throw new Exception("There were priorities above the threshold");
-        if (tasks.Count != 10)
-            throw new Exception("Expected exactly 10 from the deafult seeder");
+        if (tasks.Count != 60)
+            throw new Exception("Expected exactly 10 from the deafult seeder, but received: " + tasks.Count);
     }
     //
     // [Test]

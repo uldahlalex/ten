@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
 using api;
-using Infrastructure.Postgres.Scaffolding;
+using api.Controllers;
+using api.Services;
+using efscaffold;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +16,7 @@ public class RegisterTestsSuccess
     private IServiceProvider _scopedServiceProvider = null!;
 
     [Before(Test)]
-    public async Task Setup()
+    public async System.Threading.Tasks.Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
@@ -31,7 +33,7 @@ public class RegisterTestsSuccess
     }
 
     [Test]
-    public async Task WhenUserRegistersWithValidCredentials_TheyGetValidJwtBack()
+    public async System.Threading.Tasks.Task WhenUserRegistersWithValidCredentials_TheyGetValidJwtBack()
     {
         var reqDto = new AuthRequestDto
         {

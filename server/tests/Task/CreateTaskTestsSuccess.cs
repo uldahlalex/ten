@@ -2,13 +2,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 using api;
-using efscaffold.Entities;
-using Infrastructure.Postgres.Scaffolding;
+using api.Controllers;
+using api.Models.Dtos;
+using api.Models.Dtos.Requests;
+using efscaffold;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace tests;
+namespace tests.Task;
 
 public class CreateTaskTestsSuccess
 {
@@ -18,7 +20,7 @@ public class CreateTaskTestsSuccess
     private IServiceProvider _scopedServiceProvider = null!;
 
     [Before(Test)]
-    public async Task Setup()
+    public async System.Threading.Tasks.Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
@@ -36,7 +38,7 @@ public class CreateTaskTestsSuccess
 
 
     [Test]
-    public async Task CreateTask_ShouldReturnOk_WhenValidRequest()
+    public async System.Threading.Tasks.Task CreateTask_ShouldReturnOk_WhenValidRequest()
     {
         var logger = _scopedServiceProvider.GetRequiredService<ILogger<string>>();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();

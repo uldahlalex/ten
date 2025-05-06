@@ -1,12 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api;
+namespace api.Models.Dtos.Requests;
 
 public class UpdateTagRequestDto
 {
-    [Required]
-    public string TagId { get; set; }
-    [Required]
+    [Required] public string TagId { get; set; }
 
-    public string NewName { get; set; }
+    [Required] public string NewName { get; set; }
 }

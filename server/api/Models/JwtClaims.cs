@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api;
+namespace api.Models;
 
 public class JwtClaims
 {
-    [MinLength(1)]
-    public string Id { get; set; }
+    [MinLength(1)] public string Id { get; set; }
 }

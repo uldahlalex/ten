@@ -1,23 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace efscaffold.Entities;
+namespace api.Models.Dtos;
 
 public class TasklistDto
 {
-    [Required]
+    [Required] public string ListId { get; set; } = null!;
 
-    public string ListId { get; set; } = null!;
-    [Required]
+    [Required] public string UserId { get; set; } = null!;
 
-    public string UserId { get; set; } = null!;
-    [Required]
+    [Required] public string Name { get; set; } = null!;
 
-    public string Name { get; set; } = null!;
-    [Required]
+    [Required] public DateTime CreatedAt { get; set; }
 
-    public DateTime CreatedAt { get; set; }
- 
 
-   //   [Required] public virtual ICollection<TickticktaskDto> Tickticktasks { get; set; } = new List<TickticktaskDto>(); //todo er denne i praktisk brug i client app og fetcher vi overhovedet med EF?
-
+    //   [Required] public virtual ICollection<TickticktaskDto> Tickticktasks { get; set; } = new List<TickticktaskDto>(); //todo er denne i praktisk brug i client app og fetcher vi overhovedet med EF?
 }

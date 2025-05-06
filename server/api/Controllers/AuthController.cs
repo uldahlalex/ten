@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using api.Services;
+using efscaffold;
 using efscaffold.Entities;
-using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api;
+namespace api.Controllers;
 
 [ApiController]
 public class AuthController(ISecurityService securityService, MyDbContext ctx) : ControllerBase

@@ -1,32 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace efscaffold.Entities;
+namespace api.Models.Dtos;
 
 public class UserDto
 {
-    [Required]
+    [Required] public string UserId { get; set; } = null!;
 
-    public string UserId { get; set; } = null!;
-    [Required]
+    [Required] public string Email { get; set; } = null!;
 
-    public string Email { get; set; } = null!;
-    [Required]
+    [Required] public string Salt { get; set; } = null!;
 
+    [Required] public string PasswordHash { get; set; } = null!;
 
-    public string Salt { get; set; } = null!;
-    [Required]
+    [Required] public string Role { get; set; } = null!;
 
-    public string PasswordHash { get; set; } = null!;
-    [Required]
+    [Required] public DateTime CreatedAt { get; set; }
 
-    public string Role { get; set; } = null!;
-    [Required]
+    [Required] public virtual ICollection<TagDto> Tags { get; set; } = new List<TagDto>();
 
-    public DateTime CreatedAt { get; set; }
-    [Required]
-
-    public virtual ICollection<TagDto> Tags { get; set; } = new List<TagDto>();
-    [Required]
-
-    public virtual ICollection<TasklistDto> Tasklists { get; set; } = new List<TasklistDto>();
+    [Required] public virtual ICollection<TasklistDto> Tasklists { get; set; } = new List<TasklistDto>();
 }

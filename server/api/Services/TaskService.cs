@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations;
-using api.Mappers;
+using api.Extensions.Mappers;
+using api.Models;
+using api.Models.Dtos;
+using api.Models.Dtos.Requests;
+using efscaffold;
 using efscaffold.Entities;
-using Infrastructure.Postgres.Scaffolding;
 using Microsoft.EntityFrameworkCore;
 
-namespace api;
+namespace api.Services;
 
 public class TaskService(ISecurityService securityService, MyDbContext ctx, ILogger<TaskService> logger) : ITaskService
 {
@@ -103,7 +106,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
         ctx.Tickticktasks.Update(existing);
         ctx.SaveChanges();
-        
+
         return existing.ToDto();
     }
 
@@ -135,7 +138,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public async Task<TasklistDto> CreateList(JwtClaims claims, CreateListRequestDto dto)
     {
-        var tasList = new Tasklist()
+        var tasList = new Tasklist
         {
             CreatedAt = DateTime.UtcNow,
             ListId = Guid.NewGuid().ToString(),
@@ -149,7 +152,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public async Task<TagDto> CreateTag(JwtClaims claims, CreateTagRequestDto dto)
     {
-        var tag = new Tag()
+        var tag = new Tag
         {
             CreatedAt = DateTime.UtcNow,
             Name = dto.TagName,
@@ -184,16 +187,11 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     public async Task DeleteListWithAllTasks(string listId, JwtClaims claims)
     {
         var tasks = ctx.Tickticktasks.Where(t => t.ListId == listId).ToList();
-        foreach (var task in tasks)
-        {
-            ctx.Tickticktasks.Remove(task);
-        }
+        foreach (var task in tasks) ctx.Tickticktasks.Remove(task);
         ctx.SaveChanges();
         var list = ctx.Tasklists.First(t => t.ListId == listId);
         ctx.Tasklists.Remove(list);
         ctx.SaveChanges();
-        
-        
     }
 
     public async Task DeleteTag(string tagId, JwtClaims claims)
@@ -205,14 +203,13 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public async Task<TaskTagDto> AddTagToTask(JwtClaims claims, ChangeTaskTagRequestDto dto)
     {
-     
         var existingTag = ctx.TaskTags.FirstOrDefault(t => t.TagId == dto.TagId && t.TaskId == dto.TaskId);
 
-        if (existingTag!=null)
+        if (existingTag != null)
             throw new Exception("Task already has this tag");
 
 
-        var taskTag = new TaskTag()
+        var taskTag = new TaskTag
         {
             CreatedAt = DateTime.UtcNow,
             TagId = dto.TagId,

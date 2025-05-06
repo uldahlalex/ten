@@ -1,6 +1,7 @@
+using api.Models.Dtos;
 using efscaffold.Entities;
 
-namespace api.Mappers;
+namespace api.Extensions.Mappers;
 
 public static class MapToDtosExtensions
 {
@@ -11,7 +12,7 @@ public static class MapToDtosExtensions
             ListId = entity.ListId,
             UserId = entity.UserId,
             Name = entity.Name,
-            CreatedAt = entity.CreatedAt,
+            CreatedAt = entity.CreatedAt
             //Tickticktasks = entity.Tickticktasks.Select(t => t.ToDto()).ToList() ?? throw new Exception("Failed to get tasks for list (null)"),
         };
         return dto;

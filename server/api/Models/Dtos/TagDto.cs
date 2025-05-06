@@ -1,18 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace efscaffold.Entities;
+namespace api.Models.Dtos;
 
 public class TagDto
 {
-    [Required]
-    public string TagId { get; set; } = null!;
-    [Required]
+    [Required] public string TagId { get; set; } = null!;
 
-    public string Name { get; set; } = null!;
-    [Required]
+    [Required] public string Name { get; set; } = null!;
 
-    public string UserId { get; set; } = null!;
-    [Required]
+    [Required] public string UserId { get; set; } = null!;
 
-    public DateTime CreatedAt { get; set; }
+    [Required] public DateTime CreatedAt { get; set; }
 }

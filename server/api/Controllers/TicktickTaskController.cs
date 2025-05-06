@@ -1,7 +1,10 @@
-using efscaffold.Entities;
+using api.Models;
+using api.Models.Dtos;
+using api.Models.Dtos.Requests;
+using api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api;
+namespace api.Controllers;
 
 [ApiController]
 public class TicktickTaskController(
@@ -26,7 +29,6 @@ public class TicktickTaskController(
         [FromBody] CreateTaskRequestDto dto,
         [FromHeader] string authorization)
     {
-
         var claims = securityService.VerifyJwtOrThrow(authorization);
         var result = await taskService.CreateTask(dto, claims);
 
@@ -76,18 +78,18 @@ public class TicktickTaskController(
 
     [HttpPost]
     [Route(nameof(CreateList))]
-    public async Task<ActionResult<TasklistDto>> CreateList([FromHeader]string authorization,
-        [FromBody]CreateListRequestDto dto)
+    public async Task<ActionResult<TasklistDto>> CreateList([FromHeader] string authorization,
+        [FromBody] CreateListRequestDto dto)
     {
         var claims = securityService.VerifyJwtOrThrow(authorization);
         var result = await taskService.CreateList(claims, dto);
         return Ok(result);
     }
-    
+
     [HttpPost]
     [Route(nameof(CreateTag))]
-    public async Task<ActionResult<TagDto>> CreateTag([FromHeader]string authorization,
-        [FromBody]CreateTagRequestDto dto)
+    public async Task<ActionResult<TagDto>> CreateTag([FromHeader] string authorization,
+        [FromBody] CreateTagRequestDto dto)
     {
         var claims = securityService.VerifyJwtOrThrow(authorization);
         var result = await taskService.CreateTag(claims, dto);
@@ -103,6 +105,7 @@ public class TicktickTaskController(
         var result = await taskService.UpdateList(claims, dto);
         return Ok(result);
     }
+
     [HttpPut]
     [Route(nameof(UpdateTag))]
     public async Task<ActionResult<TagDto>> UpdateTag(
@@ -113,7 +116,7 @@ public class TicktickTaskController(
         var result = await taskService.UpdateTag(claims, dto);
         return Ok(result);
     }
-    
+
     [HttpDelete]
     [Route(nameof(DeleteListWithTasks))]
     public async Task<ActionResult> DeleteListWithTasks(
@@ -123,7 +126,7 @@ public class TicktickTaskController(
         await taskService.DeleteListWithAllTasks(listId, claims);
         return Ok();
     }
-    
+
     [HttpDelete]
     [Route(nameof(DeleteTag))]
     public async Task<ActionResult> DeleteTag(
@@ -133,24 +136,24 @@ public class TicktickTaskController(
         await taskService.DeleteTag(tagId, claims);
         return Ok();
     }
-    
+
     [HttpPut]
     [Route(nameof(AddTaskTag))]
-    public async Task<ActionResult<TaskTagDto>> AddTaskTag([FromHeader]string authorization, [FromBody]ChangeTaskTagRequestDto dto)
+    public async Task<ActionResult<TaskTagDto>> AddTaskTag([FromHeader] string authorization,
+        [FromBody] ChangeTaskTagRequestDto dto)
     {
         var claims = securityService.VerifyJwtOrThrow(authorization);
         var result = await taskService.AddTagToTask(claims, dto);
         return Ok(result);
     }
-    
+
     [HttpPut]
     [Route(nameof(RemoveTaskTag))]
-    public async Task<ActionResult> RemoveTaskTag([FromHeader]string authorization, [FromBody]ChangeTaskTagRequestDto dto)
+    public async Task<ActionResult> RemoveTaskTag([FromHeader] string authorization,
+        [FromBody] ChangeTaskTagRequestDto dto)
     {
         var claims = securityService.VerifyJwtOrThrow(authorization);
         await taskService.RemoveTaskTag(claims, dto);
         return Ok();
     }
-    
-    
 }

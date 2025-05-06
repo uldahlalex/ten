@@ -1,3 +1,5 @@
+namespace api.Models;
+
 /// <summary>
 ///     deliberately using ? operator for properties such that no default values are assigned and i can always check for
 ///     nulls

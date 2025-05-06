@@ -1,14 +1,12 @@
 using System.ComponentModel.DataAnnotations;
-using efscaffold.Entities;
 
-namespace api;
+namespace api.Models.Dtos.Requests;
 
 public class CreateTaskRequestDto
 {
-    [Required]
-    public string ListId { get; set; } = null!;
+    [Required] public string ListId { get; set; } = null!;
 
-    [MinLength(1)][Required] public string Title { get; set; } = null!;
+    [MinLength(1)] [Required] public string Title { get; set; } = null!;
 
     [MinLength(1)] [Required] public string Description { get; set; } = null!;
 

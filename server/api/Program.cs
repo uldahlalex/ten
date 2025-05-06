@@ -1,10 +1,13 @@
 using System.Text.Json;
-using api;
+using api.Extensions;
 using api.Seeder;
-using Infrastructure.Postgres.Scaffolding;
+using api.Services;
+using efscaffold;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+
+namespace api;
 
 public class Program
 {
@@ -20,7 +23,11 @@ public class Program
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
         // var pgCtx = new PgCtxSetup<MyDbContext>();
-        builder.Services.AddDbContext<MyDbContext>(ctx => { ctx.UseNpgsql(appOptions.DbConnectionString); });
+        builder.Services.AddDbContext<MyDbContext>(options =>
+        {
+            options.UseNpgsql(appOptions.DbConnectionString);
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();

@@ -1,1 +1,1 @@
-dotnet run --treenode-filter /*/*/CreateTaskTestsSuccess/* --verbosity normal
+dotnet run --treenode-filter /*/*/UpdateTask_CanSuccessfullyUpdateTask/* --verbosity normal

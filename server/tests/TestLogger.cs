@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
 
+namespace tests;
+
 public class TestLogger : ILogger
 {
     private readonly List<string> _logMessages = new();

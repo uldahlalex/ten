@@ -1,7 +1,9 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using api;
-using Infrastructure.Postgres.Scaffolding;
+using api.Controllers;
+using api.Models;
+using efscaffold;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +36,7 @@ public static class ApiTestSetupUtilities
                 Console.WriteLine(pgctx._postgres.GetConnectionString());
                 opt.EnableSensitiveDataLogging();
                 opt.LogTo(_ => { });
+                opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
         }
 

@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
+using api.Models;
 using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Serializers;
 using Microsoft.Extensions.Options;
 
-namespace api;
+namespace api.Services;
 
 public interface ISecurityService
 {

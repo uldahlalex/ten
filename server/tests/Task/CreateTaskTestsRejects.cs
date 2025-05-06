@@ -1,11 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
 using api;
-using Infrastructure.Postgres.Scaffolding;
+using api.Controllers;
+using api.Models.Dtos.Requests;
+using efscaffold;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace tests;
+namespace tests.Task;
 
 public class CreateTaskTestsRejects
 {
@@ -15,7 +17,7 @@ public class CreateTaskTestsRejects
     private IServiceProvider _scopedServiceProvider = null!;
 
     [Before(Test)]
-    public async Task Setup()
+    public async System.Threading.Tasks.Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
@@ -39,7 +41,8 @@ public class CreateTaskTestsRejects
     [Arguments("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 0)] //invalid priority: not in range
     [Arguments("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 6)] //invalid priority: empty
     [Arguments("asdsad", "asdsad", "2000-04-25T20:22:50.657021Z", 1)] //invalid due date: it is in the past
-    public async Task CreateTask_ShouldBeRejects_IfDtoDoesNotLiveUpToValidationRequirements(string title,
+    public async System.Threading.Tasks.Task CreateTask_ShouldBeRejects_IfDtoDoesNotLiveUpToValidationRequirements(
+        string title,
         string description, string timestamp, int priority)
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();

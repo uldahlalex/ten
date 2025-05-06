@@ -1,6 +1,8 @@
+using api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using tests;
+
+namespace tests;
 
 public class IntegrationTests
 {
@@ -10,7 +12,7 @@ public class IntegrationTests
     private IServiceProvider _scopedServiceProvider = null!;
 
     [Before(Test)]
-    public async Task Setup()
+    public async System.Threading.Tasks.Task Setup()
     {
         var builder = WebApplication.CreateBuilder();
         Program.ConfigureServices(builder);
@@ -29,7 +31,7 @@ public class IntegrationTests
 
     [Test]
     [Explicit]
-    public async Task Waits()
+    public async System.Threading.Tasks.Task Waits()
     {
         //Pause test indefinitely
         Console.ReadLine();

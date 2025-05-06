@@ -18,6 +18,6 @@ public class UpdateTaskRequestDto
 
     public DateTime? DueDate { get; set; }
 
-    [Range(1, 5)] public int Priority { get; set; }
+    [Range(1, 5)] [Required] public int Priority { get; set; }
 
 }

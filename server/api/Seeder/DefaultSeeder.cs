@@ -125,7 +125,7 @@ public class DefaultEnvironment(ILogger<EmptyEnvironment> logger) : ISeeder
                     Title = TaskTitles[i % TaskTitles.Length],
                     Description = TaskDescriptions[i % TaskDescriptions.Length],
                     DueDate = DateTime.UtcNow.AddDays(i),
-                    Priority = 5 % (i + 1),
+                    Priority = i % 5 + 1,
                     Completed = completed,
                     CreatedAt = DateTime.UtcNow.AddDays(i),
                     CompletedAt = completed ? DateTime.UtcNow.Subtract(TimeSpan.FromHours(i)) : null,

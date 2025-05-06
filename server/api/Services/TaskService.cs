@@ -86,9 +86,6 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public async Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, JwtClaims claims)
     {
-        if (dto.DueDate < DateTime.UtcNow)
-            throw new ValidationException("Due date cannot be in the past");
-
         var existing = ctx.Tickticktasks
             .Include(t => t.TaskTags)
             .First(t => t.TaskId == dto.Id);

@@ -2,6 +2,7 @@ import {authClient} from "../apiControllerClients.ts";
 import toast from "react-hot-toast";
 import {useAtom} from "jotai";
 import {JwtAtom} from "../atoms.ts";
+import {AuthRequestDto} from "../generated-client.ts";
 
 export default function SignIn() {
 
@@ -13,7 +14,7 @@ export default function SignIn() {
         {
             (jwt == null || jwt.length < 1) ?
                 <button className="btn btn-primary" onClick={() =>
-                    authClient.login({email: "test@user.dk", password: "abc"}).then(r => {
+                    authClient.login(new AuthRequestDto({email: "test@user.dk", password: "abc"})).then(r => {
                         toast("welcome!")
                         localStorage.setItem('jwt', r);
                         setJwt(r)

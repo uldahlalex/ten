@@ -722,14 +722,14 @@ export interface IAuthRequestDto {
 export class TickticktaskDto implements ITickticktaskDto {
     taskId!: string;
     listId!: string;
-    title?: string;
-    description?: string;
+    title!: string;
+    description!: string;
     dueDate?: Date | undefined;
-    priority?: number;
+    priority!: number;
     completed!: boolean;
     createdAt!: Date;
     completedAt?: Date | undefined;
-    taskTags?: TaskTagDto[];
+    taskTags!: TaskTagDto[];
 
     constructor(data?: ITickticktaskDto) {
         if (data) {
@@ -737,6 +737,9 @@ export class TickticktaskDto implements ITickticktaskDto {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.taskTags = [];
         }
     }
 
@@ -789,14 +792,14 @@ export class TickticktaskDto implements ITickticktaskDto {
 export interface ITickticktaskDto {
     taskId: string;
     listId: string;
-    title?: string;
-    description?: string;
+    title: string;
+    description: string;
     dueDate?: Date | undefined;
-    priority?: number;
+    priority: number;
     completed: boolean;
     createdAt: Date;
     completedAt?: Date | undefined;
-    taskTags?: TaskTagDto[];
+    taskTags: TaskTagDto[];
 }
 
 export class TaskTagDto implements ITaskTagDto {
@@ -1002,7 +1005,7 @@ export class UpdateTaskRequestDto implements IUpdateTaskRequestDto {
     title!: string;
     description!: string;
     dueDate?: Date | undefined;
-    priority?: number;
+    priority!: number;
 
     constructor(data?: IUpdateTaskRequestDto) {
         if (data) {
@@ -1052,14 +1055,14 @@ export interface IUpdateTaskRequestDto {
     title: string;
     description: string;
     dueDate?: Date | undefined;
-    priority?: number;
+    priority: number;
 }
 
 export class TagDto implements ITagDto {
-    tagId?: string;
-    name?: string;
-    userId?: string;
-    createdAt?: Date;
+    tagId!: string;
+    name!: string;
+    userId!: string;
+    createdAt!: Date;
 
     constructor(data?: ITagDto) {
         if (data) {
@@ -1097,18 +1100,17 @@ export class TagDto implements ITagDto {
 }
 
 export interface ITagDto {
-    tagId?: string;
-    name?: string;
-    userId?: string;
-    createdAt?: Date;
+    tagId: string;
+    name: string;
+    userId: string;
+    createdAt: Date;
 }
 
 export class TasklistDto implements ITasklistDto {
-    listId?: string;
-    userId?: string;
-    name?: string;
-    createdAt?: Date;
-    tickticktasks?: TickticktaskDto[];
+    listId!: string;
+    userId!: string;
+    name!: string;
+    createdAt!: Date;
 
     constructor(data?: ITasklistDto) {
         if (data) {
@@ -1125,11 +1127,6 @@ export class TasklistDto implements ITasklistDto {
             this.userId = _data["userId"];
             this.name = _data["name"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
-            if (Array.isArray(_data["tickticktasks"])) {
-                this.tickticktasks = [] as any;
-                for (let item of _data["tickticktasks"])
-                    this.tickticktasks!.push(TickticktaskDto.fromJS(item));
-            }
         }
     }
 
@@ -1146,21 +1143,15 @@ export class TasklistDto implements ITasklistDto {
         data["userId"] = this.userId;
         data["name"] = this.name;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
-        if (Array.isArray(this.tickticktasks)) {
-            data["tickticktasks"] = [];
-            for (let item of this.tickticktasks)
-                data["tickticktasks"].push(item ? item.toJSON() : <any>undefined);
-        }
         return data;
     }
 }
 
 export interface ITasklistDto {
-    listId?: string;
-    userId?: string;
-    name?: string;
-    createdAt?: Date;
-    tickticktasks?: TickticktaskDto[];
+    listId: string;
+    userId: string;
+    name: string;
+    createdAt: Date;
 }
 
 export class CreateListRequestDto implements ICreateListRequestDto {

@@ -11,13 +11,13 @@ public class TickticktaskDto
 
     [Required] public string ListId { get; set; } = null!;
 
-    [MinLength(1)] public string Title { get; set; } = null!;
+    [MinLength(1)][Required] public string Title { get; set; } = null!;
 
-    [MinLength(1)] public string Description { get; set; } = null!;
+    [MinLength(1)][Required] public string Description { get; set; } = null!;
 
     public DateTime? DueDate { get; set; }
 
-    [Range(1, 5)] public int Priority { get; set; }
+    [Range(1, 5)] [Required] public int Priority { get; set; }
 
     [Required] public bool Completed { get; set; }
 
@@ -25,5 +25,6 @@ public class TickticktaskDto
 
     public DateTime? CompletedAt { get; set; }
 
+    [Required]
     public virtual ICollection<TaskTagDto> TaskTags { get; set; } = new List<TaskTagDto>();
 }

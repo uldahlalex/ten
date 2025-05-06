@@ -36,9 +36,9 @@ export default function Sidebar() {
                     {
                         tags.map((tag,  index) => {
                             return(<li key={tag.tagId} onClick={() => {
-                                const tasksForTag = taskClient.getMyTasks(jwt, {
+                               taskClient.getMyTasks(jwt, new GetTasksFilterAndOrderParameters({
                                     tagIds: [tag.tagId!]
-                                }).then(r => {
+                                })).then(r => {
                                     setTasks(r);
                                 })
                             }}>

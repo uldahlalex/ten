@@ -10,7 +10,7 @@ public class CreateTaskRequestDto
 
     [MinLength(1)] [Required] public string Description { get; set; } = null!;
 
-    public DateTime DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
 
     [Range(1, 5)] [Required] public int Priority { get; set; }
 

@@ -938,7 +938,7 @@ export class CreateTaskRequestDto implements ICreateTaskRequestDto {
     listId!: string;
     title!: string;
     description!: string;
-    dueDate?: Date;
+    dueDate?: Date | undefined;
     priority!: number;
     taskTagsDtos?: TaskTagDto[];
 
@@ -993,7 +993,7 @@ export interface ICreateTaskRequestDto {
     listId: string;
     title: string;
     description: string;
-    dueDate?: Date;
+    dueDate?: Date | undefined;
     priority: number;
     taskTagsDtos?: TaskTagDto[];
 }

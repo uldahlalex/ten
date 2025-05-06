@@ -60,10 +60,9 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public async Task<TickticktaskDto> CreateTask(CreateTaskRequestDto dto, JwtClaims jwtClaims)
     {
-        if (dto.DueDate < DateTime.UtcNow)
+        if (dto.DueDate!=null && dto.DueDate < DateTime.UtcNow)
             throw new ValidationException("Due date cannot be in the past");
 
-        var list = ctx.Tasklists.First(list => list.ListId == dto.ListId);
         var tags = dto.TaskTagsDtos.Select(taskTagDto =>
             ctx.TaskTags.First(tag => tag.TagId == taskTagDto.TagId)).ToList();
 
@@ -78,7 +77,6 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
             CreatedAt = DateTime.UtcNow,
             Completed = false,
             CompletedAt = null,
-            List = list,
             TaskTags = tags
         };
 

@@ -1,6 +1,14 @@
 Aktuelt:
 
-      System.NullReferenceException: Object reference not set to an instance of an object.
+deno
 
+server app
+      - create tag, list
+      - update tag, list
+      - task update TEST
+      - tag update TEST
+      - list update TEST
 
-- client app
+client app
+
+      - create list, tag, task, update any of these

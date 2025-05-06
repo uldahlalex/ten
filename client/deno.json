@@ -1,0 +1,65 @@
+{
+  "tasks": {
+    "dev": "deno run -A --node-modules-dir npm:vite",
+    "build": "deno check **/*.ts && deno run -A --node-modules-dir npm:vite build",
+    "preview": "deno run -A --node-modules-dir npm:vite preview",
+    "lint": "deno lint **/*.ts{,x}"
+  },
+  "imports": {
+    "react": "npm:react",
+    "react-dom": "npm:react-dom",
+    "react-dom/client": "npm:react-dom/client",
+    "jotai": "npm:jotai",
+    "jotai-devtools": "npm:jotai-devtools",
+    "react-hot-toast": "npm:react-hot-toast",
+    "react-router": "npm:react-router",
+    "tailwindcss": "npm:tailwindcss",
+    "daisyui": "npm:daisyui",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "target": "esnext",
+    "strict": true,
+
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "allowArbitraryExtensions": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+
+    // Type checking
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "types": [
+      "npm:@types/react",
+      "npm:@types/react-dom"
+    ],
+
+    "allowJs": true,
+    "checkJs": false
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"],
+      "include": ["ban-untagged-todo"]
+    }
+  },
+  "fmt": {
+    "options": {
+      "singleQuote": true,
+      "semi": false,
+      "proseWrap": "always",
+      "lineWidth": 80
+    }
+  }
+}

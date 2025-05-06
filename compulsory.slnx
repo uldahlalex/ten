@@ -1,7 +1,0 @@
-<Solution>
-    <Folder Name="server">
-        <Project Path="server/api/api.csproj" DisplayName="api" Type="Classic C#"/>
-        <Project Path="server/tests/tests.csproj" DisplayName="tests" Type="Classic C#"/>
-        <Project Path="server/efscaffold/efscaffold.csproj" DisplayName="efscaffold" Type="Classic C#"/>
-    </Folder>
-</Solution>

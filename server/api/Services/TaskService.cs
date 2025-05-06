@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using api.Mappers;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
+using Microsoft.EntityFrameworkCore;
 
 namespace api;
 
@@ -10,7 +11,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     public async Task<List<TickticktaskDto>> GetMyTasks(GetTasksFilterAndOrderParameters parameters,
         JwtClaims jwtClaims)
     {
-        IQueryable<Tickticktask> query = ctx.Tickticktasks;
+        IQueryable<Tickticktask> query = ctx.Tickticktasks.Include(t => t.TaskTags);
         if (parameters.ListIds != null && parameters.ListIds?.Count > 0)
             //Logical OR inclusion (list belongs to user, so no need to check for user)
             query = query.Where(task => parameters.ListIds.Contains(task.ListId));
@@ -88,24 +89,24 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         if (dto.DueDate < DateTime.UtcNow)
             throw new ValidationException("Due date cannot be in the past");
 
-        var existing = ctx.Tickticktasks.First(t => t.TaskId == dto.Id);
+        var existing = ctx.Tickticktasks
+            .Include(t => t.TaskTags)
+            .First(t => t.TaskId == dto.Id);
 
         var newList = ctx.Tasklists.First(list => list.ListId == dto.ListId);
-        var newTags = dto.TaskTagsDtos.Select(taskTagDto =>
-            ctx.TaskTags.First(tag => tag.TagId == taskTagDto.TagId)).ToList();
 
         existing.Title = dto.Title;
         existing.Description = dto.Description;
         existing.DueDate = dto.DueDate;
         existing.Priority = dto.Priority;
         existing.List = newList;
-        existing.TaskTags = newTags;
         existing.Completed = dto.Completed;
         existing.CompletedAt = dto.Completed ? DateTime.UtcNow : null;
 
 
         ctx.Tickticktasks.Update(existing);
         ctx.SaveChanges();
+        
         return existing.ToDto();
     }
 
@@ -134,6 +135,105 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
             .ToList();
         return Task.FromResult(tags);
     }
+
+    public async Task<TasklistDto> CreateList(JwtClaims claims, CreateListRequestDto dto)
+    {
+        var tasList = new Tasklist()
+        {
+            CreatedAt = DateTime.UtcNow,
+            ListId = Guid.NewGuid().ToString(),
+            Name = dto.ListName,
+            UserId = claims.Id
+        };
+        ctx.Tasklists.Add(tasList);
+        ctx.SaveChanges();
+        return tasList.ToDto();
+    }
+
+    public async Task<TagDto> CreateTag(JwtClaims claims, CreateTagRequestDto dto)
+    {
+        var tag = new Tag()
+        {
+            CreatedAt = DateTime.UtcNow,
+            Name = dto.TagName,
+            UserId = claims.Id,
+            TagId = Guid.NewGuid().ToString()
+        };
+        ctx.Tags.Add(tag);
+        ctx.SaveChanges();
+        return tag.ToDto();
+    }
+
+    public async Task<TasklistDto> UpdateList(JwtClaims claims, UpdateListRequestDto dto)
+    {
+        var taskList = ctx.Tasklists.FirstOrDefault(t => t.ListId == dto.ListId) ??
+                       throw new Exception("Could not find list with id " + dto.ListId);
+        taskList.Name = dto.NewName;
+        ctx.Tasklists.Update(taskList);
+        ctx.SaveChanges();
+        return taskList.ToDto();
+    }
+
+    public async Task<TagDto> UpdateTag(JwtClaims claims, UpdateTagRequestDto dto)
+    {
+        var tag = ctx.Tags.FirstOrDefault(t => t.TagId == dto.TagId) ??
+                  throw new Exception("Could not find tag with ID " + dto.TagId);
+        tag.Name = dto.NewName;
+        ctx.Tags.Update(tag);
+        ctx.SaveChanges();
+        return tag.ToDto();
+    }
+
+    public async Task DeleteListWithAllTasks(string listId, JwtClaims claims)
+    {
+        var tasks = ctx.Tickticktasks.Where(t => t.ListId == listId).ToList();
+        foreach (var task in tasks)
+        {
+            ctx.Tickticktasks.Remove(task);
+        }
+        ctx.SaveChanges();
+        var list = ctx.Tasklists.First(t => t.ListId == listId);
+        ctx.Tasklists.Remove(list);
+        ctx.SaveChanges();
+        
+        
+    }
+
+    public async Task DeleteTag(string tagId, JwtClaims claims)
+    {
+        var tag = ctx.Tags.First(t => t.TagId == tagId);
+        ctx.Tags.Remove(tag);
+        ctx.SaveChanges();
+    }
+
+    public async Task<TaskTagDto> AddTagToTask(JwtClaims claims, ChangeTaskTagRequestDto dto)
+    {
+     
+        var existingTag = ctx.TaskTags.FirstOrDefault(t => t.TagId == dto.TagId && t.TaskId == dto.TaskId);
+
+        if (existingTag!=null)
+            throw new Exception("Task already has this tag");
+
+
+        var taskTag = new TaskTag()
+        {
+            CreatedAt = DateTime.UtcNow,
+            TagId = dto.TagId,
+            TaskId = dto.TaskId
+        };
+        ctx.TaskTags.Add(taskTag);
+        ctx.SaveChanges();
+        return taskTag.ToDto();
+    }
+
+    public async Task RemoveTaskTag(JwtClaims claims, ChangeTaskTagRequestDto dto)
+    {
+        var taskTag = ctx.TaskTags.FirstOrDefault(t => t.TagId == dto.TagId && t.TaskId == dto.TaskId);
+        if (taskTag == null)
+            throw new Exception("Task does not have this tag");
+        ctx.TaskTags.Remove(taskTag);
+        ctx.SaveChanges();
+    }
 }
 
 public interface ITaskService
@@ -144,4 +244,13 @@ public interface ITaskService
     Task DeleteTask(string taskId, JwtClaims claims);
     Task<List<TasklistDto>> GetMyLists(JwtClaims claims);
     Task<List<TagDto>> GetMyTags(JwtClaims claims);
+    Task<TasklistDto> CreateList(JwtClaims claims, CreateListRequestDto dto);
+    Task<TagDto> CreateTag(JwtClaims claims, CreateTagRequestDto dto);
+    Task<TasklistDto> UpdateList(JwtClaims claims, UpdateListRequestDto dto);
+    Task<TagDto> UpdateTag(JwtClaims claims, UpdateTagRequestDto dto);
+
+    Task DeleteListWithAllTasks(string listId, JwtClaims claims);
+    Task DeleteTag(string tagId, JwtClaims claims);
+    Task<TaskTagDto> AddTagToTask(JwtClaims claims, ChangeTaskTagRequestDto dto);
+    Task RemoveTaskTag(JwtClaims claims, ChangeTaskTagRequestDto dto);
 }

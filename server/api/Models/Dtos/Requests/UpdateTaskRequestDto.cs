@@ -17,5 +17,4 @@ public class UpdateTaskRequestDto
 
     [Range(1, 5)] public int Priority { get; set; }
 
-    public virtual ICollection<TaskTagDto> TaskTagsDtos { get; set; } = new List<TaskTagDto>();
 }

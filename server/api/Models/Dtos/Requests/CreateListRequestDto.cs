@@ -4,6 +4,6 @@ namespace api;
 
 public class CreateListRequestDto
 {
-    [MinLength(1)]
+    [MinLength(1)] [Required]
     public string ListName { get; set; }
 }

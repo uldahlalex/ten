@@ -15,7 +15,7 @@ public static class GenerateTypescriptClient
             Template = TypeScriptTemplate.Fetch,
             TypeScriptGeneratorSettings =
             {
-                TypeStyle = TypeScriptTypeStyle.Interface,
+                TypeStyle = TypeScriptTypeStyle.Class,
                 DateTimeType = TypeScriptDateTimeType.Date,
                 NullValue = TypeScriptNullValue.Undefined,
                 TypeScriptVersion = 5.2m,

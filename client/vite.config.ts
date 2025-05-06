@@ -1,16 +1,16 @@
-import { defineConfig } from 'npm:vite'
-import react from 'npm:@vitejs/plugin-react'
-import tailwindcss from 'npm:@tailwindcss/vite'
-import daisyui from 'npm:daisyui'
+import daisyui from 'daisyui'
+import {defineConfig} from "vite";
+import tailwindcss from "@tailwindcss/vite";
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss({
-      plugins: [daisyui]
-    })
-  ],
-  server: {
-    port: 3000
-  }
+    plugins: [
+        react(),
+        tailwindcss({
+            plugins: [daisyui]
+        })
+    ],
+    server: {
+        runner: 'bun'
+    }
 })

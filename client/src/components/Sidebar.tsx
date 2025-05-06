@@ -1,6 +1,7 @@
 import {useAtom} from "jotai";
 import {CurrentTasksDisplayView, JwtAtom, ListsAtom, TagsAtom} from "../atoms.ts";
 import {taskClient} from "../apiControllerClients.ts";
+import {GetTasksFilterAndOrderParameters} from "../generated-client";
 
 export default function Sidebar() {
     
@@ -21,9 +22,9 @@ export default function Sidebar() {
                 {
                     lists.map((list, index) =>  {
                     return(<li key={list.listId} onClick={() => {
-                        taskClient.getMyTasks(jwt,  {
-                            listIds: [list.listId!]
-                        }).then(r => {
+                        taskClient.getMyTasks(jwt,  new GetTasksFilterAndOrderParameters({
+                            listIds: [list.listId]
+                        })).then(r => {
                             setTasks(r);
                         })
                     }}>
@@ -34,7 +35,7 @@ export default function Sidebar() {
                 <ol> Tags </ol>
                     {
                         tags.map((tag,  index) => {
-                            return(<li onClick={() => {
+                            return(<li key={tag.tagId} onClick={() => {
                                 const tasksForTag = taskClient.getMyTasks(jwt, {
                                     tagIds: [tag.tagId!]
                                 }).then(r => {

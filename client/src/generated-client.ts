@@ -44,7 +44,9 @@ export class AuthClient {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -81,7 +83,9 @@ export class AuthClient {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -130,7 +134,15 @@ export class TicktickTaskClient {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto[];
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TickticktaskDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -168,7 +180,8 @@ export class TicktickTaskClient {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TickticktaskDto.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -206,7 +219,8 @@ export class TicktickTaskClient {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TickticktaskDto.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -244,7 +258,8 @@ export class TicktickTaskClient {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TickticktaskDto.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -278,7 +293,15 @@ export class TicktickTaskClient {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TagDto[];
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TagDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -312,7 +335,15 @@ export class TicktickTaskClient {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TasklistDto[];
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TasklistDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -322,14 +353,440 @@ export class TicktickTaskClient {
         }
         return Promise.resolve<TasklistDto[]>(null as any);
     }
+
+    createList(authorization: string | undefined, dto: CreateListRequestDto): Promise<TasklistDto> {
+        let url_ = this.baseUrl + "/CreateList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateList(_response);
+        });
+    }
+
+    protected processCreateList(response: Response): Promise<TasklistDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TasklistDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TasklistDto>(null as any);
+    }
+
+    createTag(authorization: string | undefined, dto: CreateTagRequestDto): Promise<TagDto> {
+        let url_ = this.baseUrl + "/CreateTag";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateTag(_response);
+        });
+    }
+
+    protected processCreateTag(response: Response): Promise<TagDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TagDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TagDto>(null as any);
+    }
+
+    updateList(authorization: string | undefined, dto: UpdateListRequestDto): Promise<TasklistDto> {
+        let url_ = this.baseUrl + "/UpdateList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateList(_response);
+        });
+    }
+
+    protected processUpdateList(response: Response): Promise<TasklistDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TasklistDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TasklistDto>(null as any);
+    }
+
+    updateTag(authorization: string | undefined, dto: UpdateTagRequestDto): Promise<TagDto> {
+        let url_ = this.baseUrl + "/UpdateTag";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateTag(_response);
+        });
+    }
+
+    protected processUpdateTag(response: Response): Promise<TagDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TagDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TagDto>(null as any);
+    }
+
+    deleteListWithTasks(authorization: string | undefined, listId: string | undefined): Promise<FileResponse> {
+        let url_ = this.baseUrl + "/DeleteListWithTasks?";
+        if (listId === null)
+            throw new Error("The parameter 'listId' cannot be null.");
+        else if (listId !== undefined)
+            url_ += "listId=" + encodeURIComponent("" + listId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Accept": "application/octet-stream"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteListWithTasks(_response);
+        });
+    }
+
+    protected processDeleteListWithTasks(response: Response): Promise<FileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse>(null as any);
+    }
+
+    deleteTag(authorization: string | undefined, tagId: string | undefined): Promise<FileResponse> {
+        let url_ = this.baseUrl + "/DeleteTag?";
+        if (tagId === null)
+            throw new Error("The parameter 'tagId' cannot be null.");
+        else if (tagId !== undefined)
+            url_ += "tagId=" + encodeURIComponent("" + tagId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Accept": "application/octet-stream"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteTag(_response);
+        });
+    }
+
+    protected processDeleteTag(response: Response): Promise<FileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse>(null as any);
+    }
+
+    addTaskTag(authorization: string | undefined, dto: ChangeTaskTagRequestDto): Promise<TaskTagDto> {
+        let url_ = this.baseUrl + "/AddTaskTag";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processAddTaskTag(_response);
+        });
+    }
+
+    protected processAddTaskTag(response: Response): Promise<TaskTagDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TaskTagDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TaskTagDto>(null as any);
+    }
+
+    removeTaskTag(authorization: string | undefined, dto: ChangeTaskTagRequestDto): Promise<FileResponse> {
+        let url_ = this.baseUrl + "/RemoveTaskTag";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoveTaskTag(_response);
+        });
+    }
+
+    protected processRemoveTaskTag(response: Response): Promise<FileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse>(null as any);
+    }
 }
 
-export interface AuthRequestDto {
+export class AuthRequestDto implements IAuthRequestDto {
+    email?: string;
+    password?: string;
+
+    constructor(data?: IAuthRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+            this.password = _data["password"];
+        }
+    }
+
+    static fromJS(data: any): AuthRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["password"] = this.password;
+        return data;
+    }
+}
+
+export interface IAuthRequestDto {
     email?: string;
     password?: string;
 }
 
-export interface TickticktaskDto {
+export class TickticktaskDto implements ITickticktaskDto {
+    taskId!: string;
+    listId!: string;
+    title?: string;
+    description?: string;
+    dueDate?: Date | undefined;
+    priority?: number;
+    completed!: boolean;
+    createdAt!: Date;
+    completedAt?: Date | undefined;
+    taskTags?: TaskTagDto[];
+
+    constructor(data?: ITickticktaskDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.taskId = _data["taskId"];
+            this.listId = _data["listId"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.dueDate = _data["dueDate"] ? new Date(_data["dueDate"].toString()) : <any>undefined;
+            this.priority = _data["priority"];
+            this.completed = _data["completed"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.completedAt = _data["completedAt"] ? new Date(_data["completedAt"].toString()) : <any>undefined;
+            if (Array.isArray(_data["taskTags"])) {
+                this.taskTags = [] as any;
+                for (let item of _data["taskTags"])
+                    this.taskTags!.push(TaskTagDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TickticktaskDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TickticktaskDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["taskId"] = this.taskId;
+        data["listId"] = this.listId;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["priority"] = this.priority;
+        data["completed"] = this.completed;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["completedAt"] = this.completedAt ? this.completedAt.toISOString() : <any>undefined;
+        if (Array.isArray(this.taskTags)) {
+            data["taskTags"] = [];
+            for (let item of this.taskTags)
+                data["taskTags"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export interface ITickticktaskDto {
     taskId: string;
     listId: string;
     title?: string;
@@ -342,13 +799,126 @@ export interface TickticktaskDto {
     taskTags?: TaskTagDto[];
 }
 
-export interface TaskTagDto {
+export class TaskTagDto implements ITaskTagDto {
+    taskId?: string;
+    tagId?: string;
+    createdAt?: Date;
+
+    constructor(data?: ITaskTagDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.taskId = _data["taskId"];
+            this.tagId = _data["tagId"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): TaskTagDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TaskTagDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["taskId"] = this.taskId;
+        data["tagId"] = this.tagId;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ITaskTagDto {
     taskId?: string;
     tagId?: string;
     createdAt?: Date;
 }
 
-export interface GetTasksFilterAndOrderParameters {
+export class GetTasksFilterAndOrderParameters implements IGetTasksFilterAndOrderParameters {
+    isCompleted?: boolean | undefined;
+    earliestDueDate?: Date | undefined;
+    latestDueDate?: Date | undefined;
+    minPriority?: number | undefined;
+    maxPriority?: number | undefined;
+    searchTerm?: string | undefined;
+    tagIds?: string[] | undefined;
+    listIds?: string[] | undefined;
+    orderBy?: string | undefined;
+    isDescending?: boolean | undefined;
+
+    constructor(data?: IGetTasksFilterAndOrderParameters) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isCompleted = _data["isCompleted"];
+            this.earliestDueDate = _data["earliestDueDate"] ? new Date(_data["earliestDueDate"].toString()) : <any>undefined;
+            this.latestDueDate = _data["latestDueDate"] ? new Date(_data["latestDueDate"].toString()) : <any>undefined;
+            this.minPriority = _data["minPriority"];
+            this.maxPriority = _data["maxPriority"];
+            this.searchTerm = _data["searchTerm"];
+            if (Array.isArray(_data["tagIds"])) {
+                this.tagIds = [] as any;
+                for (let item of _data["tagIds"])
+                    this.tagIds!.push(item);
+            }
+            if (Array.isArray(_data["listIds"])) {
+                this.listIds = [] as any;
+                for (let item of _data["listIds"])
+                    this.listIds!.push(item);
+            }
+            this.orderBy = _data["orderBy"];
+            this.isDescending = _data["isDescending"];
+        }
+    }
+
+    static fromJS(data: any): GetTasksFilterAndOrderParameters {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetTasksFilterAndOrderParameters();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isCompleted"] = this.isCompleted;
+        data["earliestDueDate"] = this.earliestDueDate ? this.earliestDueDate.toISOString() : <any>undefined;
+        data["latestDueDate"] = this.latestDueDate ? this.latestDueDate.toISOString() : <any>undefined;
+        data["minPriority"] = this.minPriority;
+        data["maxPriority"] = this.maxPriority;
+        data["searchTerm"] = this.searchTerm;
+        if (Array.isArray(this.tagIds)) {
+            data["tagIds"] = [];
+            for (let item of this.tagIds)
+                data["tagIds"].push(item);
+        }
+        if (Array.isArray(this.listIds)) {
+            data["listIds"] = [];
+            for (let item of this.listIds)
+                data["listIds"].push(item);
+        }
+        data["orderBy"] = this.orderBy;
+        data["isDescending"] = this.isDescending;
+        return data;
+    }
+}
+
+export interface IGetTasksFilterAndOrderParameters {
     isCompleted?: boolean | undefined;
     earliestDueDate?: Date | undefined;
     latestDueDate?: Date | undefined;
@@ -361,51 +931,435 @@ export interface GetTasksFilterAndOrderParameters {
     isDescending?: boolean | undefined;
 }
 
-export interface CreateTaskRequestDto {
-    listId?: string;
-    title?: string;
-    description?: string;
+export class CreateTaskRequestDto implements ICreateTaskRequestDto {
+    listId!: string;
+    title!: string;
+    description!: string;
     dueDate?: Date;
-    priority?: number;
+    priority!: number;
+    taskTagsDtos?: TaskTagDto[];
+
+    constructor(data?: ICreateTaskRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.listId = _data["listId"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.dueDate = _data["dueDate"] ? new Date(_data["dueDate"].toString()) : <any>undefined;
+            this.priority = _data["priority"];
+            if (Array.isArray(_data["taskTagsDtos"])) {
+                this.taskTagsDtos = [] as any;
+                for (let item of _data["taskTagsDtos"])
+                    this.taskTagsDtos!.push(TaskTagDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateTaskRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateTaskRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["listId"] = this.listId;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["priority"] = this.priority;
+        if (Array.isArray(this.taskTagsDtos)) {
+            data["taskTagsDtos"] = [];
+            for (let item of this.taskTagsDtos)
+                data["taskTagsDtos"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export interface ICreateTaskRequestDto {
+    listId: string;
+    title: string;
+    description: string;
+    dueDate?: Date;
+    priority: number;
     taskTagsDtos?: TaskTagDto[];
 }
 
-export interface UpdateTaskRequestDto {
-    id?: string;
-    listId?: string;
-    completed?: boolean;
-    title?: string;
-    description?: string;
+export class UpdateTaskRequestDto implements IUpdateTaskRequestDto {
+    id!: string;
+    listId!: string;
+    completed!: boolean;
+    title!: string;
+    description!: string;
     dueDate?: Date | undefined;
     priority?: number;
-    taskTagsDtos?: TaskTagDto[];
+
+    constructor(data?: IUpdateTaskRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.listId = _data["listId"];
+            this.completed = _data["completed"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.dueDate = _data["dueDate"] ? new Date(_data["dueDate"].toString()) : <any>undefined;
+            this.priority = _data["priority"];
+        }
+    }
+
+    static fromJS(data: any): UpdateTaskRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateTaskRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["listId"] = this.listId;
+        data["completed"] = this.completed;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["priority"] = this.priority;
+        return data;
+    }
 }
 
-export interface TagDto {
+export interface IUpdateTaskRequestDto {
+    id: string;
+    listId: string;
+    completed: boolean;
+    title: string;
+    description: string;
+    dueDate?: Date | undefined;
+    priority?: number;
+}
+
+export class TagDto implements ITagDto {
+    tagId?: string;
+    name?: string;
+    userId?: string;
+    createdAt?: Date;
+
+    constructor(data?: ITagDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tagId = _data["tagId"];
+            this.name = _data["name"];
+            this.userId = _data["userId"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): TagDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TagDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tagId"] = this.tagId;
+        data["name"] = this.name;
+        data["userId"] = this.userId;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ITagDto {
     tagId?: string;
     name?: string;
     userId?: string;
     createdAt?: Date;
 }
 
-export interface TasklistDto {
+export class TasklistDto implements ITasklistDto {
     listId?: string;
     userId?: string;
     name?: string;
     createdAt?: Date;
     tickticktasks?: TickticktaskDto[];
-    user?: UserDto;
+
+    constructor(data?: ITasklistDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.listId = _data["listId"];
+            this.userId = _data["userId"];
+            this.name = _data["name"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            if (Array.isArray(_data["tickticktasks"])) {
+                this.tickticktasks = [] as any;
+                for (let item of _data["tickticktasks"])
+                    this.tickticktasks!.push(TickticktaskDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TasklistDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TasklistDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["listId"] = this.listId;
+        data["userId"] = this.userId;
+        data["name"] = this.name;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        if (Array.isArray(this.tickticktasks)) {
+            data["tickticktasks"] = [];
+            for (let item of this.tickticktasks)
+                data["tickticktasks"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
 }
 
-export interface UserDto {
+export interface ITasklistDto {
+    listId?: string;
     userId?: string;
-    email?: string;
-    salt?: string;
-    passwordHash?: string;
-    role?: string;
+    name?: string;
     createdAt?: Date;
-    tags?: TagDto[];
-    tasklists?: TasklistDto[];
+    tickticktasks?: TickticktaskDto[];
+}
+
+export class CreateListRequestDto implements ICreateListRequestDto {
+    listName!: string;
+
+    constructor(data?: ICreateListRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.listName = _data["listName"];
+        }
+    }
+
+    static fromJS(data: any): CreateListRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateListRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["listName"] = this.listName;
+        return data;
+    }
+}
+
+export interface ICreateListRequestDto {
+    listName: string;
+}
+
+export class CreateTagRequestDto implements ICreateTagRequestDto {
+    tagName!: string;
+
+    constructor(data?: ICreateTagRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tagName = _data["tagName"];
+        }
+    }
+
+    static fromJS(data: any): CreateTagRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateTagRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tagName"] = this.tagName;
+        return data;
+    }
+}
+
+export interface ICreateTagRequestDto {
+    tagName: string;
+}
+
+export class UpdateListRequestDto implements IUpdateListRequestDto {
+    listId!: string;
+    newName!: string;
+
+    constructor(data?: IUpdateListRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.listId = _data["listId"];
+            this.newName = _data["newName"];
+        }
+    }
+
+    static fromJS(data: any): UpdateListRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateListRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["listId"] = this.listId;
+        data["newName"] = this.newName;
+        return data;
+    }
+}
+
+export interface IUpdateListRequestDto {
+    listId: string;
+    newName: string;
+}
+
+export class UpdateTagRequestDto implements IUpdateTagRequestDto {
+    tagId!: string;
+    newName!: string;
+
+    constructor(data?: IUpdateTagRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tagId = _data["tagId"];
+            this.newName = _data["newName"];
+        }
+    }
+
+    static fromJS(data: any): UpdateTagRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateTagRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tagId"] = this.tagId;
+        data["newName"] = this.newName;
+        return data;
+    }
+}
+
+export interface IUpdateTagRequestDto {
+    tagId: string;
+    newName: string;
+}
+
+export class ChangeTaskTagRequestDto implements IChangeTaskTagRequestDto {
+    tagId!: string;
+    taskId!: string;
+
+    constructor(data?: IChangeTaskTagRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tagId = _data["tagId"];
+            this.taskId = _data["taskId"];
+        }
+    }
+
+    static fromJS(data: any): ChangeTaskTagRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChangeTaskTagRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tagId"] = this.tagId;
+        data["taskId"] = this.taskId;
+        return data;
+    }
+}
+
+export interface IChangeTaskTagRequestDto {
+    tagId: string;
+    taskId: string;
+}
+
+export interface FileResponse {
+    data: Blob;
+    status: number;
+    fileName?: string;
+    headers?: { [name: string]: any };
 }
 
 export class ApiException extends Error {

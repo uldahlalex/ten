@@ -1,14 +1,11 @@
 Aktuelt:
 
-deno
+skal update entity tage nulls for at lave optional overwrites?
+
 
 server app
-      - create tag, list
-      - update tag, list
-      - task update TEST
-      - tag update TEST
-      - list update TEST
+- tests
 
 client app
-
       - create list, tag, task, update any of these
+

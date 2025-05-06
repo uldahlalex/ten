@@ -1,5 +1,6 @@
 Aktuelt:
 
+
 test runner execution direct cant
     - bliver dette fikset af at eksekvere hele filens tests med højreklik?
 

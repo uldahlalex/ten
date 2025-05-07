@@ -44,25 +44,5 @@ public static class ApiTestSetupUtilities
         builder.Services.AddSingleton<IWebHostPortAllocationService, TestPortAllocationService>();
         return builder;
     }
-
-
-    public static async Task<string> TestRegisterAndAddJwt(this HttpClient httpClient, string baseUrl)
-    {
-        var registerDto = new AuthRequestDto
-        {
-            Email = new Random().NextDouble() * 123 + "@gmail.com",
-            Password = new Random().NextDouble() * 123 + "@gmail.com"
-        };
-        var route = baseUrl +
-                    nameof(AuthController.Register);
-        var signIn = await httpClient.PostAsJsonAsync(route, registerDto);
-        if (!signIn.IsSuccessStatusCode)
-            throw new Exception("Sign up failed!: " + await signIn.Content.ReadAsStringAsync());
-        var jwt = await signIn.Content
-            .ReadAsStringAsync();
-        if (string.IsNullOrEmpty(jwt))
-            throw new Exception("No jwt!");
-        httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(jwt);
-        return jwt;
-    }
+    
 }

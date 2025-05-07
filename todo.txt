@@ -1,8 +1,7 @@
 Aktuelt:
+skift til:         _client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q"); i alle test setups
 
-
-test runner execution direct cant
-    - bliver dette fikset af at eksekvere hele filens tests med højreklik?
+hvis tunit test runner aldrig bliver fikset så migrate til andet
 
 server app
 - tests

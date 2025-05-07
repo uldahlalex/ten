@@ -87,6 +87,9 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public async Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, JwtClaims claims)
     {
+        
+        if(dto.DueDate != null && dto.DueDate < DateTime.UtcNow)
+            throw new ValidationException("Due date cannot be in the past");
         var existing = ctx.Tickticktasks
             .Include(t => t.TaskTags)
             .First(t => t.TaskId == dto.Id);
@@ -165,7 +168,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     public async Task<TasklistDto> UpdateList(JwtClaims claims, UpdateListRequestDto dto)
     {
         var taskList = ctx.Tasklists.FirstOrDefault(t => t.ListId == dto.ListId) ??
-                       throw new Exception("Could not find list with id " + dto.ListId);
+                       throw new ValidationException("Could not find list with id " + dto.ListId);
         taskList.Name = dto.NewName;
         ctx.Tasklists.Update(taskList);
         ctx.SaveChanges();
@@ -175,7 +178,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     public async Task<TagDto> UpdateTag(JwtClaims claims, UpdateTagRequestDto dto)
     {
         var tag = ctx.Tags.FirstOrDefault(t => t.TagId == dto.TagId) ??
-                  throw new Exception("Could not find tag with ID " + dto.TagId);
+                  throw new ValidationException("Could not find tag with ID " + dto.TagId);
         tag.Name = dto.NewName;
         ctx.Tags.Update(tag);
         ctx.SaveChanges();
@@ -204,7 +207,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         var existingTag = ctx.TaskTags.FirstOrDefault(t => t.TagId == dto.TagId && t.TaskId == dto.TaskId);
 
         if (existingTag != null)
-            throw new Exception("Task already has this tag");
+            throw new ValidationException("Task already has this tag");
 
 
         var taskTag = new TaskTag
@@ -222,7 +225,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     {
         var taskTag = ctx.TaskTags.FirstOrDefault(t => t.TagId == dto.TagId && t.TaskId == dto.TaskId);
         if (taskTag == null)
-            throw new Exception("Task does not have this tag");
+            throw new ValidationException("Task does not have this tag");
         ctx.TaskTags.Remove(taskTag);
         ctx.SaveChanges();
     }

@@ -54,7 +54,7 @@ public class UpdateTaskFailure
             DueDate = DateTime.UtcNow.AddDays(1),
             Priority = 3,
             Completed = false,
-            ListId = ctx.Tasklists.OrderBy(o => o.CreatedAt).FirstOrDefault().ListId,
+            ListId = ctx.Tasklists.OrderBy(o => o.CreatedAt).First().ListId,
             TaskId = Guid.NewGuid().ToString(),
             CreatedAt = DateTime.UtcNow
         };
@@ -76,7 +76,6 @@ public class UpdateTaskFailure
         var response = await _client.PatchAsJsonAsync(_baseUrl + nameof(TicktickTaskController.UpdateTask), request);
         if(response.StatusCode!=HttpStatusCode.BadRequest)
             throw new Exception("Expected status code 400 for bad request. Got:  "+response.StatusCode+" and message: "+await response.Content.ReadAsStringAsync());
-
     }
     
 }

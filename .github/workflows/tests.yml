@@ -2,6 +2,7 @@ name: .NET Tests
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   dotnet-tests:

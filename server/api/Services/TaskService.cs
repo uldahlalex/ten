@@ -206,9 +206,9 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public async Task<TaskTagDto> AddTagToTask(JwtClaims claims, ChangeTaskTagRequestDto dto)
     {
-        var existingTag = ctx.TaskTags.FirstOrDefault(t => t.TagId == dto.TagId && t.TaskId == dto.TaskId);
+        var existsAlready = ctx.TaskTags.Any(t => t.TagId == dto.TagId && t.TaskId == dto.TaskId);
 
-        if (existingTag != null)
+        if (existsAlready)
             throw new ValidationException("Task already has this tag");
 
 

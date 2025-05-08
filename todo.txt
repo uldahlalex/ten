@@ -1,7 +1,5 @@
 Aktuelt:
-skift til:         _client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q"); i alle test setups
 
-hvis tunit test runner aldrig bliver fikset så migrate til andet
 
 server app
 - tests
@@ -9,3 +7,4 @@ server app
 client app
       - create list, tag, task, update any of these
 
+hvis tunit test runner aldrig bliver fikset så migrate til andet

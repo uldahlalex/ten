@@ -680,8 +680,8 @@ export class TicktickTaskClient {
 }
 
 export class AuthRequestDto implements IAuthRequestDto {
-    email?: string;
-    password?: string;
+    email!: string;
+    password!: string;
 
     constructor(data?: IAuthRequestDto) {
         if (data) {
@@ -715,8 +715,8 @@ export class AuthRequestDto implements IAuthRequestDto {
 }
 
 export interface IAuthRequestDto {
-    email?: string;
-    password?: string;
+    email: string;
+    password: string;
 }
 
 export class TickticktaskDto implements ITickticktaskDto {
@@ -803,9 +803,9 @@ export interface ITickticktaskDto {
 }
 
 export class TaskTagDto implements ITaskTagDto {
-    taskId?: string;
-    tagId?: string;
-    createdAt?: Date;
+    taskId!: string;
+    tagId!: string;
+    createdAt!: Date;
 
     constructor(data?: ITaskTagDto) {
         if (data) {
@@ -841,9 +841,9 @@ export class TaskTagDto implements ITaskTagDto {
 }
 
 export interface ITaskTagDto {
-    taskId?: string;
-    tagId?: string;
-    createdAt?: Date;
+    taskId: string;
+    tagId: string;
+    createdAt: Date;
 }
 
 export class GetTasksFilterAndOrderParameters implements IGetTasksFilterAndOrderParameters {

@@ -1,10 +1,5 @@
 Aktuelt:
 
-appsettings prob:
-- test setup defaulter til appsettings.json
-
-server app
-- tests
 
 client app
       - create list, tag, task, update any of these

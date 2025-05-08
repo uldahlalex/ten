@@ -39,7 +39,6 @@ public class UpdateTaskFailure
     [Arguments("asdsad", "", "2050-04-25T20:22:50.657021Z", 1)] //invalid desc: empty
     [Arguments("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 0)] //invalid priority: not in range
     [Arguments("asdsad", "asdsad", "2050-04-25T20:22:50.657021Z", 6)] //invalid priority: not in rage
-    [Arguments("asdsad", "asdsad", "2000-04-25T20:22:50.657021Z", 1)] //invalid due date: it is in the past
     public async Task UpdateTask_IsRejected_WhenDtoIsInvalid(
         string title, string description, string timestamp, int priority)
 

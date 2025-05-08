@@ -17,6 +17,7 @@ export default function SignIn() {
                     authClient.login(new AuthRequestDto({email: "test@user.dk", password: "abc"})).then(r => {
                         toast("welcome!")
                         localStorage.setItem('jwt', r);
+                        console.log(r)
                         setJwt(r)
                     })}>Click to log in as a test user</button>
                 :

@@ -3,7 +3,6 @@ import Sidebar from "./Sidebar.tsx";
 import TaskList from "./TaskList.tsx";
 
 export default function Dashboard() {
-    const [deviceLogs] = useState<any[]>([]);
 
     return (
         <div className="flex h-screen"> 

@@ -14,12 +14,15 @@ export default function ApplicationRoutes() {
     const [jwt] = useAtom(JwtAtom);
     useInitializeData();
 
+
     useEffect(() => {
-        if (jwt == undefined || jwt.length < 1) {
-            navigate(SignInRoute)
+        if (jwt == null || jwt.length < 1) {
+            navigate(SignInRoute);
             toast("Please sign in to continue")
+        } else {
+            navigate(DashboardRoute);
         }
-    }, [])
+    }, [jwt])
     
     return (<>
         {/*the browser router is defined in main tsx so that i can use useNavigate anywhere*/}

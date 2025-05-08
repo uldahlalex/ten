@@ -4,6 +4,7 @@ using api.Services;
 using efscaffold;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PgCtx;
 using Scalar.AspNetCore;
 
 namespace api;
@@ -19,9 +20,11 @@ public class Program
         builder.Services.AddOpenApiDocument(conf => { });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
+        var pgctx = new PgCtxSetup<MyDbContext>();
+
         builder.Services.AddDbContext<MyDbContext>(options =>
-        {
-            options.UseNpgsql(appOptions.DbConnectionString);
+        {            
+            options.UseNpgsql(pgctx._postgres.GetConnectionString());
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();
@@ -55,7 +58,6 @@ public class Program
             {
                 app.Services.GetRequiredService<ILogger<Program>>().LogInformation("INSIDE SCOPE");
                 var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
-                Console.WriteLine(ctx.Database.GetConnectionString());
 
                 var schema = ctx.Database.GenerateCreateScript();
                 File.WriteAllText("schema_according_to_dbcontext.sql", schema);

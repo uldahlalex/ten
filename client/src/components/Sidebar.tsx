@@ -3,6 +3,7 @@ import { CurrentTasksDisplayView, JwtAtom, ListsAtom, TagsAtom } from "../atoms.
 import { taskClient } from "../apiControllerClients.ts";
 import { GetTasksFilterAndOrderParameters, TagDto, TasklistDto } from "../generated-client";
 import { useState, useCallback } from "react";
+import toast from "react-hot-toast";
 
 export default function Sidebar() {
     const [lists] = useAtom(ListsAtom);
@@ -43,7 +44,9 @@ export default function Sidebar() {
     }, [jwt, setTasks]);
 
     const handleSignOut = useCallback(() => {
-        // Implement sign out logic here
+        localStorage.setItem('jwt', '');
+        console.log("JWT IS NOW: "+jwt)
+        toast("You have been signed out. localstoirage jwt "+ localStorage.getItem('jwt'));
     }, []);
 
     return (

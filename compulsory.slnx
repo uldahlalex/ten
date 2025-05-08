@@ -1,5 +1,0 @@
-<Solution>
-    <Project Path="server/api/api.csproj" />
-    <Project Path="server/tests/tests.csproj" />
-    <Project Path="server/efscaffold/efscaffold.csproj"/>
-</Solution>

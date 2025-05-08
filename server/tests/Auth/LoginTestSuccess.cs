@@ -1,17 +1,14 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using api;
 using api.Controllers;
-using api.Models.Dtos.Requests;
 using efscaffold;
-using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace tests.Task;
+namespace tests.Auth;
 
-public class CreateListFailure
+public class LoginTestSuccess
 {
     private WebApplication _app = null!;
     private string _baseUrl = null!;
@@ -32,26 +29,21 @@ public class CreateListFailure
         
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = _app.CreateHttpClientWithDefaultTestJwt();
+        _client = new HttpClient(); //should not use the method which adds jwt
     }
+
 
     [Test]
-    [Arguments("")]//invalid string for listname
-    [Arguments("Work")]//taken name
-    public async System.Threading.Tasks.Task CreateList_ShouldReturnBadRequest_WhenInvalidRequest(string listName)
+    public async System.Threading.Tasks.Task Login_CanSuccessfully_Login()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-
-        var request = new CreateListRequestDto()
+        var dto = new AuthRequestDto()
         {
-            ListName = listName
+            Email = "test@user.dk",
+            Password = "abc"
         };
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);
-
-        if (response.StatusCode != HttpStatusCode.BadRequest)
-            throw new Exception("Expected status 400 but got: " + response.StatusCode + " and message: " +
-                                await response.Content.ReadAsStringAsync());
+        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Login), dto);
+        if (response.StatusCode != HttpStatusCode.OK)
+            throw new Exception($"Login failed: {response.StatusCode}");
     }
-    
 }

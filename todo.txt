@@ -1,5 +1,7 @@
 Aktuelt:
 
+appsettings prob:
+- test setup defaulter til appsettings.json
 
 server app
 - tests

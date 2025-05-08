@@ -19,18 +19,19 @@ public class RegisterTestsSuccess
     [Before(Test)]
     public async System.Threading.Tasks.Task Setup()
     {
-        var builder = WebApplication.CreateBuilder();
-        Program.ConfigureServices(builder);
-        builder.DefaultTestConfig();
-
+        var builder = ApiTestSetupUtilities.MakeWebAppBuilderForTesting();
+        builder.AddProgramcsServices();
+        builder.ModifyServicesForTesting();
         _app = builder.Build();
-        Program.ConfigureApp(_app);
-        await _app.StartAsync();
 
+        _app.BeforeProgramcsMiddleware();
+        _app.AddProgramcsMiddleware();
+        _app.AfterProgramcsMiddleware();
+        
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = new HttpClient();
-        _client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q");
+        _client = new HttpClient(); //should not use the method which adds jwt
+
     }
 
     [Test]

@@ -22,21 +22,20 @@ public class GetTasksTests
     private IServiceProvider _scopedServiceProvider = null!;
 
     [Before(Test)]
-    public void Setup()
+    public async System.Threading.Tasks.Task Setup()
     {
-        var builder = WebApplication.CreateBuilder();
-        Program.ConfigureServices(builder);
-        builder.DefaultTestConfig();
-
+        var builder = ApiTestSetupUtilities.MakeWebAppBuilderForTesting();
+        builder.AddProgramcsServices();
+        builder.ModifyServicesForTesting();
         _app = builder.Build();
-        Program.ConfigureApp(_app);
-        _app.StartAsync().GetAwaiter().GetResult();
 
-
+        _app.BeforeProgramcsMiddleware();
+        _app.AddProgramcsMiddleware();
+        _app.AfterProgramcsMiddleware();
+        
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = new HttpClient();
-        _client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q");
+        _client = _app.CreateHttpClientWithDefaultTestJwt();
     }
 
 

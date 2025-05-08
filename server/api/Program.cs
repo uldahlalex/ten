@@ -22,7 +22,6 @@ public class Program
         builder.Services.AddOpenApiDocument(conf => { });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
-        // var pgCtx = new PgCtxSetup<MyDbContext>();
         builder.Services.AddDbContext<MyDbContext>(options =>
         {
             options.UseNpgsql(appOptions.DbConnectionString);

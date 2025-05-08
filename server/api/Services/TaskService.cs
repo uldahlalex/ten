@@ -139,6 +139,8 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public async Task<TasklistDto> CreateList(JwtClaims claims, CreateListRequestDto dto)
     {
+        if(ctx.Tasklists.Any(t => t.Name == dto.ListName))
+            throw new ValidationException("List with this name already exists");
         var tasList = new Tasklist
         {
             CreatedAt = DateTime.UtcNow,

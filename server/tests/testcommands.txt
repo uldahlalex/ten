@@ -6,4 +6,4 @@ dotnet run -c Release --report-trx --coverage
 
 
 Run filtered with certain output level:
-dotnet run --treenode-filter /*/*/UpdateTask_CanSuccessfullyUpdateTask/* --verbosity normal
+dotnet run --treenode-filter /*/*/GetMyTags/* --verbosity normal

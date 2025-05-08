@@ -3,17 +3,15 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using api;
 using api.Controllers;
-using api.Extensions.Mappers;
-using api.Models.Dtos;
+using api.Models.Dtos.Requests;
 using efscaffold;
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace tests.Task;
 
-public class GetMyTagsSuccess
+public class CreateListFailure
 {
     private WebApplication _app = null!;
     private string _baseUrl = null!;
@@ -39,22 +37,22 @@ public class GetMyTagsSuccess
 
 
     [Test]
-    public async System.Threading.Tasks.Task GetMyTags_CanSuccessfully_ListMyTagsDtos()
+    [Arguments("")]//invalid string for listname
+    [Arguments("Work")]//taken name
+    public async System.Threading.Tasks.Task CreateList_ShouldReturnBadRequest_WhenInvalidRequest(string listName)
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        
 
-        var response = await _client.GetAsync(_baseUrl + nameof(TicktickTaskController.GetMyTags));
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception("Expected status 200 but got: " + response.StatusCode + " and message: " +
+        var request = new CreateListRequestDto()
+        {
+            ListName = listName
+        };
+
+        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);
+
+        if (response.StatusCode != HttpStatusCode.BadRequest)
+            throw new Exception("Expected status 400 but got: " + response.StatusCode + " and message: " +
                                 await response.Content.ReadAsStringAsync());
-
-        var rawContent = await response.Content.ReadAsStringAsync();
-        var dtos = await response.Content.ReadFromJsonAsync<List<TagDto>>();
-        if (dtos.Count == 0)
-            throw new Exception("After desieralization, found 0 tags");
-        var orderedActual = dtos.OrderBy(d => d.TagId);
-        var orderedExpected = ctx.Tags.OrderBy(t => t.TagId).Select(t => t.ToDto());
-        orderedActual.Should().BeEquivalentTo(orderedExpected);
     }
+    
 }

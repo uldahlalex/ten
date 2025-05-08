@@ -6,6 +6,7 @@ using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 using efscaffold;
 using efscaffold.Entities;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
@@ -50,8 +51,13 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         {
             if (parameters.OrderBy == nameof(Tickticktask.Priority))
                 query = query.OrderBy(t => t.Priority);
-            if (parameters.OrderBy == nameof(Tickticktask.DueDate))
+            else if (parameters.OrderBy == nameof(Tickticktask.DueDate))
                 query = query.OrderBy(t => t.DueDate);
+            else if (parameters.OrderBy == nameof(Tickticktask.CreatedAt))
+                query = query.OrderBy(t => t.CreatedAt);
+            else
+                throw new ValidationException("Not a valid ordering!");
+            
         }
 
         if (parameters.IsDescending != null) query = query.Reverse();

@@ -2,6 +2,7 @@ Aktuelt:
 
 
 client app
-      - create list, tag, task, update any of these
+      - create list, tag, task, update any of these + delete
+      - tasklist orderby og 
 
 hvis tunit test runner aldrig bliver fikset så migrate til andet

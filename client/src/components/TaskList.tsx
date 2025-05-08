@@ -24,39 +24,40 @@ export default function TaskList() {
 
         })
     }
+    return (
 
-    return (<>
-
-        <ul className="list bg-base-100 rounded-box shadow-md">
-            <li  className="p-4 pb-2 text-xs opacity-60 tracking-wide">Tasks:</li>
-
-            {
-
-
-                tasks.map((task, index) => {
-                    return (
-
-                        <li key={index} className="list-row">
-                            <div>
-                                <input type="checkbox" checked={task.completed} onChange={e => handleClickCheckbox(e, task)}/> {JSON.stringify(task)}
-
-                            </div>
-
-                        </li>
-
-                    )
+        <div className="w-full px-4"> {/* Added padding and full width */}
+                <ul className="list bg-base-100 rounded-box shadow-md w-full space-y-4">
+                    {/*<input value={} />*/}
                     
-                    })
-            }
-
-
-       
-
-           
-
-        </ul>
-        
-
- </>)
+                    <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Tasks:</li>
+                    {tasks.map((task, index) => (
+                        <li key={index} className="w-full">
+                            <div className="card w-full bg-base-100 shadow-md">
+                                <div className="card-body">
+                                    <div className="flex items-center gap-4">
+                                        <input
+                                            type="checkbox"
+                                            checked={task.completed}
+                                            onChange={e => handleClickCheckbox(e, task)}
+                                            className="checkbox"
+                                        />
+                                        <div className="flex-1">
+                                            <h2 className="card-title">{task.title}</h2>
+                                            <p className="text-gray-600">{task.description}</p>
+                                            <p className="text-gray-600">{task.taskId}</p>
+                                        </div>
+                                    </div>
+                                    <div className="card-actions justify-end mt-4">
+                                        <button className="btn btn-primary">Edit</button>
+                                        <button className="btn btn-error">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+    )
 
 }

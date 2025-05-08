@@ -1,6 +1,5 @@
 using System.Text.Json;
-using api.Extensions;
-using api.Seeder;
+using api.Etc;
 using api.Services;
 using efscaffold;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +10,6 @@ namespace api;
 
 public class Program
 {
-    public static int DefaultPort { get; set; } = 8080;
-    public static string? FinalBaseUrl { get; private set; }
 
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
@@ -46,7 +43,7 @@ public class Program
             conf.DocumentPath = "/openapi/v1.json";
         });
         app.MapControllers();
-        app.GenerateTypeScriptClient("/../../client/src/generated-client.ts").Wait();
+        app.GenerateTypeScriptClientFromOpenApi("/../../client/src/generated-client.ts").Wait();
         app.MapScalarApiReference();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         var environment = app.Environment.EnvironmentName;

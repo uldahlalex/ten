@@ -4,5 +4,5 @@ namespace api.Models;
 
 public class JwtClaims
 {
-    [MinLength(1)] public string Id { get; set; }
+    [MinLength(1)][Required] public string Id { get; set; } = null!;
 }

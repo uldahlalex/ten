@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using api.Models.Dtos.Responses;
 
 namespace api.Models.Dtos.Requests;
 

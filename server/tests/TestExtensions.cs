@@ -1,7 +1,6 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using api;
-using api.Controllers;
+using api.Etc;
 using api.Models;
 using efscaffold;
 using Microsoft.AspNetCore.Builder;
@@ -20,14 +19,15 @@ public static class ApiTestSetupUtilities
     {
         var builder = WebApplication.CreateBuilder();
         builder.Environment.EnvironmentName = "Development";
-    
+
         builder.Configuration
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true)
-            .AddJsonFile($"appsettings.Development.json", optional: true);
+            .AddJsonFile("appsettings.json", true)
+            .AddJsonFile("appsettings.Development.json", true);
 
         return builder;
     }
+
     public static WebApplicationBuilder AddProgramcsServices(this WebApplicationBuilder builder)
     {
         Program.ConfigureServices(builder);
@@ -82,8 +82,8 @@ public static class ApiTestSetupUtilities
     public static HttpClient CreateHttpClientWithDefaultTestJwt(this WebApplication app)
     {
         var client = new HttpClient();
-        client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q");
+        client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q");
         return client;
     }
-    
 }

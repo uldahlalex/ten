@@ -689,17 +689,13 @@ export class TotpClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    totpRegister(registerRequestDto: TotpRegisterRequestDto): Promise<TotpRegisterResponseDto> {
+    totpRegister(): Promise<TotpRegisterResponseDto> {
         let url_ = this.baseUrl + "/TotpRegister";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(registerRequestDto);
-
         let options_: RequestInit = {
-            body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -766,11 +762,53 @@ export class TotpClient {
         return Promise.resolve<string>(null as any);
     }
 
-    rotateTotpSecret(requestDto: RotateTotpRequestDto, authorization: string | undefined): Promise<TotpRegisterResponseDto> {
-        let url_ = this.baseUrl + "/RotateTotpSecret";
+    totpVerify(request: TotpVerifyRequestDto): Promise<FileResponse> {
+        let url_ = this.baseUrl + "/TotpVerify";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(requestDto);
+        const content_ = JSON.stringify(request);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processTotpVerify(_response);
+        });
+    }
+
+    protected processTotpVerify(response: Response): Promise<FileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse>(null as any);
+    }
+
+    totpRotate(request: TotpRotateRequestDto, authorization: string | undefined): Promise<TotpRegisterResponseDto> {
+        let url_ = this.baseUrl + "/TotpRotate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
 
         let options_: RequestInit = {
             body: content_,
@@ -783,11 +821,11 @@ export class TotpClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRotateTotpSecret(_response);
+            return this.processTotpRotate(_response);
         });
     }
 
-    protected processRotateTotpSecret(response: Response): Promise<TotpRegisterResponseDto> {
+    protected processTotpRotate(response: Response): Promise<TotpRegisterResponseDto> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -805,15 +843,15 @@ export class TotpClient {
         return Promise.resolve<TotpRegisterResponseDto>(null as any);
     }
 
-    verifyTotpSetup(requestDto: VerifySetupRequestDto): Promise<FileResponse> {
-        let url_ = this.baseUrl + "/VerifyTotpSetup";
+    toptUnregister(request: TotpUnregisterRequestDto): Promise<FileResponse> {
+        let url_ = this.baseUrl + "/ToptUnregister";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(requestDto);
+        const content_ = JSON.stringify(request);
 
         let options_: RequestInit = {
             body: content_,
-            method: "POST",
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/octet-stream"
@@ -821,11 +859,11 @@ export class TotpClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processVerifyTotpSetup(_response);
+            return this.processToptUnregister(_response);
         });
     }
 
-    protected processVerifyTotpSetup(response: Response): Promise<FileResponse> {
+    protected processToptUnregister(response: Response): Promise<FileResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200 || status === 206) {
@@ -1516,9 +1554,10 @@ export interface IChangeTaskTagRequestDto {
 }
 
 export class TotpRegisterResponseDto implements ITotpRegisterResponseDto {
-    message?: string;
-    qrCodeBase64?: string;
-    secretKey?: string;
+    message!: string;
+    qrCodeBase64!: string;
+    secretKey!: string;
+    userId!: string;
 
     constructor(data?: ITotpRegisterResponseDto) {
         if (data) {
@@ -1534,6 +1573,7 @@ export class TotpRegisterResponseDto implements ITotpRegisterResponseDto {
             this.message = _data["message"];
             this.qrCodeBase64 = _data["qrCodeBase64"];
             this.secretKey = _data["secretKey"];
+            this.userId = _data["userId"];
         }
     }
 
@@ -1549,54 +1589,19 @@ export class TotpRegisterResponseDto implements ITotpRegisterResponseDto {
         data["message"] = this.message;
         data["qrCodeBase64"] = this.qrCodeBase64;
         data["secretKey"] = this.secretKey;
+        data["userId"] = this.userId;
         return data;
     }
 }
 
 export interface ITotpRegisterResponseDto {
-    message?: string;
-    qrCodeBase64?: string;
-    secretKey?: string;
-}
-
-export class TotpRegisterRequestDto implements ITotpRegisterRequestDto {
-    email!: string;
-
-    constructor(data?: ITotpRegisterRequestDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.email = _data["email"];
-        }
-    }
-
-    static fromJS(data: any): TotpRegisterRequestDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TotpRegisterRequestDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["email"] = this.email;
-        return data;
-    }
-}
-
-export interface ITotpRegisterRequestDto {
-    email: string;
+    message: string;
+    qrCodeBase64: string;
+    secretKey: string;
+    userId: string;
 }
 
 export class TotpLoginRequestDto implements ITotpLoginRequestDto {
-    email!: string;
     totpCode!: string;
 
     constructor(data?: ITotpLoginRequestDto) {
@@ -1610,7 +1615,6 @@ export class TotpLoginRequestDto implements ITotpLoginRequestDto {
 
     init(_data?: any) {
         if (_data) {
-            this.email = _data["email"];
             this.totpCode = _data["totpCode"];
         }
     }
@@ -1624,58 +1628,20 @@ export class TotpLoginRequestDto implements ITotpLoginRequestDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["email"] = this.email;
         data["totpCode"] = this.totpCode;
         return data;
     }
 }
 
 export interface ITotpLoginRequestDto {
-    email: string;
     totpCode: string;
 }
 
-export class RotateTotpRequestDto implements IRotateTotpRequestDto {
-    currentTotpCode!: string;
-
-    constructor(data?: IRotateTotpRequestDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.currentTotpCode = _data["currentTotpCode"];
-        }
-    }
-
-    static fromJS(data: any): RotateTotpRequestDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new RotateTotpRequestDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["currentTotpCode"] = this.currentTotpCode;
-        return data;
-    }
-}
-
-export interface IRotateTotpRequestDto {
-    currentTotpCode: string;
-}
-
-export class VerifySetupRequestDto implements IVerifySetupRequestDto {
+export class TotpVerifyRequestDto implements ITotpVerifyRequestDto {
     userId!: string;
     totpCode!: string;
 
-    constructor(data?: IVerifySetupRequestDto) {
+    constructor(data?: ITotpVerifyRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1691,9 +1657,9 @@ export class VerifySetupRequestDto implements IVerifySetupRequestDto {
         }
     }
 
-    static fromJS(data: any): VerifySetupRequestDto {
+    static fromJS(data: any): TotpVerifyRequestDto {
         data = typeof data === 'object' ? data : {};
-        let result = new VerifySetupRequestDto();
+        let result = new TotpVerifyRequestDto();
         result.init(data);
         return result;
     }
@@ -1706,7 +1672,83 @@ export class VerifySetupRequestDto implements IVerifySetupRequestDto {
     }
 }
 
-export interface IVerifySetupRequestDto {
+export interface ITotpVerifyRequestDto {
+    userId: string;
+    totpCode: string;
+}
+
+export class TotpRotateRequestDto implements ITotpRotateRequestDto {
+    currentTotpCode!: string;
+
+    constructor(data?: ITotpRotateRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currentTotpCode = _data["currentTotpCode"];
+        }
+    }
+
+    static fromJS(data: any): TotpRotateRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TotpRotateRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currentTotpCode"] = this.currentTotpCode;
+        return data;
+    }
+}
+
+export interface ITotpRotateRequestDto {
+    currentTotpCode: string;
+}
+
+export class TotpUnregisterRequestDto implements ITotpUnregisterRequestDto {
+    userId!: string;
+    totpCode!: string;
+
+    constructor(data?: ITotpUnregisterRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.totpCode = _data["totpCode"];
+        }
+    }
+
+    static fromJS(data: any): TotpUnregisterRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TotpUnregisterRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["totpCode"] = this.totpCode;
+        return data;
+    }
+}
+
+export interface ITotpUnregisterRequestDto {
     userId: string;
     totpCode: string;
 }

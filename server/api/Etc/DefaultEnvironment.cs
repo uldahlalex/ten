@@ -1,29 +1,8 @@
-using efscaffold;
+using api.Services;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 
 namespace api.Etc;
-
-public interface ISeeder
-{
-    void CreateEnvironment(MyDbContext ctx);
-}
-
-public class EmptyEnvironment : ISeeder
-{
-    public void CreateEnvironment(MyDbContext ctx)
-    {
-        ctx.Database.EnsureDeleted(); //only use this if using testcontainers
-        ctx.Database.EnsureCreated();
-
-        // Clear existing data
-        ctx.TaskTags.RemoveRange(ctx.TaskTags);
-        ctx.Tickticktasks.RemoveRange(ctx.Tickticktasks);
-        ctx.Tasklists.RemoveRange(ctx.Tasklists);
-        ctx.Tags.RemoveRange(ctx.Tags);
-        ctx.Users.RemoveRange(ctx.Users);
-    }
-}
 
 /// <summary>
 ///     Will seed the following data:
@@ -34,7 +13,7 @@ public class EmptyEnvironment : ISeeder
 ///     "follow-up", "blocked", "in-progress", "review", "approved", "deployed"
 ///     15 tasks per list with random titles and descriptions and 1 tag each
 /// </summary>
-public class DefaultEnvironment(ILogger<EmptyEnvironment> logger) : ISeeder
+public class DefaultEnvironment(ILogger<EmptyEnvironment> logger, ISecurityService securityService, string? email = "test@user.dk", string? userId="user-1") : ISeeder
 {
     private static readonly string[] TaskTitles =
     {
@@ -83,12 +62,13 @@ public class DefaultEnvironment(ILogger<EmptyEnvironment> logger) : ISeeder
         // Create test user
         var user = new User
         {
-            UserId = "user-1",
+            UserId = userId,
             CreatedAt = DateTime.UtcNow,
-            Email = "test@user.dk",
+            Email = email,
             Role = "User",
             Salt = "6cbf8487-8f2c-48bc-a15c-33d88eae8b9e",
-            PasswordHash = "TJlSDc2mvpBmYKoi+2hnIOFx6ykf/V6JpmU7irhpoRcDT3KKUMwH7BWL/WlDTGrL11ud+5Q1BNxBEy3ZD1RRuQ=="
+            PasswordHash = "TJlSDc2mvpBmYKoi+2hnIOFx6ykf/V6JpmU7irhpoRcDT3KKUMwH7BWL/WlDTGrL11ud+5Q1BNxBEy3ZD1RRuQ==",
+            TotpSecret = securityService.GenerateSecretKey()
         };
         ctx.Users.Add(user);
         ctx.SaveChanges();

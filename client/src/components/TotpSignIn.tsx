@@ -1,93 +1,153 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {totpClient} from "../apiControllerClients.ts";
-import {TotpClient, TotpLoginRequestDto, TotpRegisterRequestDto} from "../generated-client.ts";
+import {
+    TotpLoginRequestDto,
+    TotpRegisterResponseDto,
+    TotpRotateRequestDto,
+    TotpUnregisterRequestDto
+} from "../generated-client.ts";
+import {useAtom} from 'jotai';
 import toast from "react-hot-toast";
+import {jwtDecode} from "jwt-decode";
+import {JwtAtom} from "../atoms.ts";
+import {JwtClaims} from "../JwtClaims.ts";
+import SignOut from "../signOut.tsx"; // assuming you're using jwt-decode
 
-export default function TotpLogin() {
-    const [email, setEmail] = useState('');
+export default function TotpAuth() {
+    const [jwt, setJwt] = useAtom(JwtAtom);
     const [totpCode, setTotpCode] = useState('');
-    const [isNewUser, setIsNewUser] = useState(false);
     const [qrCode, setQrCode] = useState('');
-
-    const handleRegister = async () => {
     
+    const handleRegister = async () => {
+        try {
             const response = await totpClient.totpRegister(new TotpRegisterRequestDto({
-                email: email
-            }))
-        
-                setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
-                toast('Scan QR code with your authenticator app');
-         
-      
+                
+            }));
+            setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
+            toast.success('Scan QR code with your authenticator app');
+        } catch (error) {
+            toast.error('Registration failed');
+        }
     };
 
     const handleLogin = async () => {
-   const response = await totpClient.totpLogin(new TotpLoginRequestDto({
-       email: email,
-       totpCode: totpCode
-   }))
+        try {
+            const response = await totpClient.totpLogin(new TotpLoginRequestDto({
+                totpCode: totpCode
+            }));
 
+            setJwt(response);
+            toast.success('Login successful!');
+            setTotpCode('');
+        } catch (error) {
+            toast.error('Invalid code');
+            setTotpCode('');
+        }
+    };
 
-                localStorage.setItem('jwt', response);
-                toast('Login successful!');
-    
+    const handleRotate = async () => {
+        try {
+            if (!jwt) {
+                toast.error('Please login first');
+                return;
+            }
+
+            const response = await totpClient.totpRotate(
+                new TotpRotateRequestDto({currentTotpCode: totpCode}),
+                jwt
+            );
+
+            setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
+            toast.success('TOTP secret rotated. Scan new QR code');
+            setTotpCode('');
+        } catch (error) {
+            toast.error('Failed to rotate TOTP secret');
+            setTotpCode('');
+        }
+    };
+
+    const handleUnregister = async () => {
+        try {
+            await totpClient.toptUnregister(new TotpUnregisterRequestDto({
+                userId: jwtDecode<JwtClaims>(jwt).id!,
+                totpCode: totpCode
+            }));
+
+            SignOut()
+
+        } catch (error) {
+            toast.error('Failed to unregister device');
+            setTotpCode('');
+        }
     };
 
     return (
-        <div className="max-w-md mx-auto p-6 space-y-4">
-            <div className="space-y-2">
-                <input
-                    type="text"
-                    placeholder="Username"
-                    className="w-full p-2 border rounded"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+        <div className="max-w-md mx-auto p-6 space-y-6">
 
-                {!isNewUser && (
-                    <input
-                        type="text"
-                        placeholder="6-digit code"
-                        maxLength={6}
-                        className="w-full p-2 border rounded"
-                        value={totpCode}
-                        onChange={(e) => setTotpCode(e.target.value)}
-                    />
-                )}
-
-                {isNewUser ? (
-                    <button
-                        onClick={handleRegister}
-                        className="w-full p-2 bg-blue-500 text-white rounded"
-                    >
-                        Register
-                    </button>
-                ) : (
-                    <button
-                        onClick={handleLogin}
-                        className="w-full p-2 bg-green-500 text-white rounded"
-                    >
-                        Login
-                    </button>
-                )}
-
+            <div className="space-y-4">
+                <h2 className="text-xl font-bold text-center">New Device Setup</h2>
                 <button
-                    onClick={() => setIsNewUser(!isNewUser)}
-                    className="w-full p-2 bg-gray-200 rounded"
+                    onClick={handleRegister}
+                    className="w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >
-                    {isNewUser ? 'Already have an account?' : 'Need to register?'}
+                    Register New Device
                 </button>
             </div>
 
-            {qrCode && (
-                <div className="text-center">
-                    <img src={qrCode} alt="TOTP QR Code" className="mx-auto" />
-                    <p className="text-sm text-gray-600 mt-2">
-                        Scan this QR code with your authenticator app
-                    </p>
+            <div className="space-y-4">
+                <h2 className="text-xl font-bold text-center">Enter Authentication Code</h2>
+                <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="Enter 6-digit code"
+                    className="w-full p-3 border rounded-lg text-center text-2xl tracking-wider"
+                    value={totpCode}
+                    onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                />
+
+                <div className="grid grid-cols-2 gap-3">
+                    <button
+                        onClick={handleLogin}
+                        disabled={totpCode.length !== 6}
+                        className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 
+                                     disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    >
+                        Verify Code
+                    </button>
+
+                    <button
+                        onClick={handleRotate}
+                        disabled={totpCode.length !== 6}
+                        className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 
+                                     disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    >
+                        Rotate Secret
+                    </button>
                 </div>
-            )}
+
+                <button
+                    onClick={handleUnregister}
+                    disabled={totpCode.length !== 6}
+                    className="w-full p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 
+                                 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                    Unregister Device
+                </button>
+            </div>
+
+
+            <div className="text-center space-y-3 p-4 border rounded-lg">
+                <img
+                    src={qrCode}
+                    alt="TOTP QR Code"
+                    className="mx-auto max-w-[200px]"
+                />
+                <p className="text-sm text-gray-600">
+                    Scan this QR code with your authenticator app
+                </p>
+            </div>
             
+
         </div>
     );
 }

@@ -2,6 +2,11 @@ Aktuelt:
 - revider fly io deployment
 
 authenticator som 2fa i stedet for at anvende emails
+- totp barrierer for at kun anvende scan og indtat kode:
+    - Når man slår op i bruger tabellen for at confirm den 6 ciferede kode, skal man vide hvor man skal slå op, så enheden skal have sit eget ID
+        - Man kan ikke bare generere et random ID i browseren, for hvis brugeren rydder ID'et efter at have registreret sig selv og inden de skal logge på igen,
+        kan klient appen ikke finde noget ID at vedhæfte og så ved vi ikke hvor vi skal slå op henne.
+        - løsning: altid brug brugernavn / email sammen med totp
 
 client app
       - create list, tag, task, update any of these + delete

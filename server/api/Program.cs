@@ -2,6 +2,7 @@ using System.Text.Json;
 using api.Etc;
 using api.Services;
 using efscaffold;
+using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PgCtx;

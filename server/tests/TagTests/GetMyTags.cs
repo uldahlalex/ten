@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using Infrastructure.Postgres.Scaffolding;
 
 namespace tests.Tag;
 

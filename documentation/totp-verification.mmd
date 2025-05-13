@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant P as Phone
+    participant S as Server
+
+    Note over P,S: Both phone and server have the same secret key
+
+    rect rgb(0,0,0,0)
+        Note over P: Current time: 15:42:23
+        Note over P: Step 1: Get time interval<br/>(time ÷ 30 seconds = 1890423)
+        Note over P: Step 2: Use HMAC-SHA1 with:<br/>- Secret key<br/>- Time interval<br/>To generate hash
+        Note over P: Step 3: Take last 6 digits<br/>Result: "847591"
+    end
+
+    rect rgb(0,0,0,0)
+        Note over S: Current time: 15:42:24
+        Note over S: Step 1: Get time interval<br/>(time ÷ 30 seconds = 1890423)
+        Note over S: Step 2: Use HMAC-SHA1 with:<br/>- Same secret key<br/>- Time interval<br/>To generate hash
+        Note over S: Step 3: Take last 6 digits<br/>Result: "847591"
+    end
+
+    P->>S: Send 6-digit code: "847591"
+    Note over S: Codes match ✓

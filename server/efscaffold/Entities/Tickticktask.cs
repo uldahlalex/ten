@@ -1,6 +1,9 @@
-﻿namespace efscaffold.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Tickticktask
+namespace efscaffold.Entities;
+
+public partial class Tickticktask
 {
     public string TaskId { get; set; } = null!;
 

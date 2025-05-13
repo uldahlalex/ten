@@ -1,5 +1,6 @@
 using efscaffold;
 using efscaffold.Entities;
+using Infrastructure.Postgres.Scaffolding;
 
 namespace api.Etc;
 

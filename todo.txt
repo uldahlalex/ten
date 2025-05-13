@@ -1,8 +1,13 @@
 Aktuelt:
+- revider fly io deployment
 
+authenticator som 2fa i stedet for at anvende emails
 
 client app
       - create list, tag, task, update any of these + delete
-      - tasklist orderby og 
+      - tasklist orderbys og flere filtre evt (eller lav custom filter)
+
+til sidst:
+- skriv en masse dokumentation og visualisering i README
 
 hvis tunit test runner aldrig bliver fikset så migrate til andet

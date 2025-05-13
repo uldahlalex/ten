@@ -15,6 +15,9 @@ public interface ISecurityService
     string GenerateJwt(string id);
     JwtClaims VerifyJwtOrThrow(string jwt);
     string Hash(string str);
+    string GenerateQrCodeBase64(string otpauthUrl);
+    string? GenerateSecretKey();
+    void ValidateTotpCodeOrThrow(string? userTotpSecret, string requestTotpCode);
 }
 
 public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor) : ISecurityService
@@ -49,5 +52,20 @@ public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor) : ISecu
     {
         return Convert.ToBase64String(SHA512.Create()
             .ComputeHash(Encoding.UTF8.GetBytes(str)));
+    }
+
+    public string GenerateQrCodeBase64(string otpauthUrl)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string? GenerateSecretKey()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ValidateTotpCodeOrThrow(string? userTotpSecret, string requestTotpCode)
+    {
+        throw new NotImplementedException();
     }
 }

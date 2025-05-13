@@ -3,6 +3,7 @@ using api;
 using api.Etc;
 using api.Models;
 using efscaffold;
+using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

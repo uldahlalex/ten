@@ -3,6 +3,7 @@ using api.Models.Dtos.Requests;
 using api.Services;
 using efscaffold;
 using efscaffold.Entities;
+using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;

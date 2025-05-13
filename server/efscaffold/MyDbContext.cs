@@ -1,7 +1,9 @@
-﻿using efscaffold.Entities;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using efscaffold.Entities;
 
-namespace efscaffold;
+namespace Infrastructure.Postgres.Scaffolding;
 
 public partial class MyDbContext : DbContext
 {
@@ -119,6 +121,7 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
             entity.Property(e => e.Role).HasColumnName("role");
             entity.Property(e => e.Salt).HasColumnName("salt");
+            entity.Property(e => e.TotpSecret).HasColumnName("totp_secret");
         });
 
         OnModelCreatingPartial(modelBuilder);

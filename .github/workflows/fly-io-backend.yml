@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Deploy and Configure Fly
+      - name: Deploy and Configure Fly #first create toml with "fly app create" after signing in
         run: |
           cd server
           # Set scale to 1 before deployment to ensure we never exceed 1 machine
@@ -22,4 +22,4 @@ jobs:
           # Deploy
           flyctl deploy --ha=false
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_BACKEND }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_BACKEND }} #fly tokens create deploy

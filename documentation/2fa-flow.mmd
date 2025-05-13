@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant U as User/Phone
+    participant C as Client App
+    participant S as Server
+    participant DB as Database
+
+    rect rgb(0,0,0,0)
+        Note over U,DB: ONE-TIME SETUP PHASE
+        C->>S: Initiate TOTP setup
+        S->>S: Generate secret key
+        S->>DB: Store secret key
+        S-->>C: Return QR code
+        U->>C: Scan QR code with phone
+        Note over U: Authenticator app now has<br/>the secret key stored
+    end
+
+    rect rgb(0, 0, 0, 0)
+        Note over U,DB: LATER: PASSWORD RESET PHASE
+        Note over U: User opens authenticator app
+        Note over U: App generates 6-digit code<br/>(using stored secret + current time)
+        U->>C: Enter 6-digit code
+        C->>S: Send code + new password
+        S->>DB: Get stored secret
+        S->>S: Validate code using<br/>secret + current time
+        alt Valid code
+            S->>DB: Update password
+            S-->>C: Success
+        else Invalid code
+            S-->>C: Error
+        end
+    end

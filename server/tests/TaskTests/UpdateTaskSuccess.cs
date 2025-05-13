@@ -6,6 +6,7 @@ using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 using efscaffold;
 using efscaffold.Entities;
+using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

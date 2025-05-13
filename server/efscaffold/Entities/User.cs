@@ -1,18 +1,23 @@
-﻿namespace efscaffold.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class User
+namespace efscaffold.Entities;
+
+public partial class User
 {
     public string UserId { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 
-    public string Salt { get; set; } = null!;
+    public string? Salt { get; set; }
 
-    public string PasswordHash { get; set; } = null!;
+    public string? PasswordHash { get; set; }
 
     public string Role { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }
+
+    public string? TotpSecret { get; set; }
 
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
 

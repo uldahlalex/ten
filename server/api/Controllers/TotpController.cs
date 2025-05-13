@@ -12,7 +12,7 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
 {
 
     [HttpPost(nameof(TotpRegister))]
-    public async Task<IActionResult> TotpRegister([FromBody] TotpRegisterRequestDto registerRequestDto)
+    public async Task<ActionResult<TotpRegisterResponseDto>> TotpRegister([FromBody] TotpRegisterRequestDto registerRequestDto)
     {
         if (ctx.Users.Any(u => u.Email == registerRequestDto.Email))
             return BadRequest(new { Error = "email already exists" });
@@ -42,7 +42,7 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
     }
 
     [HttpPost(nameof(TotpLogin))]
-    public async Task<IActionResult> TotpLogin([FromBody] TotpLoginRequestDto request)
+    public async Task<ActionResult<string>> TotpLogin([FromBody] TotpLoginRequestDto request)
     {
         var user = ctx.Users.FirstOrDefault(u => u.Email == request.Email) ?? throw new Exception("");
 
@@ -54,9 +54,9 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
 
     }
 
-    [HttpPost("rotate-totp")]
+    [HttpPost(nameof(RotateTotpSecret))]
 
-    public async Task<IActionResult> RotateTotpSecret([FromBody] RotateTotpRequestDto requestDto,
+    public async Task<ActionResult<TotpRegisterResponseDto>> RotateTotpSecret([FromBody] RotateTotpRequestDto requestDto,
         [FromHeader] string authorization)
     {
         var jwt = securityService.VerifyJwtOrThrow(authorization);
@@ -82,8 +82,8 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
         });
     }
 
-    [HttpPost("verify-setup")]
-    public async Task<IActionResult> VerifyTotpSetup([FromBody] VerifySetupRequestDto requestDto)
+    [HttpPost(nameof(VerifyTotpSetup))]
+    public async Task<ActionResult> VerifyTotpSetup([FromBody] VerifySetupRequestDto requestDto)
     {
         var user = ctx.Users.FirstOrDefault(u => u.UserId == requestDto.UserId) ??
                    throw new Exception("Not found!");

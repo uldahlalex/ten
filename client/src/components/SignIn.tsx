@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import {useAtom} from "jotai";
 import {JwtAtom} from "../atoms.ts";
 import {AuthRequestDto} from "../generated-client.ts";
+import TotpLogin from "./TotpSignIn.tsx";
 
 export default function SignIn() {
 
@@ -31,6 +32,8 @@ export default function SignIn() {
                     </button>
                 </>
         }
+        
+        <TotpLogin />
 
     </div>)
 }

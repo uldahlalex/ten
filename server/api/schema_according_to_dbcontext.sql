@@ -9,10 +9,11 @@ END $EF$;
 CREATE TABLE ticktick.users (
     user_id text NOT NULL,
     email text NOT NULL,
-    salt text NOT NULL,
-    password_hash text NOT NULL,
+    salt text,
+    password_hash text,
     role text NOT NULL,
     created_at timestamp with time zone NOT NULL,
+    totp_secret text,
     CONSTRAINT users_pkey PRIMARY KEY (user_id)
 );
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useMatches, useLocation, RouteObject } from 'react-router-dom';
-import { ChevronRight, ChevronsUpDown } from 'lucide-react';
+import { ChevronRight, GitBranch } from 'lucide-react';
 
 interface RouteHandle {
     label: string;
@@ -21,86 +21,91 @@ interface UIMatch {
 
 export const Breadcrumbs = ({ routes }: { routes: ExtendedRouteObject[] }) => {
     const matches = useMatches() as UIMatch[];
-    const location = useLocation();
-    const [showSiblings, setShowSiblings] = React.useState(false);
+    const [openDropdownIndex, setOpenDropdownIndex] = React.useState<number | null>(null);
 
-    // Function to find sibling routes
-    const findSiblingRoutes = (currentMatch: UIMatch): ExtendedRouteObject[] => {
-        const parentMatches = matches.slice(0, -1);
-        const lastParentMatch = parentMatches[parentMatches.length - 1];
-
-        if (!lastParentMatch?.handle) return [];
-
-        // Find the parent route object from your routes configuration
-        const findParentRoute = (routes: ExtendedRouteObject[], path: string): ExtendedRouteObject | null => {
-            for (const route of routes) {
-                if (route.path === path) return route;
-                if (route.children) {
-                    const found = findParentRoute(route.children, path);
-                    if (found) return found;
+    const findSiblingRoutes = (pathname: string, currentRoutes: ExtendedRouteObject[]): ExtendedRouteObject[] => {
+        for (const route of currentRoutes) {
+            if (route.path === pathname) {
+                return [];
+            }
+            if (route.children) {
+                const siblings = route.children.filter(r => r.path !== pathname && r.handle?.label);
+                if (siblings.length > 0) {
+                    return siblings;
+                }
+                const nestedSiblings = findSiblingRoutes(pathname, route.children);
+                if (nestedSiblings.length > 0) {
+                    return nestedSiblings;
                 }
             }
-            return null;
-        };
-
-        // Get sibling routes from the parent's children
-        const parentRoute = findParentRoute(routes, lastParentMatch.pathname);
-        return (parentRoute?.children?.filter(route => route.path !== currentMatch.pathname) || []) as ExtendedRouteObject[];
+        }
+        return [];
     };
 
-    const currentMatch = matches[matches.length - 1];
-    const siblingRoutes = findSiblingRoutes(currentMatch);
+    const renderBreadcrumbItem = (match: UIMatch, index: number, array: UIMatch[]) => {
+        const siblings = findSiblingRoutes(match.pathname, routes);
+        const isLast = index === array.length - 1;
+
+        return (
+            <React.Fragment key={match.pathname}>
+                <div className="flex items-center">
+                    <Link
+                        to={match.pathname}
+                        className={`text-sm hover:text-blue-600 transition-colors ${
+                            isLast ? 'text-blue-600 font-semibold' : 'text-gray-600'
+                        }`}
+                    >
+                        {match.handle.label}
+                    </Link>
+
+                    {siblings.length > 0 && (
+                        <div className="relative ml-2">
+                            <button
+                                onClick={() => setOpenDropdownIndex(openDropdownIndex === index ? null : index)}
+                                className="group flex items-center"
+                            >
+                                <GitBranch
+                                    className="w-4 h-4 text-gray-400 transform rotate-225 hover:text-blue-500 transition-colors"
+                                />
+                            </button>
+
+                            {openDropdownIndex === index && (
+                                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 py-1">
+                                    {siblings.map((route) => (
+                                        <Link
+                                            key={route.path}
+                                            to={route.path || ''}
+                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                                        >
+                                            {route.handle?.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {!isLast && (
+                    <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+                )}
+            </React.Fragment>
+        );
+    };
 
     return (
         <nav className="p-4 bg-white shadow-sm rounded-lg">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                    {matches
-                        .filter((match): match is UIMatch => Boolean(match.handle?.label))
-                        .map((match, index, array) => (
-                            <React.Fragment key={match.pathname}>
-                                <Link
-                                    to={match.pathname}
-                                    className={`text-sm hover:text-blue-600 transition-colors ${
-                                        index === array.length - 1
-                                            ? 'text-blue-600 font-semibold'
-                                            : 'text-gray-600'
-                                    }`}
-                                >
-                                    {match.handle.label}
-                                </Link>
-                                {index < array.length - 1 && (
-                                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                                )}
-                            </React.Fragment>
-                        ))}
-                </div>
-
-                {siblingRoutes.length > 0 && (
-                    <div className="relative">
-                        <button
-                            onClick={() => setShowSiblings(!showSiblings)}
-                            className="flex items-center space-x-1 text-sm text-gray-600 hover:text-blue-600 transition-colors"
-                        >
-                            <span>Related Pages</span>
-                            <ChevronsUpDown className="w-4 h-4" />
-                        </button>
-
-                        {showSiblings && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 py-1">
-                                {siblingRoutes.map((route) => (
-                                    <Link
-                                        key={route.path}
-                                        to={route.path || ''}
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
-                                    >
-                                        {route.handle?.label}
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
+            <div
+                className="flex items-center flex-wrap gap-y-2"
+                onClick={(e) => {
+                    if (!(e.target as HTMLElement).closest('button')) {
+                        setOpenDropdownIndex(null);
+                    }
+                }}
+            >
+                {matches
+                    .filter((match): match is UIMatch => Boolean(match.handle?.label))
+                    .map(renderBreadcrumbItem)}
             </div>
         </nav>
     );

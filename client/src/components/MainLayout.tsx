@@ -3,6 +3,7 @@ import {JwtAtom} from "../atoms/atoms.ts";
 import Sidebar from "./sidebar/Sidebar.tsx";
 import {Outlet} from "react-router-dom";
 import {Breadcrumbs} from "./Breadcrumbs.tsx";
+import {routes} from "./ApplicationRoutes.tsx";
 
 export const MainLayout = () => {
 
@@ -22,7 +23,7 @@ export const MainLayout = () => {
             <div className="flex-1 h-full">
                 <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
                     {/* Add the Breadcrumbs component here */}
-                    <Breadcrumbs />
+                    <Breadcrumbs routes={routes} />
 
                     {/* This is where nested routes will render */}
                     <div className="bg-white p-6 rounded-lg shadow">

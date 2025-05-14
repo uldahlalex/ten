@@ -1,84 +1,109 @@
-import { useMatches, Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import React from 'react';
+import { Link, useMatches, useLocation, RouteObject } from 'react-router-dom';
+import { ChevronRight, ChevronsUpDown } from 'lucide-react';
 
-// Define the structure for route metadata
-interface BreadcrumbMetadata {
-    label?: string;
-    hideInBreadcrumb?: boolean;
+interface RouteHandle {
+    label: string;
 }
 
-// Helper type for the route with handle
-interface RouteWithHandle {
+interface ExtendedRouteObject extends RouteObject {
+    handle?: RouteHandle;
+    children?: ExtendedRouteObject[];
+}
+
+interface UIMatch {
     id: string;
     pathname: string;
     params: Record<string, string>;
     data: unknown;
-    handle?: BreadcrumbMetadata;
+    handle: RouteHandle | undefined;
 }
 
-export const Breadcrumbs = () => {
-    const matches = useMatches() as RouteWithHandle[];
-    const [breadcrumbs, setBreadcrumbs] = useState<Array<{path: string, label: string}>>([]);
+export const Breadcrumbs = ({ routes }: { routes: ExtendedRouteObject[] }) => {
+    const matches = useMatches() as UIMatch[];
+    const location = useLocation();
+    const [showSiblings, setShowSiblings] = React.useState(false);
 
-    useEffect(() => {
-        // Filter out routes that should be hidden
-        const visibleMatches = matches.filter(match => {
-            // Skip routes with hideInBreadcrumb flag
-            if (match.handle?.hideInBreadcrumb) {
-                return false;
+    // Function to find sibling routes
+    const findSiblingRoutes = (currentMatch: UIMatch): ExtendedRouteObject[] => {
+        const parentMatches = matches.slice(0, -1);
+        const lastParentMatch = parentMatches[parentMatches.length - 1];
+
+        if (!lastParentMatch?.handle) return [];
+
+        // Find the parent route object from your routes configuration
+        const findParentRoute = (routes: ExtendedRouteObject[], path: string): ExtendedRouteObject | null => {
+            for (const route of routes) {
+                if (route.path === path) return route;
+                if (route.children) {
+                    const found = findParentRoute(route.children, path);
+                    if (found) return found;
+                }
             }
-            return true;
-        });
+            return null;
+        };
 
-        // Create breadcrumb items from visible matches
-        const items = visibleMatches.map(match => {
-            // Extract the label directly from the route's handle property
-            // If no label is provided, use the last segment of the pathname
-            const label = match.handle?.label ||
-                (match.pathname === '/' ? 'Home' :
-                    match.pathname.split('/').pop() || 'Home');
+        // Get sibling routes from the parent's children
+        const parentRoute = findParentRoute(routes, lastParentMatch.pathname);
+        return (parentRoute?.children?.filter(route => route.path !== currentMatch.pathname) || []) as ExtendedRouteObject[];
+    };
 
-            return {
-                path: match.pathname,
-                label: label
-            };
-        });
-
-        setBreadcrumbs(items);
-    }, [matches]);
-
-    // Don't show breadcrumbs if we're just at the root or there's only one item
-    if (breadcrumbs.length <= 1) {
-        return null;
-    }
+    const currentMatch = matches[matches.length - 1];
+    const siblingRoutes = findSiblingRoutes(currentMatch);
 
     return (
-        <nav aria-label="Breadcrumb" className="px-4 py-2 bg-gray-50 rounded-md mb-4">
-            <ol className="flex items-center space-x-1 text-sm">
-                {breadcrumbs.map((crumb, index) => {
-                    const isLast = index === breadcrumbs.length - 1;
-
-                    return (
-                        <li key={crumb.path} className="flex items-center">
-                            {index > 0 && <ChevronRight className="h-4 w-4 text-gray-400 mx-1" />}
-
-                            {isLast ? (
-                                <span className="font-medium text-gray-700" aria-current="page">
-                  {crumb.label}
-                </span>
-                            ) : (
+        <nav className="p-4 bg-white shadow-sm rounded-lg">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                    {matches
+                        .filter((match): match is UIMatch => Boolean(match.handle?.label))
+                        .map((match, index, array) => (
+                            <React.Fragment key={match.pathname}>
                                 <Link
-                                    to={crumb.path}
-                                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                                    to={match.pathname}
+                                    className={`text-sm hover:text-blue-600 transition-colors ${
+                                        index === array.length - 1
+                                            ? 'text-blue-600 font-semibold'
+                                            : 'text-gray-600'
+                                    }`}
                                 >
-                                    {crumb.label}
+                                    {match.handle.label}
                                 </Link>
-                            )}
-                        </li>
-                    );
-                })}
-            </ol>
+                                {index < array.length - 1 && (
+                                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                                )}
+                            </React.Fragment>
+                        ))}
+                </div>
+
+                {siblingRoutes.length > 0 && (
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowSiblings(!showSiblings)}
+                            className="flex items-center space-x-1 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                        >
+                            <span>Related Pages</span>
+                            <ChevronsUpDown className="w-4 h-4" />
+                        </button>
+
+                        {showSiblings && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 py-1">
+                                {siblingRoutes.map((route) => (
+                                    <Link
+                                        key={route.path}
+                                        to={route.path || ''}
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                                    >
+                                        {route.handle?.label}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
         </nav>
     );
 };
+
+export default Breadcrumbs;

@@ -16,6 +16,7 @@ import {ProtectedRoute} from "./ProtectedRoute.tsx";
 import TaskList from "./routes/tasks/TaskList.tsx";
 import useInitializeData from "../functions/useInitializeData.tsx";
 import SignInWithPassword from "./routes/auth/pass/SignInWithPassword.tsx";
+import Breadcrumbs from "./Breadcrumbs.tsx";
 
 export const mainLayoutPath = "/";
 export const AuthenticationRoute = "/auth";
@@ -80,7 +81,10 @@ function ApplicationRoutes() {
 
     const router = createBrowserRouter(routes);
 
-    return <RouterProvider router={router} />;
+    return <>
+
+        <RouterProvider router={router} />
+    </>
 }
 
 export default ApplicationRoutes;

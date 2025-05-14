@@ -1,17 +1,15 @@
 import React, {useState} from 'react';
-import {totpClient} from "../apiControllerClients.ts";
+import {totpClient} from "../../../apiControllerClients.ts";
 import {
-    TotpLoginRequestDto, TotpRegisterRequestDto,
-    TotpRegisterResponseDto,
+    TotpLoginRequestDto,
+    TotpRegisterRequestDto,
     TotpRotateRequestDto,
     TotpUnregisterRequestDto
-} from "../generated-client.ts";
+} from "../../../generated-client.ts";
 import {useAtom} from 'jotai';
 import toast from "react-hot-toast";
-import {jwtDecode} from "jwt-decode";
-import {JwtAtom} from "../atoms.ts";
-import {JwtClaims} from "../JwtClaims.ts";
-import SignOut from "../signOut.tsx"; // assuming you're using jwt-decode
+import {JwtAtom} from "../../../atoms/atoms.ts";
+import SignOut from "../../../functions/signOut.tsx"; 
 
 export default function TotpAuth() {
     const [jwt, setJwt] = useAtom(JwtAtom);
@@ -83,7 +81,8 @@ export default function TotpAuth() {
     };
 
     return (
-        <div className="max-w-md mx-auto p-6 space-y-6">
+        <div className="flex flex-col items-center justify-center h-screen">
+            
 
             <div className="space-y-4">
                 <h2 className="text-xl font-bold text-center">New Device Setup</h2>

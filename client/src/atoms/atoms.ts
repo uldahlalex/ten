@@ -5,7 +5,7 @@ import {
     TagDto,
     TasklistDto,
     TickticktaskDto
-} from "./generated-client.ts";
+} from "../generated-client.ts";
 import {atomWithStorage} from "jotai/utils";
 
 export const JwtAtom = atomWithStorage<JwtResponse | undefined>('jwt',undefined);

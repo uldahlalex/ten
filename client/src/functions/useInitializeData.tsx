@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useAtom} from "jotai";
-import {JwtAtom, ListsAtom, TagsAtom} from "../atoms.ts";
+import {JwtAtom, ListsAtom, TagsAtom} from "../atoms/atoms.ts";
 import {taskClient} from "../apiControllerClients.ts";
 
 export default function useInitializeData() {

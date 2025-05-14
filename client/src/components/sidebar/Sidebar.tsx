@@ -1,14 +1,14 @@
 import {useAtom} from "jotai";
-import {CurrentTasksDisplayView, JwtAtom, ListsAtom, QueryParametersAtom, TagsAtom} from "../atoms.ts";
-import {taskClient} from "../apiControllerClients.ts";
+import {CurrentTasksDisplayView, JwtAtom, ListsAtom, QueryParametersAtom, TagsAtom} from "../../atoms/atoms.ts";
+import {taskClient} from "../../apiControllerClients.ts";
 import {
     GetTasksFilterAndOrderParameters,
     IGetTasksFilterAndOrderParameters,
     TagDto,
     TasklistDto
-} from "../generated-client";
+} from "../../generated-client.ts";
 import {useCallback} from "react";
-import SignOut from "../signOut.tsx";
+import SignOut from "../../functions/signOut.tsx";
 import {useNavigate} from "react-router-dom";
 
 export default function Sidebar() {

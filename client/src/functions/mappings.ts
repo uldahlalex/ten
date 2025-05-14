@@ -1,4 +1,4 @@
-import {TickticktaskDto, UpdateTaskRequestDto} from "./generated-client.ts";
+import {TickticktaskDto, UpdateTaskRequestDto} from "../generated-client.ts";
 
 export default function ToUpdateDto(task: TickticktaskDto): UpdateTaskRequestDto {
     return new UpdateTaskRequestDto({

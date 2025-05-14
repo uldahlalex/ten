@@ -1,9 +1,9 @@
 import {useAtom} from "jotai";
-import {CurrentTasksDisplayView, JwtAtom} from "../atoms.ts";
-import {taskClient} from "../apiControllerClients";
-import {TickticktaskDto, UpdateTaskRequestDto} from "../generated-client";
+import {CurrentTasksDisplayView, JwtAtom} from "../../atoms/atoms.ts";
+import {taskClient} from "../../apiControllerClients.ts";
+import {TickticktaskDto, UpdateTaskRequestDto} from "../../generated-client.ts";
 import toast from "react-hot-toast";
-import ToUpdateDto from "../mappings.ts";
+import ToUpdateDto from "../../functions/mappings.ts";
 
 export default function TaskList() {
 

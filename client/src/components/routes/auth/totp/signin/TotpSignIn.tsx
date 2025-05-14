@@ -1,33 +1,19 @@
 import React, {useState} from 'react';
-import {totpClient} from "../../../apiControllerClients.ts";
-import {
-    TotpLoginRequestDto,
-    TotpRegisterRequestDto,
-    TotpRotateRequestDto,
-    TotpUnregisterRequestDto
-} from "../../../generated-client.ts";
+import {totpClient} from "../../../../../apiControllerClients.ts";
+import {TotpLoginRequestDto, TotpRotateRequestDto, TotpUnregisterRequestDto} from "../../../../../generated-client.ts";
 import {useAtom} from 'jotai';
 import toast from "react-hot-toast";
-import {JwtAtom} from "../../../atoms/atoms.ts";
-import SignOut from "../../../functions/signOut.tsx"; 
+import {JwtAtom} from "../../../../../atoms/atoms.ts";
+import SignOut from "../../../../../functions/signOut.tsx";
+import {Outlet} from "react-router-dom";
 
-export default function TotpAuth() {
+export default function TotpSignIn() {
     const [jwt, setJwt] = useAtom(JwtAtom);
     const [totpCode, setTotpCode] = useState('');
     const [qrCode, setQrCode] = useState('');
     const [email, setEmail] = useState('');
     
-    const handleRegister = async () => {
-        try {
-            const response = await totpClient.totpRegister(new TotpRegisterRequestDto({
-                email: email 
-            }));
-            setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
-            toast.success('Scan QR code with your authenticator app');
-        } catch (error) {
-            toast.error('Registration failed');
-        }
-    };
+
 
     const handleLogin = async () => {
         try {
@@ -84,16 +70,7 @@ export default function TotpAuth() {
         <div className="flex flex-col items-center justify-center h-screen">
             
 
-            <div className="space-y-4">
-                <h2 className="text-xl font-bold text-center">New Device Setup</h2>
-                <button
-                    onClick={handleRegister}
-                    className="w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                >
-                    Register New Device
-                </button>
-            </div>
-
+  
             <div className="space-y-4">
                 <h2 className="text-xl font-bold text-center">Enter Authentication Code</h2>
                 <input

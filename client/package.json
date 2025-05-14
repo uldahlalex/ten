@@ -15,6 +15,7 @@
     "jotai": "^2.*",
     "jotai-devtools": "^0.*",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.510.0",
     "react": "^19.*",
     "react-dom": "^19.*",
     "react-hot-toast": "^2.*",

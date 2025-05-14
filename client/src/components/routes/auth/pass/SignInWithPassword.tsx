@@ -1,10 +1,10 @@
-import {authClient} from "../../../apiControllerClients.ts";
+import {authClient} from "../../../../apiControllerClients.ts";
 import toast from "react-hot-toast";
 import {useAtom} from "jotai";
-import {JwtAtom} from "../../../atoms/atoms.ts";
-import {AuthRequestDto} from "../../../generated-client.ts";
+import {JwtAtom} from "../../../../atoms/atoms.ts";
+import {AuthRequestDto} from "../../../../generated-client.ts";
 import {useNavigate} from "react-router-dom";
-import {TasksRoute} from "../../ApplicationRoutes.tsx";
+import {TaskListRoute} from "../../../ApplicationRoutes.tsx";
 
 export default function SignInWithPassword() {
 
@@ -16,7 +16,7 @@ export default function SignInWithPassword() {
             authClient.login(new AuthRequestDto({email: "test@user.dk", password: "abc"})).then(r => {
                 toast("welcome!")
                 setJwt(r);
-                navigate(TasksRoute)
+                navigate(TaskListRoute)
             })}>Click to log in as a test user
         </button>
     </div>)

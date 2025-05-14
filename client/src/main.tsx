@@ -5,9 +5,9 @@ import './style.css';
 import {BrowserRouter} from "react-router";
 
 createRoot(document.getElementById('root')!).render(
-    <BrowserRouter>
+<><App/>
+    <Toaster/>
+</>
 
-        <App/>
-        <Toaster/>
-    </BrowserRouter>
+        
 );

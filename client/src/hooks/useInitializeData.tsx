@@ -10,12 +10,12 @@ export default function useInitializeData() {
     const [, setTags] = useAtom(TagsAtom);
 
     useEffect(() => {
-        if (jwt == null || jwt.length < 1)
+        if (jwt == null || jwt.jwt.length < 1)
             return;
-        taskClient.getMyLists(jwt).then(r => {
+        taskClient.getMyLists(jwt.jwt).then(r => {
             setLists(r);
         })
-        taskClient.getMyTags(jwt).then(r => {
+        taskClient.getMyTags(jwt.jwt).then(r => {
             setTags(r);
             });
     }, [jwt])

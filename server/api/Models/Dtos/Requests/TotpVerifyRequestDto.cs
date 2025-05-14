@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace api.Controllers;
 
-public class TotpUnregisterRequestDto
+public class TotpVerifyRequestDto
 {
     [Required]
-    public string UserId { get; set; }
+    public string Id { get; set; }
 
     [Required]
     [StringLength(6, MinimumLength = 6)]

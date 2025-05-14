@@ -1,7 +1,7 @@
 import {useAtom} from "jotai";
 import {CurrentTasksDisplayView, JwtAtom} from "../atoms.ts";
 import {taskClient} from "../apiControllerClients";
-import {UpdateTaskRequestDto} from "../generated-client";
+import {TickticktaskDto, UpdateTaskRequestDto} from "../generated-client";
 import toast from "react-hot-toast";
 import ToUpdateDto from "../mappings.ts";
 
@@ -10,10 +10,10 @@ export default function TaskList() {
     const [tasks, setTasks] = useAtom(CurrentTasksDisplayView);
     const [jwt] = useAtom(JwtAtom);
 
-    function handleClickCheckbox(e, task) {
+    function handleClickCheckbox(e:  React.ChangeEvent<HTMLInputElement>, task: TickticktaskDto) {
         const updateDto = new UpdateTaskRequestDto(ToUpdateDto(task));
         updateDto.completed = e.target.checked;
-        taskClient.updateTask(updateDto, jwt).then(result => {
+        taskClient.updateTask(updateDto, jwt!.jwt).then(result => {
             setTasks(tasks.map(t => {
                 if (t.taskId === task.taskId) {
                     return result;

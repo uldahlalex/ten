@@ -20,13 +20,13 @@ export default function Sidebar() {
 
     const handleListClick = ((list: TasklistDto) => {
         setParams({...params, listIds: [list.listId]});
-        taskClient.getMyTasks(jwt, params).then(r => {
+        taskClient.getMyTasks(jwt!.jwt, new GetTasksFilterAndOrderParameters(params)).then(r => {
             setTasks(r);
         });
     });
 
     const handleTagClick = ((tag: TagDto) => {
-        const existingTagIds = [...params.tagIds]
+        const existingTagIds: string[] = [...params.tagIds!]
         const includesNewTag = existingTagIds.includes(tag.tagId);
         if (includesNewTag) {
             // Remove the tag ID from the array
@@ -40,7 +40,7 @@ export default function Sidebar() {
         
         
             // Fetch tasks with updated tag selection
-            taskClient.getMyTasks(jwt, params).then(r => {
+            taskClient.getMyTasks(jwt!.jwt, new GetTasksFilterAndOrderParameters(params)).then(r => {
                 setTasks(r);
             });
 
@@ -57,7 +57,7 @@ export default function Sidebar() {
                 <li className="pb-2 text-xs opacity-60 tracking-wide">Lists</li>
                 {lists.map((list, index) => (
                     <button
-                        className={`btn mt-2 ${params.listIds.includes(list.listId) ? 'btn-primary' : ''}`}
+                        className={`btn mt-2 ${params.listIds!.includes(list.listId) ? 'btn-primary' : ''}`}
                         key={index}
                         onClick={() => handleListClick(list)}
                     >
@@ -68,7 +68,7 @@ export default function Sidebar() {
                 <li  className="pt-6 pb-2 text-xs opacity-60 tracking-wide">Tags</li>
                 {tags.map((tag, index) => (
                     <button
-                        className={`btn mt-2 ${params.tagIds.includes(tag.tagId) ? 'btn-primary' : ''}`}
+                        className={`btn mt-2 ${params.tagIds!.includes(tag.tagId) ? 'btn-primary' : ''}`}
                         key={index}
                         onClick={() => handleTagClick(tag)}
                     >

@@ -1,38 +1,42 @@
-import {Route, Routes, useNavigate} from "react-router";
+import { Route, Routes, useNavigate, Outlet } from "react-router-dom";
 import useInitializeData from "../hooks/useInitializeData.tsx";
-import {DashboardRoute, SignInRoute} from '../routeConstants.ts';
+import { HomeRoute, SignInRoute } from '../routeConstants.ts';
 import SignIn from "./SignIn.tsx";
-import {useEffect} from "react";
-import {useAtom} from "jotai";
-import {JwtAtom} from "../atoms.ts";
-import toast from "react-hot-toast";
-import Dashboard from "./Dashboard.tsx";
+import Sidebar from "./Sidebar.tsx";
+import TaskList from "./TaskList.tsx";
+import {ProtectedRoute} from "./ProtectedRoute.tsx";
+
+
+const MainLayout = () => {
+    return (
+        <div className="flex h-screen">
+            <div className="w-64 h-full border-r border-gray-200 bg-white">
+                <Sidebar />
+            </div>
+            <div className="flex-1 h-full">
+                <Outlet />
+            </div>
+        </div>
+    );
+};
 
 export default function ApplicationRoutes() {
-    
-    const navigate = useNavigate();
-    const [jwt] = useAtom(JwtAtom);
     useInitializeData();
 
-
-    useEffect(() => {
-        if (jwt == null || jwt.length < 1) {
-            navigate(SignInRoute);
-            toast("Please sign in to continue")
-        } else {
-            navigate(DashboardRoute);
-        }
-    }, [jwt])
-    
-    return (<>
-        {/*the browser router is defined in main tsx so that i can use useNavigate anywhere*/}
+    return (
         <Routes>
-    
-            <Route element={<SignIn/>} path={SignInRoute}/>
-            <Route element={<Dashboard/>} path={DashboardRoute}/>
+            <Route element={<MainLayout />}>
+                <Route path={SignInRoute} element={<SignIn />} />
+                <Route
+                    path={HomeRoute}
+                    element={
+                        <ProtectedRoute>
+                            <TaskList />
+                        </ProtectedRoute>
+                    }
+                />
 
+            </Route>
         </Routes>
-        
-
-    </>)
+    );
 }

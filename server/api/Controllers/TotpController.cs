@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using api.Etc;
+using api.Models.Dtos.Responses;
 using api.Services;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
@@ -12,7 +13,7 @@ namespace api.Controllers;
 public class TotpController(ISecurityService securityService, MyDbContext ctx) : ControllerBase
 {
     [HttpPost(nameof(TotpRegister))]
-    public async Task<ActionResult<TotpRegisterResponseDto>> TotpRegister()
+    public async Task<ActionResult<TotpRegisterResponseDto>> TotpRegister([FromBody]TotpRegisterRequestDto dto)
     {
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
@@ -34,6 +35,8 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
         }
         else
         {
+            if (ctx.Users.Any(u => u.Email == dto.Email))
+                throw new Exception("User already exists");
             var userId = Guid.NewGuid().ToString();
             var totpSecret = securityService.GenerateSecretKey();
             var user = new User
@@ -42,7 +45,7 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
                 TotpSecret = totpSecret,
                 Role = nameof(User),
                 CreatedAt = DateTime.UtcNow,
-                Email = "test@totpuser.dk"
+                Email = dto.Email
             };
             ctx.Users.Add(user);
             await ctx.SaveChangesAsync();
@@ -61,22 +64,25 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
     }
 
     [HttpPost(nameof(TotpLogin))]
-    public async Task<ActionResult<string>> TotpLogin([FromBody] TotpLoginRequestDto request)
+    public async Task<ActionResult<JwtResponse>> TotpLogin([FromBody] TotpLoginRequestDto request)
     {
         
-        var user = await ctx.Users.FirstOrDefaultAsync(u => u.TotpSecret == request.TotpCode) ??
+        var user = await ctx.Users.FirstOrDefaultAsync(u => u.Email == request.Email) ??
                    throw new ValidationException("User not found");
 
         securityService.ValidateTotpCodeOrThrow(user.TotpSecret, request.TotpCode);
 
         var token = securityService.GenerateJwt(user.UserId);
-        return Ok(token);
+        return Ok(new JwtResponse()
+        {
+            Jwt = token
+        });
     }
 
     [HttpPost(nameof(TotpVerify))]
     public async Task<ActionResult> TotpVerify([FromBody] TotpVerifyRequestDto request)
     {
-        var user = await ctx.Users.FirstOrDefaultAsync(u => u.UserId == request.UserId) ??
+        var user = await ctx.Users.FirstOrDefaultAsync(u => u.UserId == request.Id) ??
                    throw new Exception("User not found");
 
         securityService.ValidateTotpCodeOrThrow(user.TotpSecret, request.TotpCode);
@@ -84,12 +90,11 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
     }
 
     [HttpPost(nameof(TotpRotate))]
-    public async Task<ActionResult<TotpRegisterResponseDto>> TotpRotate([FromBody] TotpRotateRequestDto request,
+    public async Task<ActionResult<TotpRegisterResponseDto>> TotpRotate(
+        [FromBody] TotpRotateRequestDto request,
         [FromHeader] string authorization)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
+     
 
         var jwt = securityService.VerifyJwtOrThrow(authorization);
 
@@ -116,15 +121,16 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
     }
 
     [HttpDelete(nameof(ToptUnregister))]
-    public async Task<IActionResult> ToptUnregister([FromBody] TotpUnregisterRequestDto request)
+    public async Task<ActionResult> ToptUnregister([FromBody] TotpUnregisterRequestDto request, [FromHeader]string authorization)
     {
-        var user = await ctx.Users.FirstOrDefaultAsync(u => u.UserId == request.UserId) ??
+        var jwt = securityService.VerifyJwtOrThrow(authorization);
+        var user = await ctx.Users.FirstOrDefaultAsync(u => u.UserId == jwt.Id) ??
                    throw new Exception("User not found");
         securityService.ValidateTotpCodeOrThrow(user.TotpSecret, request.TotpCode);
 
         ctx.Users.Remove(user);
         await ctx.SaveChangesAsync();
 
-        return Ok(new { Message = "Device unregistered successfully" });
+        return Ok();
     }
 }

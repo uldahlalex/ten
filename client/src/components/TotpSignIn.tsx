@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {totpClient} from "../apiControllerClients.ts";
 import {
-    TotpLoginRequestDto,
+    TotpLoginRequestDto, TotpRegisterRequestDto,
     TotpRegisterResponseDto,
     TotpRotateRequestDto,
     TotpUnregisterRequestDto
@@ -17,11 +17,12 @@ export default function TotpAuth() {
     const [jwt, setJwt] = useAtom(JwtAtom);
     const [totpCode, setTotpCode] = useState('');
     const [qrCode, setQrCode] = useState('');
+    const [email, setEmail] = useState('');
     
     const handleRegister = async () => {
         try {
             const response = await totpClient.totpRegister(new TotpRegisterRequestDto({
-                
+                email: email 
             }));
             setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
             toast.success('Scan QR code with your authenticator app');
@@ -33,7 +34,8 @@ export default function TotpAuth() {
     const handleLogin = async () => {
         try {
             const response = await totpClient.totpLogin(new TotpLoginRequestDto({
-                totpCode: totpCode
+                totpCode: totpCode,
+                email: email
             }));
 
             setJwt(response);
@@ -54,7 +56,7 @@ export default function TotpAuth() {
 
             const response = await totpClient.totpRotate(
                 new TotpRotateRequestDto({currentTotpCode: totpCode}),
-                jwt
+                jwt.jwt
             );
 
             setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
@@ -69,9 +71,8 @@ export default function TotpAuth() {
     const handleUnregister = async () => {
         try {
             await totpClient.toptUnregister(new TotpUnregisterRequestDto({
-                userId: jwtDecode<JwtClaims>(jwt).id!,
-                totpCode: totpCode
-            }));
+                totpCode: totpCode, 
+            }), jwt!.jwt);
 
             SignOut()
 
@@ -114,6 +115,14 @@ export default function TotpAuth() {
                     >
                         Verify Code
                     </button>
+                    {/*email field*/}
+                    <input
+                        type="email"
+                        placeholder="Enter your email"
+                        className="w-full p-3 border rounded-lg text-center"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        />
 
                     <button
                         onClick={handleRotate}
@@ -136,16 +145,20 @@ export default function TotpAuth() {
             </div>
 
 
-            <div className="text-center space-y-3 p-4 border rounded-lg">
-                <img
-                    src={qrCode}
-                    alt="TOTP QR Code"
-                    className="mx-auto max-w-[200px]"
-                />
-                <p className="text-sm text-gray-600">
-                    Scan this QR code with your authenticator app
-                </p>
-            </div>
+            {
+                (qrCode.length != 0) && (<div className="text-center space-y-3 p-4 border rounded-lg">
+                    <img
+                        src={qrCode}
+                        alt="TOTP QR Code"
+                        className="mx-auto max-w-[200px]"
+                    />
+                    <p className="text-sm text-gray-600">
+                        Scan this QR code with your authenticator app
+                    </p>
+                </div>)
+              
+            }
+            
             
 
         </div>

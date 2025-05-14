@@ -19,6 +19,7 @@
     "react-dom": "^19.*",
     "react-hot-toast": "^2.*",
     "react-router": "^7.*",
+    "react-router-dom": "^7.*",
     "tailwindcss": "^4.*"
   },
   "devDependencies": {

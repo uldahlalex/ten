@@ -1,14 +1,14 @@
 import {atom} from 'jotai';
 import {
     GetTasksFilterAndOrderParameters,
-    IGetTasksFilterAndOrderParameters,
+    IGetTasksFilterAndOrderParameters, JwtResponse,
     TagDto,
     TasklistDto,
     TickticktaskDto
 } from "./generated-client.ts";
 import {atomWithStorage} from "jotai/utils";
 
-export const JwtAtom = atomWithStorage<string>('jwt', localStorage.getItem('jwt') || '');
+export const JwtAtom = atomWithStorage<JwtResponse | undefined>('jwt',undefined);
 
 export const ListsAtom = atom<TasklistDto[]>([]);
 export const TagsAtom = atom<TagDto[]>([]);

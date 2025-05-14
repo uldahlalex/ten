@@ -18,7 +18,7 @@ export class AuthClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    register(dto: AuthRequestDto): Promise<string> {
+    register(dto: AuthRequestDto): Promise<JwtResponse> {
         let url_ = this.baseUrl + "/Register";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -38,15 +38,14 @@ export class AuthClient {
         });
     }
 
-    protected processRegister(response: Response): Promise<string> {
+    protected processRegister(response: Response): Promise<JwtResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = JwtResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -54,10 +53,10 @@ export class AuthClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve<JwtResponse>(null as any);
     }
 
-    login(dto: AuthRequestDto): Promise<string> {
+    login(dto: AuthRequestDto): Promise<JwtResponse> {
         let url_ = this.baseUrl + "/Login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -77,15 +76,14 @@ export class AuthClient {
         });
     }
 
-    protected processLogin(response: Response): Promise<string> {
+    protected processLogin(response: Response): Promise<JwtResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = JwtResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -93,7 +91,7 @@ export class AuthClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve<JwtResponse>(null as any);
     }
 }
 
@@ -689,13 +687,17 @@ export class TotpClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    totpRegister(): Promise<TotpRegisterResponseDto> {
+    totpRegister(dto: TotpRegisterRequestDto): Promise<TotpRegisterResponseDto> {
         let url_ = this.baseUrl + "/TotpRegister";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(dto);
+
         let options_: RequestInit = {
+            body: content_,
             method: "POST",
             headers: {
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -723,7 +725,7 @@ export class TotpClient {
         return Promise.resolve<TotpRegisterResponseDto>(null as any);
     }
 
-    totpLogin(request: TotpLoginRequestDto): Promise<string> {
+    totpLogin(request: TotpLoginRequestDto): Promise<JwtResponse> {
         let url_ = this.baseUrl + "/TotpLogin";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -743,15 +745,14 @@ export class TotpClient {
         });
     }
 
-    protected processTotpLogin(response: Response): Promise<string> {
+    protected processTotpLogin(response: Response): Promise<JwtResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = JwtResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -759,7 +760,7 @@ export class TotpClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve<JwtResponse>(null as any);
     }
 
     totpVerify(request: TotpVerifyRequestDto): Promise<FileResponse> {
@@ -843,7 +844,7 @@ export class TotpClient {
         return Promise.resolve<TotpRegisterResponseDto>(null as any);
     }
 
-    toptUnregister(request: TotpUnregisterRequestDto): Promise<FileResponse> {
+    toptUnregister(request: TotpUnregisterRequestDto, authorization: string | undefined): Promise<FileResponse> {
         let url_ = this.baseUrl + "/ToptUnregister";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -853,6 +854,7 @@ export class TotpClient {
             body: content_,
             method: "DELETE",
             headers: {
+                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/octet-stream"
             }
@@ -884,6 +886,42 @@ export class TotpClient {
         }
         return Promise.resolve<FileResponse>(null as any);
     }
+}
+
+export class JwtResponse implements IJwtResponse {
+    jwt!: string;
+
+    constructor(data?: IJwtResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.jwt = _data["jwt"];
+        }
+    }
+
+    static fromJS(data: any): JwtResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new JwtResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["jwt"] = this.jwt;
+        return data;
+    }
+}
+
+export interface IJwtResponse {
+    jwt: string;
 }
 
 export class AuthRequestDto implements IAuthRequestDto {
@@ -1601,8 +1639,45 @@ export interface ITotpRegisterResponseDto {
     userId: string;
 }
 
+export class TotpRegisterRequestDto implements ITotpRegisterRequestDto {
+    email!: string;
+
+    constructor(data?: ITotpRegisterRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+        }
+    }
+
+    static fromJS(data: any): TotpRegisterRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TotpRegisterRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        return data;
+    }
+}
+
+export interface ITotpRegisterRequestDto {
+    email: string;
+}
+
 export class TotpLoginRequestDto implements ITotpLoginRequestDto {
     totpCode!: string;
+    email!: string;
 
     constructor(data?: ITotpLoginRequestDto) {
         if (data) {
@@ -1616,6 +1691,7 @@ export class TotpLoginRequestDto implements ITotpLoginRequestDto {
     init(_data?: any) {
         if (_data) {
             this.totpCode = _data["totpCode"];
+            this.email = _data["email"];
         }
     }
 
@@ -1629,16 +1705,18 @@ export class TotpLoginRequestDto implements ITotpLoginRequestDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["totpCode"] = this.totpCode;
+        data["email"] = this.email;
         return data;
     }
 }
 
 export interface ITotpLoginRequestDto {
     totpCode: string;
+    email: string;
 }
 
 export class TotpVerifyRequestDto implements ITotpVerifyRequestDto {
-    userId!: string;
+    id!: string;
     totpCode!: string;
 
     constructor(data?: ITotpVerifyRequestDto) {
@@ -1652,7 +1730,7 @@ export class TotpVerifyRequestDto implements ITotpVerifyRequestDto {
 
     init(_data?: any) {
         if (_data) {
-            this.userId = _data["userId"];
+            this.id = _data["id"];
             this.totpCode = _data["totpCode"];
         }
     }
@@ -1666,14 +1744,14 @@ export class TotpVerifyRequestDto implements ITotpVerifyRequestDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
+        data["id"] = this.id;
         data["totpCode"] = this.totpCode;
         return data;
     }
 }
 
 export interface ITotpVerifyRequestDto {
-    userId: string;
+    id: string;
     totpCode: string;
 }
 
@@ -1714,7 +1792,6 @@ export interface ITotpRotateRequestDto {
 }
 
 export class TotpUnregisterRequestDto implements ITotpUnregisterRequestDto {
-    userId!: string;
     totpCode!: string;
 
     constructor(data?: ITotpUnregisterRequestDto) {
@@ -1728,7 +1805,6 @@ export class TotpUnregisterRequestDto implements ITotpUnregisterRequestDto {
 
     init(_data?: any) {
         if (_data) {
-            this.userId = _data["userId"];
             this.totpCode = _data["totpCode"];
         }
     }
@@ -1742,14 +1818,12 @@ export class TotpUnregisterRequestDto implements ITotpUnregisterRequestDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
         data["totpCode"] = this.totpCode;
         return data;
     }
 }
 
 export interface ITotpUnregisterRequestDto {
-    userId: string;
     totpCode: string;
 }
 

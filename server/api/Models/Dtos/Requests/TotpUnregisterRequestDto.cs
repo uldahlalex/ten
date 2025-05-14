@@ -2,10 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace api.Controllers;
 
-public class TotpVerifyRequestDto
+/// <summary>
+/// Unregister is basically "delete"
+/// </summary>
+public class TotpUnregisterRequestDto
 {
-    [Required]
-    public string UserId { get; set; }
 
     [Required]
     [StringLength(6, MinimumLength = 6)]

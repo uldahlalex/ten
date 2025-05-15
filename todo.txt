@@ -1,13 +1,11 @@
 Aktuelt:
 - revider fly io deployment
-- error boundary / error element (får jeg noget ud af det og er der en default der giver mening?)
-- er automatic http error handling tilstrækkelig? (bør jeg tilføje problemdetails til nswag?)
 
 client app
       - create list, tag, task, update any of these + delete
-      - tasklist orderbys og flere filtre evt (eller lav custom filter)
+      - tasklist orderbys og flere filtre evt (eller lav custom filter til at gemme hvis det skal være mere avanceret)
 
 til sidst:
 - skriv en masse dokumentation og visualisering i README
-
-hvis tunit test runner aldrig bliver fikset så migrate til andet
+- fik jeg noget ud af react-error-boundary?
+- hvis tunit test runner aldrig bliver fikset så migrate til andet

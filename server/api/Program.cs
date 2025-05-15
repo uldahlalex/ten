@@ -18,7 +18,10 @@ public class Program
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
-        builder.Services.AddOpenApiDocument(conf => { });
+        builder.Services.AddOpenApiDocument(conf =>
+        {
+            conf.AddTypeToSwagger<ProblemDetails>();
+        });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
         var pgctx = new PgCtxSetup<MyDbContext>();

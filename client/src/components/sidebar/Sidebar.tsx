@@ -17,32 +17,39 @@ export default function Sidebar() {
     const [tags] = useAtom(TagsAtom);
     const [, setTasks] = useAtom(CurrentTasksDisplayView);
     const [params, setParams] = useAtom<IGetTasksFilterAndOrderParameters>(QueryParametersAtom);
-    const navigate = useNavigate();
 
-    const handleListClick = ((list: TasklistDto) => {
-        setParams({...params, listIds: [list.listId]});
-        taskClient.getMyTasks(jwt!.jwt, new GetTasksFilterAndOrderParameters(params)).then(r => {
-            setTasks(r);
+    const handleListClick = (list: TasklistDto) => {
+        setParams((prevParams) => {
+            const newParams = {...prevParams, listIds: [list.listId]};
+            taskClient.getMyTasks(
+                jwt!.jwt,
+                new GetTasksFilterAndOrderParameters(newParams)  
+            ).then(r => {
+                setTasks(r);
+            });
+            return newParams;
         });
-    });
+    };
 
     const handleTagClick = ((tag: TagDto) => {
-        const existingTagIds: string[] = [...params.tagIds!]
-        const includesNewTag = existingTagIds.includes(tag.tagId);
+        let duplicateTagIds: string[] = [...params.tagIds!]
+        const includesNewTag = duplicateTagIds.includes(tag.tagId);
         if (includesNewTag) {
-            // Remove the tag ID from the array
-            const newTagIds = existingTagIds.filter(tagId => tagId !== tag.tagId);
-            setParams({...params, tagIds: newTagIds});
+            duplicateTagIds = duplicateTagIds.filter(tagId => tagId !== tag.tagId);
         } else {
-            // Add the tag ID to the array
-            existingTagIds.push(tag.tagId);
-            setParams({...params, tagIds: existingTagIds});
+            duplicateTagIds.push(tag.tagId);
         }
+        
+        setParams((existingParams) => {
+            const newObject = {...existingParams, tagIds: duplicateTagIds};
+            taskClient.getMyTasks(jwt!.jwt, new GetTasksFilterAndOrderParameters(newObject)).then(r => {
+                setTasks(r);
+            });
+            return newObject;
+        })
 
 
-        taskClient.getMyTasks(jwt!.jwt, new GetTasksFilterAndOrderParameters(params)).then(r => {
-            setTasks(r);
-        });
+      
 
 
     });

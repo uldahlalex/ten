@@ -1,9 +1,7 @@
 Aktuelt:
 - revider fly io deployment
-
-error boundary / error element
-
-revider routing (single source of truth og proceduelt genereret breadcrumbs til navigation)
+- jotai atom state change før http request ændring
+- error boundary / error element (får jeg noget ud af det og er der en default der giver mening?)
 
 client app
       - create list, tag, task, update any of these + delete

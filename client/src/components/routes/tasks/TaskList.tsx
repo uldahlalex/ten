@@ -46,6 +46,7 @@ export default function TaskList() {
                                             <h2 className="card-title">{task.title}</h2>
                                             <p className="text-gray-600">{task.description}</p>
                                             <p className="text-gray-600">{task.taskId}</p>
+                                            <p className="text-gray-600">{JSON.stringify(task.taskTags)}</p>
                                         </div>
                                     </div>
                                     <div className="card-actions justify-end mt-4">

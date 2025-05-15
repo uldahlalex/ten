@@ -1,9 +1,20 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import {PasswordSignInRoute, TotpRoute} from "../../ApplicationRoutes.tsx";
+import {PasswordSignInRoute, TaskListRoute, TotpRoute} from "../../ApplicationRoutes.tsx";
+import {useEffect} from "react";
+import {useAtom} from "jotai";
+import {JwtAtom} from "../../../atoms/atoms.ts";
+import {JwtResponse} from "../../../generated-client.ts";
 
 export default function Authentication() {
     const navigate = useNavigate();
     const location = useLocation();
+    const [jwt] = useAtom<JwtResponse | undefined>(JwtAtom);
+
+    useEffect(() => {
+        if(jwt && jwt.jwt && jwt.jwt.length > 1) {
+            navigate(TaskListRoute)
+        } 
+    }, [jwt]);
 
     const isPath = (path: string) => location.pathname === path;
 

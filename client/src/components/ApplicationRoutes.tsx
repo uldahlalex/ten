@@ -18,6 +18,7 @@ import useInitializeData from "../functions/useInitializeData.tsx";
 import SignInWithPassword from "./routes/auth/pass/SignInWithPassword.tsx";
 import Breadcrumbs from "./Breadcrumbs.tsx";
 
+// Update your route constants
 export const mainLayoutPath = "/";
 export const AuthenticationRoute = "/auth";
 export const TotpRoute = "/auth/totp";
@@ -35,39 +36,42 @@ export const routes: RouteObject[] = [
         handle: { label: 'Home' },
         children: [
             {
+                index: true, // This makes it the default route
                 Component: Authentication,
-                path: AuthenticationRoute,
+                handle: { label: 'Authentication' },
+            },
+            {
+                path: 'auth',
+                Component: Authentication,
                 handle: { label: 'Authentication' },
                 children: [
                     {
-                        path: TotpRoute,
+                        path: 'totp',
                         Component: Totp,
                         handle: { label: 'TOTP Authentication' },
                         children: [
                             {
-                                path: TotpSignInRoute,
+                                path: 'signin',
                                 Component: TotpSignIn,
                                 handle: { label: 'Sign In with TOTP' },
                             },
                             {
-                                path: TotpRegisterRoute,
+                                path: 'register',
                                 Component: TotpRegister,
                                 handle: { label: 'Register TOTP' },
                             }
                         ]
                     },
                     {
-                        path: PasswordSignInRoute,
+                        path: 'password',
                         Component: SignInWithPassword,
                         handle: { label: 'Password Sign In' },
                     }
                 ]
             },
             {
-                path: TaskListRoute,
-                element: <ProtectedRoute>
-                    <TaskList />
-                </ProtectedRoute>,
+                path: 'tasks',
+                element: <ProtectedRoute><TaskList /></ProtectedRoute>,
                 handle: { label: 'Tasks' },
             }
         ]
@@ -82,7 +86,6 @@ function ApplicationRoutes() {
     const router = createBrowserRouter(routes);
 
     return <>
-
         <RouterProvider router={router} />
     </>
 }

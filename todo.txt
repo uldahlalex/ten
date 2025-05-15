@@ -1,6 +1,8 @@
 Aktuelt:
 - revider fly io deployment
 
+error boundary / error element
+
 revider routing (single source of truth og proceduelt genereret breadcrumbs til navigation)
 
 client app

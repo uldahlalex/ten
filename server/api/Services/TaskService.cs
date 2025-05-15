@@ -71,8 +71,8 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         if (dto.DueDate != null && dto.DueDate < DateTime.UtcNow)
             throw new ValidationException("Due date cannot be in the past");
 
-        var tags = dto.TaskTagsDtos.Select(taskTagDto =>
-            ctx.TaskTags.First(tag => tag.TagId == taskTagDto.TagId)).ToList();
+        var tags = dto.TagsIds.Select(tagId =>
+            ctx.TaskTags.First(tag => tag.TagId == tagId)).ToList();
 
         var entity = new Tickticktask
         {

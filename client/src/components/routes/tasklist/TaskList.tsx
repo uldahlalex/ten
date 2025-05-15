@@ -1,16 +1,18 @@
 import {useAtom} from "jotai";
 import {CurrentTasksDisplayView, JwtAtom} from "../../../atoms/atoms.ts";
 import {taskClient} from "../../../apiControllerClients.ts";
-import {TickticktaskDto, UpdateTaskRequestDto} from "../../../generated-client.ts";
+import {CreateTaskRequestDto, TickticktaskDto, UpdateTaskRequestDto} from "../../../generated-client.ts";
 import toast from "react-hot-toast";
 import ToUpdateDto from "../../../functions/mappings.ts";
+import CreateNewTask from "./CreateNewTask.tsx";
+import {useState} from "react";
 
 export default function TaskList() {
-
     const [tasks, setTasks] = useAtom(CurrentTasksDisplayView);
     const [jwt] = useAtom(JwtAtom);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    function handleClickCheckbox(e:  React.ChangeEvent<HTMLInputElement>, task: TickticktaskDto) {
+    function handleClickCheckbox(e: React.ChangeEvent<HTMLInputElement>, task: TickticktaskDto) {
         const updateDto = new UpdateTaskRequestDto(ToUpdateDto(task));
         updateDto.completed = e.target.checked;
         taskClient.updateTask(updateDto, jwt!.jwt).then(result => {
@@ -21,14 +23,47 @@ export default function TaskList() {
                 return t;
             }));
             toast.success("Task updated successfully");
-
         })
     }
-    return (
 
-        <div className="w-full px-4"> {/* Added padding and full width */}
-                <ul className="list bg-base-100 rounded-box shadow-md w-full space-y-4">
-                    {/*<input value={} />*/}
+    return (
+        <div className="w-full px-4">
+            <ul className="list bg-base-100 rounded-box shadow-md w-full space-y-4">
+                <button
+                    className="btn btn-primary"
+                    onClick={() => setIsModalOpen(true)}
+                >
+                    Create New Task
+                </button>
+
+                {isModalOpen && (
+                    <div className="modal modal-open">
+                        <div className="modal-box">
+                            <h3 className="font-bold text-lg">Create New Task</h3>
+                            <div className="py-4">
+                                <CreateNewTask onCancel={() => setIsModalOpen(false)} onSubmit={(task) => {
+                                    taskClient.createTask(new CreateTaskRequestDto(task), jwt!.jwt).then(result => {
+                                        setTasks([...tasks, result]);
+                                        toast.success("Task created successfully");
+                                        setIsModalOpen(false);
+                                    })
+                                } } />
+                            </div>
+                            <div className="modal-action">
+                                <button
+                                    className="btn"
+                                    onClick={() => setIsModalOpen(false)}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                        <div
+                            className="modal-backdrop"
+                            onClick={() => setIsModalOpen(false)}
+                        ></div>
+                    </div>
+                )}
                     
                     <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Tasks:</li>
                     {tasks.map((task, index) => (

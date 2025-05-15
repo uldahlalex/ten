@@ -15,5 +15,5 @@ public class CreateTaskRequestDto
 
     [Range(1, 5)] [Required] public int Priority { get; set; }
 
-    public virtual ICollection<TaskTagDto> TaskTagsDtos { get; set; } = new List<TaskTagDto>();
+    public virtual ICollection<string> TagsIds { get; set; } = new List<string>();
 }

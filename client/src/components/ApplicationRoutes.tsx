@@ -6,14 +6,13 @@ import {
     RouteObject,
     NonIndexRouteObject
 } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
 import {MainLayout} from "./MainLayout.tsx";
 import Authentication from "./routes/auth/Authentication.tsx";
 import Totp from "./routes/auth/totp/Totp.tsx";
 import TotpSignIn from "./routes/auth/totp/signin/TotpSignIn.tsx";
 import TotpRegister from "./routes/auth/totp/register/TotpRegister.tsx";
 import {ProtectedRoute} from "./ProtectedRoute.tsx";
-import TaskList from "./routes/tasks/TaskList.tsx";
+import TaskList from "./routes/tasklist/TaskList.tsx";
 import useInitializeData from "../functions/useInitializeData.tsx";
 import SignInWithPassword from "./routes/auth/pass/SignInWithPassword.tsx";
 import Breadcrumbs from "./Breadcrumbs.tsx";

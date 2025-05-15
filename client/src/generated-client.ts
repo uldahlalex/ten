@@ -1185,7 +1185,7 @@ export class CreateTaskRequestDto implements ICreateTaskRequestDto {
     description!: string;
     dueDate?: Date | undefined;
     priority!: number;
-    taskTagsDtos?: TaskTagDto[];
+    tagsIds?: string[];
 
     constructor(data?: ICreateTaskRequestDto) {
         if (data) {
@@ -1203,10 +1203,10 @@ export class CreateTaskRequestDto implements ICreateTaskRequestDto {
             this.description = _data["description"];
             this.dueDate = _data["dueDate"] ? new Date(_data["dueDate"].toString()) : <any>undefined;
             this.priority = _data["priority"];
-            if (Array.isArray(_data["taskTagsDtos"])) {
-                this.taskTagsDtos = [] as any;
-                for (let item of _data["taskTagsDtos"])
-                    this.taskTagsDtos!.push(TaskTagDto.fromJS(item));
+            if (Array.isArray(_data["tagsIds"])) {
+                this.tagsIds = [] as any;
+                for (let item of _data["tagsIds"])
+                    this.tagsIds!.push(item);
             }
         }
     }
@@ -1225,10 +1225,10 @@ export class CreateTaskRequestDto implements ICreateTaskRequestDto {
         data["description"] = this.description;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["priority"] = this.priority;
-        if (Array.isArray(this.taskTagsDtos)) {
-            data["taskTagsDtos"] = [];
-            for (let item of this.taskTagsDtos)
-                data["taskTagsDtos"].push(item ? item.toJSON() : <any>undefined);
+        if (Array.isArray(this.tagsIds)) {
+            data["tagsIds"] = [];
+            for (let item of this.tagsIds)
+                data["tagsIds"].push(item);
         }
         return data;
     }
@@ -1240,7 +1240,7 @@ export interface ICreateTaskRequestDto {
     description: string;
     dueDate?: Date | undefined;
     priority: number;
-    taskTagsDtos?: TaskTagDto[];
+    tagsIds?: string[];
 }
 
 export class UpdateTaskRequestDto implements IUpdateTaskRequestDto {

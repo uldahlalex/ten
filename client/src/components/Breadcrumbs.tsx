@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useMatches, useLocation } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
 
 interface RouteHandle {
     label: string;
@@ -52,7 +51,7 @@ export const Breadcrumbs = () => {
                                 {match.handle?.label}
                             </Link>
                             {index < array.length - 1 && (
-                                <ChevronRight className="w-4 h-4 text-gray-400" />
+                                <p> 👉 </p>
                             )}
                         </React.Fragment>
                     ))}

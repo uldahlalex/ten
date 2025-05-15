@@ -1,7 +1,7 @@
 Aktuelt:
 - revider fly io deployment
-- jotai atom state change før http request ændring
 - error boundary / error element (får jeg noget ud af det og er der en default der giver mening?)
+- er automatic http error handling tilstrækkelig? (bør jeg tilføje problemdetails til nswag?)
 
 client app
       - create list, tag, task, update any of these + delete

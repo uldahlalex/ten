@@ -18,7 +18,7 @@ function createHttpClientWithErrorHandling() {
     }
     return response;
    } catch (error) {
-    toast.error(error.title ?? 'An error occurred');
+    toast.error('An error occurred');
     throw error;
    }
   }

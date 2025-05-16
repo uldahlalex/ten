@@ -24,7 +24,6 @@ public class Program
         });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
-        var pgctx = new PgCtxSetup<MyDbContext>();
 
         builder.Services.AddDbContext<MyDbContext>(options =>
         {            

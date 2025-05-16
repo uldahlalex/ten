@@ -2,6 +2,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import ApplicationRoutes from "./ApplicationRoutes.tsx";
 import {DevTools} from "jotai-devtools";
 const prod = import.meta.env.PROD
+import 'jotai-devtools/styles.css'
 
 function App() {
     return (

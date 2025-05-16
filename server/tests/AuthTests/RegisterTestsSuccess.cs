@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using api.Controllers;
 using api.Models.Dtos.Requests;
+using api.Models.Dtos.Responses;
 using api.Services;
 using efscaffold;
 using Infrastructure.Postgres.Scaffolding;
@@ -49,9 +50,9 @@ public class RegisterTestsSuccess
                                 $"Status code: {response.StatusCode}, " +
                                 $"Response: {await response.Content.ReadAsStringAsync()}");
 
-        var jwt = await response.Content.ReadAsStringAsync();
+        var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
         _scopedServiceProvider.GetRequiredService<ISecurityService>()
-            .VerifyJwtOrThrow(jwt); //throws if JWT issued is invalid
+            .VerifyJwtOrThrow(jwt.Jwt); //throws if JWT issued is invalid
         _ = _scopedServiceProvider.GetRequiredService<MyDbContext>().Users
             .First(u => u.Email == reqDto.Email); //throws if not found
     }

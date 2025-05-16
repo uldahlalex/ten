@@ -78,10 +78,10 @@ export default function TaskList() {
                                             className="checkbox"
                                         />
                                         <div className="flex-1">
-                                            <h2 className="card-title">{task.title}</h2>
-                                            <p className="text-gray-600">{task.description}</p>
-                                            <p className="text-gray-600">{task.taskId}</p>
-                                            <p className="text-gray-600">{JSON.stringify(task.taskTags)}</p>
+                                        {/*    indented JSON representation*/}
+                                            <pre className="whitespace-pre-wrap">
+                                                {JSON.stringify(task, null, 2)}
+                                            </pre>
                                         </div>
                                     </div>
                                     <div className="card-actions justify-end mt-4">

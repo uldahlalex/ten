@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using api.Controllers;
 using api.Models.Dtos.Requests;
+using api.Models.Dtos.Responses;
+using api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,7 +30,7 @@ public class LoginTestSuccess
 
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = new HttpClient(); //should not use the method which adds jwt
+        _client = new HttpClient(); 
         return Task.CompletedTask;
     }
 
@@ -45,5 +47,8 @@ public class LoginTestSuccess
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Login), dto);
         if (response.StatusCode != HttpStatusCode.OK)
             throw new Exception($"Login failed: {response.StatusCode}");
+        var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
+        _scopedServiceProvider.GetRequiredService<ISecurityService>()
+            .VerifyJwtOrThrow(jwt.Jwt); //throws if JWT issued is invalid
     }
 }

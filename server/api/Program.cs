@@ -28,7 +28,7 @@ public class Program
 
         builder.Services.AddDbContext<MyDbContext>(options =>
         {            
-            options.UseNpgsql(pgctx._postgres.GetConnectionString());
+            options.UseNpgsql(appOptions.DbConnectionString);
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
         builder.Services.AddScoped<ISeeder, DefaultEnvironment>();

@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useAtom} from "jotai";
 import {ListsAtom} from "../../../atoms/atoms.ts";
 import TaskTagsDropdown from "./updateTags.tsx";
+import DateTimeInput from "../../reusables/DateTime.tsx";
 
 export interface UpdateTaskProps {
     task: TickticktaskDto;
@@ -62,13 +63,7 @@ export default function UpdateTask(props: UpdateTaskProps) {
                     <label className="label">
                         <span className="label-text">Due Date</span>
                     </label>
-                    <input
-                        type="date"
-                        className="input input-bordered w-full"
-                        value={updateForm.dueDate ? updateForm.dueDate.toString()?.split('T')[0] : ''} //todo
-                        onChange={(e) => setUpdateForm({...updateForm, dueDate: new Date(e.target.value)})}
-                        required
-                    />
+                   <DateTimeInput onChange={date => setUpdateForm({...updateForm,dueDate: date})} value={updateForm.dueDate} />
                 </div>
                 <div className="form-control w-full">
                     <label className="label">

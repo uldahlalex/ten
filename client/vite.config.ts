@@ -1,4 +1,3 @@
-import daisyui from 'daisyui'
 import {defineConfig, UserConfig} from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import react from '@vitejs/plugin-react'

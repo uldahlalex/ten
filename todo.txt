@@ -1,6 +1,6 @@
 Aktuelt:
 - revider fly io deployment
-- fix totp bug
+- er mine ui komponenter for indlejrede? måske ville en mere "side" agtig komponent gøre det nemmere
 
 client app
       - create list, tag, task, update any of these + delete

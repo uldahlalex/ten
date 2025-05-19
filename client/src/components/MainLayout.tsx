@@ -7,31 +7,30 @@ import {AuthenticationRoute, routes} from "./ApplicationRoutes.tsx";
 import toast from "react-hot-toast";
 
 export const MainLayout = () => {
-
     const [jwt] = useAtom(JwtAtom)
     const navigate = useNavigate();
-    
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen overflow-hidden">
+            {jwt && jwt.jwt.length > 0 && (
+                <div className="w-64 h-full border-r border-gray-200 bg-white">
+                    <Sidebar/>
+                </div>
+            )}
 
-            {
-                jwt && jwt.jwt.length > 0 && <>
-                    <div className="w-64 h-full border-r border-gray-200 bg-white">
-                        <Sidebar/>
-                    </div>
-                </>
-            }
-
-            <div className="flex-1 h-full">
-                <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <div className="flex-1 flex flex-col h-max">
+                <div className="flex-none">
                     <Breadcrumbs />
+                </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex-1 overflow-auto min-h-0 p-6">
+                    <div className="bg-base-100 rounded-lg shadow h-full">
                         <Outlet />
                     </div>
-                </main>
+                </div>
             </div>
         </div>
     );
 };
+
+export default MainLayout;

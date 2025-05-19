@@ -1,5 +1,6 @@
 Aktuelt:
 - revider fly io deployment
+- fix totp bug
 
 client app
       - create list, tag, task, update any of these + delete

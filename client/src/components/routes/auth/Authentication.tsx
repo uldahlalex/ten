@@ -4,6 +4,7 @@ import {useEffect} from "react";
 import {useAtom} from "jotai";
 import {JwtAtom} from "../../../atoms/atoms.ts";
 import {JwtResponse} from "../../../generated-client.ts";
+import {pathIncludes} from "../../../functions/pathIncludes.ts";
 
 export default function Authentication() {
     const navigate = useNavigate();
@@ -16,25 +17,24 @@ export default function Authentication() {
         } 
     }, [jwt]);
 
-    const isPath = (path: string) => location.pathname === path;
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-4">
-            {!isPath(TotpRoute) && (
+        <div className="flex flex-col items-center space-between min-h-screen gap-4 p-4">
+            {!pathIncludes(TotpRoute, location) && (
                 <button
                     className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
                     onClick={() => navigate(TotpRoute)}
                 >
-                    Sign in with authenticator
+                    Go to authenticator sign-in
                 </button>
             )}
 
-            {!isPath(PasswordSignInRoute) && (
+            {!pathIncludes(PasswordSignInRoute, location) && (
                 <button
                     className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
                     onClick={() => navigate(PasswordSignInRoute)}
                 >
-                    Sign in with password
+                    Go to password sign in
                 </button>
             )}
 

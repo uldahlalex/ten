@@ -10,7 +10,6 @@ import {Outlet} from "react-router-dom";
 export default function TotpSignIn() {
     const [jwt, setJwt] = useAtom(JwtAtom);
     const [totpCode, setTotpCode] = useState('');
-    const [qrCode, setQrCode] = useState('');
     const [email, setEmail] = useState('');
     
 
@@ -31,26 +30,26 @@ export default function TotpSignIn() {
         }
     };
 
-    const handleRotate = async () => {
-        try {
-            if (!jwt) {
-                toast.error('Please login first');
-                return;
-            }
-
-            const response = await totpClient.totpRotate(
-                new TotpRotateRequestDto({currentTotpCode: totpCode}),
-                jwt.jwt
-            );
-
-            setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
-            toast.success('TOTP secret rotated. Scan new QR code');
-            setTotpCode('');
-        } catch (error) {
-            toast.error('Failed to rotate TOTP secret');
-            setTotpCode('');
-        }
-    };
+    // const handleRotate = async () => {
+    //     try {
+    //         if (!jwt) {
+    //             toast.error('Please login first');
+    //             return;
+    //         }
+    //
+    //         const response = await totpClient.totpRotate(
+    //             new TotpRotateRequestDto({currentTotpCode: totpCode}),
+    //             jwt.jwt
+    //         );
+    //
+    //         setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
+    //         toast.success('TOTP secret rotated. Scan new QR code');
+    //         setTotpCode('');
+    //     } catch (error) {
+    //         toast.error('Failed to rotate TOTP secret');
+    //         setTotpCode('');
+    //     }
+    // };
 
     const handleUnregister = async () => {
         try {
@@ -100,14 +99,14 @@ export default function TotpSignIn() {
                         onChange={(e) => setEmail(e.target.value)}
                         />
 
-                    <button
-                        onClick={handleRotate}
-                        disabled={totpCode.length !== 6}
-                        className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 
-                                     disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    >
-                        Rotate Secret
-                    </button>
+                    {/*<button*/}
+                    {/*    onClick={handleRotate}*/}
+                    {/*    disabled={totpCode.length !== 6}*/}
+                    {/*    className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 */}
+                    {/*                 disabled:bg-gray-300 disabled:cursor-not-allowed"*/}
+                    {/*>*/}
+                    {/*    Rotate Secret*/}
+                    {/*</button>*/}
                 </div>
 
                 <button
@@ -121,19 +120,7 @@ export default function TotpSignIn() {
             </div>
 
 
-            {
-                (qrCode.length != 0) && (<div className="text-center space-y-3 p-4 border rounded-lg">
-                    <img
-                        src={qrCode}
-                        alt="TOTP QR Code"
-                        className="mx-auto max-w-[200px]"
-                    />
-                    <p className="text-sm text-gray-600">
-                        Scan this QR code with your authenticator app
-                    </p>
-                </div>)
-              
-            }
+     
             
             
 

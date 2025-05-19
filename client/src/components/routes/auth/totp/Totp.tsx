@@ -1,17 +1,24 @@
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import React from "react";
 import {TotpRegisterRoute, TotpSignInRoute} from "../../../ApplicationRoutes.tsx";
+import {pathIncludes, pathIsExactly} from "../../../../functions/pathIncludes.ts";
 
 export default function Totp() {
     
     const navigate = useNavigate();
-    const route = useLocation();
+    const location = useLocation();
     
-    return(<>
-        <button onClick={() => navigate(TotpRegisterRoute)}>I want to register new device</button>
-        <button onClick={() => navigate(TotpSignInRoute)}>I already have added to authenticator app</button>
+    return(<div>
+        {
+            !pathIsExactly(TotpRegisterRoute, location) &&             
+            <button onClick={() => navigate(TotpRegisterRoute)}>I want to register</button>
+        }
+        {
+            !pathIsExactly(TotpSignInRoute, location) &&
+            <button onClick={() => navigate(TotpSignInRoute)}>I already have added the authenticator to my device</button>
+        }
         <Outlet />
 
 
-    </>)
+    </div>)
 }

@@ -48,8 +48,7 @@ public class DefaultEnvironment(ILogger<EmptyEnvironment> logger, ISecurityServi
 
     public void CreateEnvironment(MyDbContext ctx)
     {
-        logger.LogInformation("SEEDING");
-// ctx.Database.EnsureDeleted();
+
         ctx.Database.EnsureCreated();
 
         // Clear existing data
@@ -139,9 +138,6 @@ public class DefaultEnvironment(ILogger<EmptyEnvironment> logger, ISecurityServi
 
         ctx.TaskTags.AddRange(taskTags);
         ctx.SaveChanges();
-        var count = ctx.Tickticktasks.Count();
-        Console.WriteLine(count);
-        if (count == 0)
-            throw new Exception("No tasks found in DB");
+
     }
 }

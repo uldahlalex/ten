@@ -1,7 +1,7 @@
 export default function SignOut() {
 
-        localStorage.removeItem('jwt');
-        window.location.href = '/';
-    
+    localStorage.removeItem('jwt');
+    window.location.href = '/';
+
 
 };

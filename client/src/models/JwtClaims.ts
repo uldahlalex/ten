@@ -1,3 +1,3 @@
 export interface JwtClaims {
-    id:string;
+    id: string;
 }

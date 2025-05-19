@@ -1,21 +1,22 @@
-import { ErrorBoundary } from "react-error-boundary";
+import {ErrorBoundary} from "react-error-boundary";
 import ApplicationRoutes from "./ApplicationRoutes.tsx";
 import {DevTools} from "jotai-devtools";
-const prod = import.meta.env.PROD
 import 'jotai-devtools/styles.css'
+
+const prod = import.meta.env.PROD
 
 function App() {
     return (
         <>
             <ErrorBoundary
-                fallback={<></>}  
+                fallback={<></>}
                 onError={(error, errorInfo) => {
                     console.log('Caught an error:', error, errorInfo);
                 }}
             >
-                <ApplicationRoutes />
+                <ApplicationRoutes/>
             </ErrorBoundary>
-            {!prod && <DevTools />}
+            {!prod && <DevTools/>}
         </>
     );
 }

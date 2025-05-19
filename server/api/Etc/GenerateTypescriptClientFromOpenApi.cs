@@ -15,7 +15,7 @@ public static class GenerateTypescriptClientFromOpenApi
             Template = TypeScriptTemplate.Fetch,
             TypeScriptGeneratorSettings =
             {
-                TypeStyle = TypeScriptTypeStyle.Class,
+                TypeStyle = TypeScriptTypeStyle.Interface,
                 DateTimeType = TypeScriptDateTimeType.Date,
                 NullValue = TypeScriptNullValue.Undefined,
                 TypeScriptVersion = 5.2m,

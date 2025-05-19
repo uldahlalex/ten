@@ -2,15 +2,15 @@ import {authClient} from "../../../../apiControllerClients.ts";
 import toast from "react-hot-toast";
 import {useAtom} from "jotai";
 import {JwtAtom} from "../../../../atoms/atoms.ts";
-import {AuthRequestDto, IAuthRequestDto} from "../../../../generated-client.ts";
 import {useNavigate} from "react-router-dom";
 import {TaskListRoute} from "../../../ApplicationRoutes.tsx";
 import {useState} from "react";
+import {AuthRequestDto} from "../../../../generated-client.ts";
 
 export default function SignInWithPassword() {
 
     const [, setJwt] = useAtom(JwtAtom);
-    const [registerForm, setRegisterForm] = useState<IAuthRequestDto>({
+    const [registerForm, setRegisterForm] = useState<AuthRequestDto>({
         email: '',
         password: '',
     })
@@ -19,14 +19,14 @@ export default function SignInWithPassword() {
 
     return (<div className="flex flex-col items-center justify-center h-screen">
         <h1 className="text-3xl font-bold mb-4">Register with password</h1>
- 
+
         <form className="space-y-4" onSubmit={(e) => {
             e.preventDefault();
             if (registerForm.password !== passwordRepeat) {
                 toast.error("Passwords do not match");
                 return;
             }
-            authClient.register(new AuthRequestDto(registerForm)).then(r => {
+            authClient.register((registerForm)).then(r => {
                 toast("welcome!")
                 setJwt(r);
                 navigate(TaskListRoute)
@@ -56,7 +56,7 @@ export default function SignInWithPassword() {
                     onChange={(e) => setRegisterForm({...registerForm, password: e.target.value})}
                     required
                 />
-                
+
             </div>
             <div className="form-control w-full">
                 <label className="label">
@@ -70,16 +70,16 @@ export default function SignInWithPassword() {
                     required
                 />
 
-            <button type="submit" className="btn btn-primary w-full">Register</button>
+                <button type="submit" className="btn btn-primary w-full">Register</button>
             </div>
-            
+
         </form>
-        
-        
+
+
         <div>
             <h1>test login button below:</h1>
             <button className="btn btn-primary" onClick={() =>
-                authClient.login(new AuthRequestDto({email: "test@user.dk", password: "abc"})).then(r => {
+                authClient.login(({email: "test@user.dk", password: "abc"})).then(r => {
                     toast("welcome!")
                     setJwt(r);
                     navigate(TaskListRoute)

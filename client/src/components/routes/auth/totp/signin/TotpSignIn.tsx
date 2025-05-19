@@ -1,22 +1,19 @@
 import React, {useState} from 'react';
 import {totpClient} from "../../../../../apiControllerClients.ts";
-import {TotpLoginRequestDto, TotpRotateRequestDto, TotpUnregisterRequestDto} from "../../../../../generated-client.ts";
 import {useAtom} from 'jotai';
 import toast from "react-hot-toast";
 import {JwtAtom} from "../../../../../atoms/atoms.ts";
 import SignOut from "../../../../../functions/signOut.tsx";
-import {Outlet} from "react-router-dom";
 
 export default function TotpSignIn() {
     const [jwt, setJwt] = useAtom(JwtAtom);
     const [totpCode, setTotpCode] = useState('');
     const [email, setEmail] = useState('');
-    
 
 
     const handleLogin = async () => {
         try {
-            const response = await totpClient.totpLogin(new TotpLoginRequestDto({
+            const response = await totpClient.totpLogin(({
                 totpCode: totpCode,
                 email: email
             }));
@@ -53,8 +50,8 @@ export default function TotpSignIn() {
 
     const handleUnregister = async () => {
         try {
-            await totpClient.toptUnregister(new TotpUnregisterRequestDto({
-                totpCode: totpCode, 
+            await totpClient.toptUnregister(({
+                totpCode: totpCode,
             }), jwt!.jwt);
 
             SignOut()
@@ -67,9 +64,8 @@ export default function TotpSignIn() {
 
     return (
         <div className="flex flex-col items-center justify-center h-screen">
-            
 
-  
+
             <div className="space-y-4">
                 <h2 className="text-xl font-bold text-center">Enter Authentication Code</h2>
                 <input
@@ -97,7 +93,7 @@ export default function TotpSignIn() {
                         className="w-full p-3 border rounded-lg text-center"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        />
+                    />
 
                     {/*<button*/}
                     {/*    onClick={handleRotate}*/}
@@ -119,10 +115,6 @@ export default function TotpSignIn() {
                 </button>
             </div>
 
-
-     
-            
-            
 
         </div>
     );

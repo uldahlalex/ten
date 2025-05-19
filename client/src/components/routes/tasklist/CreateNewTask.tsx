@@ -1,15 +1,15 @@
-import { ICreateTaskRequestDto } from '../../../generated-client';
-import { useState } from "react";
-import { useAtom } from "jotai";
-import { ListsAtom, TagsAtom } from "../../../atoms/atoms.ts";
+import {CreateTaskRequestDto} from '../../../generated-client';
+import React, {FormEvent, useState} from "react";
+import {useAtom} from "jotai";
+import {ListsAtom, TagsAtom} from "../../../atoms/atoms.ts";
 
 interface CreateNewTaskProps {
-    onSubmit: (task: ICreateTaskRequestDto) => void;
+    onSubmit: (task: CreateTaskRequestDto) => void;
     onCancel?: () => void;
 }
 
-export default function CreateNewTask({ onSubmit, onCancel }: CreateNewTaskProps) {
-    const [newTask, setNewTask] = useState<ICreateTaskRequestDto>({
+export default function CreateNewTask({onSubmit, onCancel}: CreateNewTaskProps) {
+    const [newTask, setNewTask] = useState<CreateTaskRequestDto>({
         description: "",
         dueDate: new Date(),
         listId: '',
@@ -21,7 +21,7 @@ export default function CreateNewTask({ onSubmit, onCancel }: CreateNewTaskProps
     const [lists] = useAtom(ListsAtom);
     const [tags] = useAtom(TagsAtom);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         onSubmit(newTask);
     };

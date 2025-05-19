@@ -56,7 +56,7 @@ export const routes: RouteObject[] = [
                 Component: SignInWithPassword,
                 handle: {label: 'Password Sign In'},
             },
-            
+
             {
                 path: 'tasks',
                 element: <ProtectedRoute><TaskList/></ProtectedRoute>,

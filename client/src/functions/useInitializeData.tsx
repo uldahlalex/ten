@@ -17,7 +17,7 @@ export default function useInitializeData() {
         })
         taskClient.getMyTags(jwt.jwt).then(r => {
             setTags(r);
-            });
+        });
     }, [jwt])
 
 }

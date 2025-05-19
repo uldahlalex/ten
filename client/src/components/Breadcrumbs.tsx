@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useMatches, useLocation } from 'react-router-dom';
+import {Link, useMatches} from 'react-router-dom';
 
 interface RouteHandle {
     label: string;
@@ -59,5 +59,3 @@ export const Breadcrumbs = () => {
         </nav>
     );
 };
-
-export default Breadcrumbs;

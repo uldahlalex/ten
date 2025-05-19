@@ -1,6 +1,6 @@
 Aktuelt:
 - revider fly io deployment
-- er mine ui komponenter for indlejrede? måske ville en mere "side" agtig komponent gøre det nemmere
+- date input bug
 
 client app
       - create list, tag, task, update any of these + delete

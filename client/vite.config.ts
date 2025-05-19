@@ -1,16 +1,16 @@
 import daisyui from 'daisyui'
-import {defineConfig} from "vite";
+import {defineConfig, UserConfig} from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+/** @type {import('tailwindcss').Config} */
+const viteConfig: UserConfig = {
     plugins: [
         react(),
-        tailwindcss({
-            plugins: [daisyui]
-        })
+        tailwindcss()
     ],
-    server: {
-        runner: 'bun'
-    }
-})
+
+}
+
+/** @type {import('tailwindcss').Config} */
+export default defineConfig(viteConfig);

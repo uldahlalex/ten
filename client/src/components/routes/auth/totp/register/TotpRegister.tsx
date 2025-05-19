@@ -1,17 +1,16 @@
 import React, {useState} from "react";
 import {totpClient} from "../../../../../apiControllerClients.ts";
-import {TotpRegisterRequestDto} from "../../../../../generated-client.ts";
 import toast from "react-hot-toast";
 
 export default function TotpRegister() {
-    
+
     const [email, setEmail] = useState<string>('');
     const [qrCode, setQrCode] = useState('');
 
 
     const handleRegister = async () => {
         try {
-            const response = await totpClient.totpRegister(new TotpRegisterRequestDto({
+            const response = await totpClient.totpRegister(({
                 email: email
             }));
             setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
@@ -20,7 +19,7 @@ export default function TotpRegister() {
             toast.error('Registration failed');
         }
     };
-    return(<>
+    return (<>
 
         <div className="space-y-4">
             <h2 className="text-xl font-bold text-center">New Device Setup</h2>

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace api.Controllers;
 
 /// <summary>
-/// When register is performed the client app reveals the QR code
+///     When register is performed the client app reveals the QR code
 /// </summary>
 public class TotpRegisterRequestDto
 {
@@ -13,7 +13,7 @@ public class TotpRegisterRequestDto
     }
 
     /// <summary>
-    /// TOTP required unique identifier for lookup: Email can be used for this
+    ///     TOTP required unique identifier for lookup: Email can be used for this
     /// </summary>
     [Required]
     [EmailAddress]

@@ -1,32 +1,26 @@
 using System.Text.Json;
 using api.Etc;
 using api.Services;
-using efscaffold;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PgCtx;
 using Scalar.AspNetCore;
 
 namespace api;
 
 public class Program
 {
-
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
-        builder.Services.AddOpenApiDocument(conf =>
-        {
-            conf.AddTypeToSwagger<ProblemDetails>();
-        });
+        builder.Services.AddOpenApiDocument(conf => { conf.AddTypeToSwagger<ProblemDetails>(); });
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
 
         builder.Services.AddDbContext<MyDbContext>(options =>
-        {            
+        {
             options.UseNpgsql(appOptions.DbConnectionString);
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });

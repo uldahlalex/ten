@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using NJsonSchema.CodeGeneration.TypeScript;
 using NSwag.CodeGeneration.TypeScript;
 using NSwag.Generation;

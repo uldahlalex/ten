@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using api.Controllers;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
-using efscaffold;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,11 +46,11 @@ public class CreateTaskTestsSuccess
         // _scopedServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
         var request = new CreateTaskRequestDto
         (
-            listId: ctx.Tasklists.First().ListId,
-            title: "Test Task",
-            description: "Test Description",
-            dueDate: DateTime.Parse("2050-04-25T20:22:50.657021Z").ToUniversalTime(),
-            priority: 1
+            ctx.Tasklists.First().ListId,
+            "Test Task",
+            "Test Description",
+            DateTime.Parse("2050-04-25T20:22:50.657021Z").ToUniversalTime(),
+            1
         );
 
 

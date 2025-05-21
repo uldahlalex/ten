@@ -51,19 +51,19 @@ public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor) : ISecu
         using var qrGenerator = new QRCodeGenerator();
         using var qrCodeData = qrGenerator.CreateQrCode(otpauthUrl, QRCodeGenerator.ECCLevel.Q);
         using var qrCode = new PngByteQRCode(qrCodeData);
-        byte[] qrCodeBytes = qrCode.GetGraphic(20);
+        var qrCodeBytes = qrCode.GetGraphic(20);
         return Convert.ToBase64String(qrCodeBytes);
     }
 
     public string GenerateSecretKey()
     {
         // Generate a random secret key (20 bytes is recommended for TOTP)
-        byte[] secretBytes = new byte[20];
+        var secretBytes = new byte[20];
         using (var rng = RandomNumberGenerator.Create())
         {
             rng.GetBytes(secretBytes);
         }
-        
+
         // Convert to Base32 string (which is standard for TOTP)
         return Base32Encoding.ToString(secretBytes);
     }
@@ -79,9 +79,9 @@ public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor) : ISecu
         try
         {
             var totp = new Totp(Base32Encoding.ToBytes(userTotpSecret));
-            
-            bool isValid = totp.VerifyTotp(requestTotpCode, out _, new VerificationWindow(1, 1));
-            
+
+            var isValid = totp.VerifyTotp(requestTotpCode, out _, new VerificationWindow(1, 1));
+
             if (!isValid)
                 throw new Exception("Invalid TOTP code");
         }

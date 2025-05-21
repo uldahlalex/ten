@@ -4,7 +4,6 @@ using api.Controllers;
 using api.Mappers;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
-using efscaffold;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

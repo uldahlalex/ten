@@ -13,7 +13,11 @@ namespace api.Etc;
 ///     "follow-up", "blocked", "in-progress", "review", "approved", "deployed"
 ///     15 tasks per list with random titles and descriptions and 1 tag each
 /// </summary>
-public class DefaultEnvironment(ILogger<EmptyEnvironment> logger, ISecurityService securityService, string? email = "test@user.dk", string? userId="user-1") : ISeeder
+public class DefaultEnvironment(
+    ILogger<EmptyEnvironment> logger,
+    ISecurityService securityService,
+    string? email = "test@user.dk",
+    string? userId = "user-1") : ISeeder
 {
     private static readonly string[] TaskTitles =
     {
@@ -48,7 +52,6 @@ public class DefaultEnvironment(ILogger<EmptyEnvironment> logger, ISecurityServi
 
     public void CreateEnvironment(MyDbContext ctx)
     {
-
         ctx.Database.EnsureCreated();
 
         // Clear existing data
@@ -138,6 +141,5 @@ public class DefaultEnvironment(ILogger<EmptyEnvironment> logger, ISecurityServi
 
         ctx.TaskTags.AddRange(taskTags);
         ctx.SaveChanges();
-
     }
 }

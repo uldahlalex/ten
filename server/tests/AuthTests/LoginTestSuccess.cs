@@ -30,7 +30,7 @@ public class LoginTestSuccess
 
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = new HttpClient(); 
+        _client = new HttpClient();
         return Task.CompletedTask;
     }
 

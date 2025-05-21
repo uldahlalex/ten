@@ -13,8 +13,8 @@
         <PackageReference Include="NSwag.AspNetCore" Version="14.*"/>
         <PackageReference Include="PgCtxSetup" Version="1.5.0"/>
         <PackageReference Include="Scalar.AspNetCore" Version="2.*"/>
-        <PackageReference Include="Otp.NET" Version="1.*" />
-        <PackageReference Include="QRCoder" Version="1.*" />
+        <PackageReference Include="Otp.NET" Version="1.*"/>
+        <PackageReference Include="QRCoder" Version="1.*"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-<!--        Used for XML comments above types for OpenAPI definition -->
+        <!--        Used for XML comments above types for OpenAPI definition -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>

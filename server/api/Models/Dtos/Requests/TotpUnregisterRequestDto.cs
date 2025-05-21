@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace api.Controllers;
 
 /// <summary>
-/// Unregister is basically "delete"
+///     Unregister is basically "delete"
 /// </summary>
 public class TotpUnregisterRequestDto
 {

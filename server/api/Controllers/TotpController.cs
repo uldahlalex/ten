@@ -13,7 +13,7 @@ namespace api.Controllers;
 public class TotpController(ISecurityService securityService, MyDbContext ctx) : ControllerBase
 {
     [HttpPost(nameof(TotpRegister))]
-    public async Task<ActionResult<TotpRegisterResponseDto>> TotpRegister([FromBody]TotpRegisterRequestDto dto)
+    public async Task<ActionResult<TotpRegisterResponseDto>> TotpRegister([FromBody] TotpRegisterRequestDto dto)
     {
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
@@ -22,7 +22,8 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
             ctx.Users.Update(user);
             await ctx.SaveChangesAsync();
             var otpauthUrl =
-                $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(user.UserId)}?secret={user.TotpSecret}&issuer="+nameof(StaticConstants.TickTickClone);
+                $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(user.UserId)}?secret={user.TotpSecret}&issuer=" +
+                nameof(StaticConstants.TickTickClone);
 
 
             return Ok(new TotpRegisterResponseDto
@@ -50,7 +51,8 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
             ctx.Users.Add(user);
             await ctx.SaveChangesAsync();
             var otpauthUrl =
-                $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(userId)}?secret={totpSecret}&issuer="+nameof(StaticConstants.TickTickClone);
+                $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(userId)}?secret={totpSecret}&issuer=" +
+                nameof(StaticConstants.TickTickClone);
 
 
             return Ok(new TotpRegisterResponseDto
@@ -66,14 +68,13 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
     [HttpPost(nameof(TotpLogin))]
     public async Task<ActionResult<JwtResponse>> TotpLogin([FromBody] TotpLoginRequestDto request)
     {
-        
         var user = await ctx.Users.FirstOrDefaultAsync(u => u.Email == request.Email) ??
                    throw new ValidationException("User not found");
 
         securityService.ValidateTotpCodeOrThrow(user.TotpSecret, request.TotpCode);
 
         var token = securityService.GenerateJwt(user.UserId);
-        return Ok(new JwtResponse()
+        return Ok(new JwtResponse
         {
             Jwt = token
         });
@@ -94,8 +95,6 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
         [FromBody] TotpRotateRequestDto request,
         [FromHeader] string authorization)
     {
-     
-
         var jwt = securityService.VerifyJwtOrThrow(authorization);
 
         var user = await ctx.Users.FirstOrDefaultAsync(u => u.UserId == jwt.Id);
@@ -109,7 +108,8 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
         await ctx.SaveChangesAsync();
 
         var otpauthUrl =
-            $"otpauth://totp/{Uri.EscapeDataString(StaticConstants.TickTickClone)}:{Uri.EscapeDataString(user.UserId)}?secret={newTotpSecret}&issuer="+nameof(StaticConstants.TickTickClone);
+            $"otpauth://totp/{Uri.EscapeDataString(StaticConstants.TickTickClone)}:{Uri.EscapeDataString(user.UserId)}?secret={newTotpSecret}&issuer=" +
+            nameof(StaticConstants.TickTickClone);
 
         return Ok(new TotpRegisterResponseDto
         {
@@ -121,7 +121,8 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
     }
 
     [HttpDelete(nameof(ToptUnregister))]
-    public async Task<ActionResult> ToptUnregister([FromBody] TotpUnregisterRequestDto request, [FromHeader]string authorization)
+    public async Task<ActionResult> ToptUnregister([FromBody] TotpUnregisterRequestDto request,
+        [FromHeader] string authorization)
     {
         var jwt = securityService.VerifyJwtOrThrow(authorization);
         var user = await ctx.Users.FirstOrDefaultAsync(u => u.UserId == jwt.Id) ??

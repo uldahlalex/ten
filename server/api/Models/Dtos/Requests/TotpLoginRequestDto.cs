@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace api.Controllers;
 
 /// <summary>
-/// Login is when the 6 digit code is sent to the server
+///     Login is when the 6 digit code is sent to the server
 /// </summary>
 public class TotpLoginRequestDto
 {
@@ -14,14 +14,14 @@ public class TotpLoginRequestDto
     }
 
     /// <summary>
-    /// This code is found in the authenticator on the device
+    ///     This code is found in the authenticator on the device
     /// </summary>
     [Required]
     [StringLength(6, MinimumLength = 6)]
     public string TotpCode { get; set; }
-    
+
     /// <summary>
-    /// Email is relevant because backend needs a unique identifier to make a lookup
+    ///     Email is relevant because backend needs a unique identifier to make a lookup
     /// </summary>
     [Required]
     [EmailAddress]

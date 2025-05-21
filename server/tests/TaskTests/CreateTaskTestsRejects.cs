@@ -48,11 +48,11 @@ public class CreateTaskTestsRejects
 
 
         var request = new CreateTaskRequestDto(
-            listId: (ctx.Tasklists.FirstOrDefault() ?? throw new Exception("Could not find any task list")).ListId,
-            title: title,
-            description: description,
-            dueDate: DateTime.Parse(timestamp).ToUniversalTime(),
-            priority: priority);
+            (ctx.Tasklists.FirstOrDefault() ?? throw new Exception("Could not find any task list")).ListId,
+            title,
+            description,
+            DateTime.Parse(timestamp).ToUniversalTime(),
+            priority);
 
 
         // Act
@@ -63,5 +63,4 @@ public class CreateTaskTestsRejects
             throw new Exception("Expected bad request. Received: " + response.StatusCode + " and body :" +
                                 await response.Content.ReadAsStringAsync());
     }
- 
 }

@@ -1,4 +1,3 @@
-using efscaffold;
 using Infrastructure.Postgres.Scaffolding;
 
 namespace api.Etc;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace api.Models.Dtos.Requests;
 
 /// <summary>
-/// Task is always created for the user sending the request
+///     Task is always created for the user sending the request
 /// </summary>
 public class CreateTaskRequestDto
 {
@@ -23,7 +23,7 @@ public class CreateTaskRequestDto
     [MinLength(1)] [Required] public string Description { get; set; } = null!;
 
     /// <summary>
-    /// Due date is optional since tasks may have none
+    ///     Due date is optional since tasks may have none
     /// </summary>
     public DateTime? DueDate { get; set; }
 
@@ -31,7 +31,7 @@ public class CreateTaskRequestDto
 
 
     /// <summary>
-    /// List of tag IDs to add to the task when it is created
+    ///     List of tag IDs to add to the task when it is created
     /// </summary>
     public virtual ICollection<string> TagsIds { get; set; } = new List<string>();
 }

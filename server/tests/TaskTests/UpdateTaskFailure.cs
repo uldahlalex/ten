@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using api.Controllers;
 using api.Models.Dtos.Requests;
-using efscaffold;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
@@ -62,7 +61,7 @@ public class UpdateTaskFailure
 
         var request = new UpdateTaskRequestDto
         (
-            id: taskToUpdate.TaskId,
+            taskToUpdate.TaskId,
             title: title,
             description: description,
             dueDate: DateTime.Parse(timestamp).ToUniversalTime(),

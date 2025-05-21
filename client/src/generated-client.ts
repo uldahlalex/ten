@@ -882,7 +882,7 @@ export interface TaskTagDto {
     createdAt: string;
 }
 
-/** deliberately using ? operator for properties such that no default values are assigned and i can always check for nulls */
+/** If no value is passed to each property it defaults to not filter by the property. No value is required. Deliberately using ? C# operator for properties such that if no default values are assigned, service method assigns them manually No constructor due to the above. */
 export interface GetTasksFilterAndOrderParameters {
     isCompleted?: boolean | undefined;
     earliestDueDate?: string | undefined;
@@ -896,21 +896,26 @@ export interface GetTasksFilterAndOrderParameters {
     isDescending?: boolean | undefined;
 }
 
+/** Task is always created for the user sending the request */
 export interface CreateTaskRequestDto {
     listId: string;
     title: string;
     description: string;
+    /** Due date is optional since tasks may have none */
     dueDate?: string | undefined;
     priority: number;
+    /** List of tag IDs to add to the task when it is created */
     tagsIds?: string[];
 }
 
+/** Replaces all of the properties with the values. Nulls are not allowed, since the client app should send the existing object and not just declare certain properties to replace */
 export interface UpdateTaskRequestDto {
     id: string;
     listId: string;
     completed: boolean;
     title: string;
     description: string;
+    /** Due date can be "removed" by assigning it null */
     dueDate?: string | undefined;
     priority: number;
 }
@@ -929,24 +934,29 @@ export interface TasklistDto {
     createdAt: string;
 }
 
+/** List is always created for the user sending the request */
 export interface CreateListRequestDto {
     listName: string;
 }
 
+/** Tag is always created for the user sending the request */
 export interface CreateTagRequestDto {
     tagName: string;
 }
 
+/** Basically just a change name of list since there are so few properties to lists */
 export interface UpdateListRequestDto {
     listId: string;
     newName: string;
 }
 
+/** Basically just a change name of tag since there are so few properties to tags */
 export interface UpdateTagRequestDto {
     tagId: string;
     newName: string;
 }
 
+/** Used for assigning and de-assigning tags to tasks. Works as "toggle", so if the tag already exists it is removed and vice versa. */
 export interface ChangeTaskTagRequestDto {
     tagId: string;
     taskId: string;
@@ -959,13 +969,17 @@ export interface TotpRegisterResponseDto {
     userId: string;
 }
 
+/** When register is performed the client app reveals the QR code */
 export interface TotpRegisterRequestDto {
+    /** TOTP required unique identifier for lookup: Email can be used for this */
     email: string;
 }
 
 /** Login is when the 6 digit code is sent to the server */
 export interface TotpLoginRequestDto {
+    /** This code is found in the authenticator on the device */
     totpCode: string;
+    /** Email is relevant because backend needs a unique identifier to make a lookup */
     email: string;
 }
 

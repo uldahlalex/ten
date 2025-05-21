@@ -4,7 +4,6 @@ using api.Controllers;
 using api.Mappers;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
-using efscaffold;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
@@ -58,7 +57,7 @@ public class UpdateTaskSuccess
 
         var request = new UpdateTaskRequestDto
         (
-            id: taskToUpdate.TaskId,
+            taskToUpdate.TaskId,
             title: "Updated Title",
             description: "Updated Description",
             dueDate: DateTime.UtcNow.AddDays(10).ToUniversalTime(),

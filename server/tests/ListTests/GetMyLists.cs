@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using api.Controllers;
 using api.Mappers;
 using api.Models.Dtos.Responses;
-using efscaffold;
 using FluentAssertions;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;

@@ -10,8 +10,7 @@ public class TotpVerifyRequestDto
         TotpCode = totpCode;
     }
 
-    [Required]
-    public string Id { get; set; }
+    [Required] public string Id { get; set; }
 
     [Required]
     [StringLength(6, MinimumLength = 6)]

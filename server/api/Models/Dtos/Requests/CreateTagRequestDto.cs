@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace api.Models.Dtos.Requests;
 
 /// <summary>
-/// Tag is always created for the user sending the request
+///     Tag is always created for the user sending the request
 /// </summary>
 public class CreateTagRequestDto
 {
@@ -12,5 +12,5 @@ public class CreateTagRequestDto
         TagName = tagName;
     }
 
-    [Required] public string TagName { get; set; }= null!;
+    [Required] public string TagName { get; set; } = null!;
 }

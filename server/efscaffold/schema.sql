@@ -5,11 +5,11 @@ CREATE TABLE ticktick.users
 (
     user_id       TEXT PRIMARY KEY,
     email         TEXT        NOT NULL,
-    salt          TEXT        ,
-    password_hash TEXT        ,
+    salt          TEXT,
+    password_hash TEXT,
     role          TEXT        NOT NULL,
     created_at    TIMESTAMPTZ NOT NULL,
-    totp_secret   TEXT        
+    totp_secret   TEXT
 );
 
 CREATE TABLE ticktick.tasklist

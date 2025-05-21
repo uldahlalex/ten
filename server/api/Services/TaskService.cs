@@ -1,13 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using api.Mappers;
 using api.Models;
-using api.Models.Dtos;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
-using efscaffold;
 using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
-using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
@@ -18,7 +15,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         JwtClaims jwtClaims)
     {
         IQueryable<Tickticktask> query = ctx.Tickticktasks.Include(t => t.TaskTags);
-      
+
         if (parameters.ListIds != null && parameters.ListIds?.Count > 0)
             //Logical OR inclusion (list belongs to user, so no need to check for user)
             query = query.Where(task => parameters.ListIds.Contains(task.ListId));
@@ -59,7 +56,6 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
                 query = query.OrderBy(t => t.CreatedAt);
             else
                 throw new ValidationException("Not a valid ordering!");
-            
         }
 
         if (parameters.IsDescending != null) query = query.Reverse();

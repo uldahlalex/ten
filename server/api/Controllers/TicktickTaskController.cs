@@ -1,5 +1,3 @@
-using api.Models;
-using api.Models.Dtos;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 using api.Services;

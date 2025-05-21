@@ -29,7 +29,7 @@ public class AuthController(ISecurityService securityService, MyDbContext ctx) :
             UserId = uid
         });
         ctx.SaveChanges();
-        var responseDto = new JwtResponse()
+        var responseDto = new JwtResponse
         {
             Jwt = securityService.GenerateJwt(uid)
         };
@@ -46,7 +46,7 @@ public class AuthController(ISecurityService securityService, MyDbContext ctx) :
             throw new ValidationException("User not found");
         if (user.PasswordHash != securityService.Hash(dto.Password + user.Salt))
             throw new ValidationException("Invalid password");
-        var responseDto = new JwtResponse()
+        var responseDto = new JwtResponse
         {
             Jwt = securityService.GenerateJwt(user.UserId)
         };

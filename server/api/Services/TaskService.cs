@@ -18,6 +18,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         JwtClaims jwtClaims)
     {
         IQueryable<Tickticktask> query = ctx.Tickticktasks.Include(t => t.TaskTags);
+      
         if (parameters.ListIds != null && parameters.ListIds?.Count > 0)
             //Logical OR inclusion (list belongs to user, so no need to check for user)
             query = query.Where(task => parameters.ListIds.Contains(task.ListId));

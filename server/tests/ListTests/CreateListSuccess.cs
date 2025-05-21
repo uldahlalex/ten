@@ -39,10 +39,7 @@ public class CreateListSuccess
     [Test]
     public async Task CreateList_SuccessfullyCreatesList()
     {
-        var dto = new CreateListRequestDto
-        {
-            ListName = "Example list"
-        };
+        var dto = new CreateListRequestDto("Example list");
         var actualResponse = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), dto);
 
         if (actualResponse.StatusCode != HttpStatusCode.OK)

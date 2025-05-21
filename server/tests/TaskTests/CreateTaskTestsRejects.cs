@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using api.Controllers;
 using api.Models.Dtos.Requests;
-using efscaffold;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,14 +47,12 @@ public class CreateTaskTestsRejects
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
 
 
-        var request = new CreateTaskRequestDto
-        {
-            ListId = (ctx.Tasklists.FirstOrDefault() ?? throw new Exception("Could not find any task list")).ListId,
-            Title = title,
-            Description = description,
-            DueDate = DateTime.Parse(timestamp).ToUniversalTime(),
-            Priority = priority
-        };
+        var request = new CreateTaskRequestDto(
+            listId: (ctx.Tasklists.FirstOrDefault() ?? throw new Exception("Could not find any task list")).ListId,
+            title: title,
+            description: description,
+            dueDate: DateTime.Parse(timestamp).ToUniversalTime(),
+            priority: priority);
 
 
         // Act
@@ -66,4 +63,5 @@ public class CreateTaskTestsRejects
             throw new Exception("Expected bad request. Received: " + response.StatusCode + " and body :" +
                                 await response.Content.ReadAsStringAsync());
     }
+ 
 }

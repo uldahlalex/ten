@@ -13,11 +13,6 @@ public class AuthRequestDto
         Password = password;
     }
 
-    public AuthRequestDto(string email)
-    {
-        Email = email;
-    }
-
     /// <summary>
     /// Just to have any unique identifier for the user when signing in and registering
     /// </summary>

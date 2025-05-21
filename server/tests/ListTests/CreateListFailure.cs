@@ -41,10 +41,7 @@ public class CreateListFailure
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
 
-        var request = new CreateListRequestDto
-        {
-            ListName = listName
-        };
+        var request = new CreateListRequestDto(listName);
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);
 

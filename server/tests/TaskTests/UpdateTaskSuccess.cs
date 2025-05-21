@@ -57,16 +57,16 @@ public class UpdateTaskSuccess
 
 
         var request = new UpdateTaskRequestDto
-        {
-            Id = taskToUpdate.TaskId,
-            Title = "Updated Title",
-            Description = "Updated Description",
-            DueDate = DateTime.UtcNow.AddDays(10).ToUniversalTime(),
-            Priority = 3,
-            Completed = true,
-            ListId = ctx.Tasklists.OrderBy(o => o.CreatedAt).Reverse().FirstOrDefault()
+        (
+            id: taskToUpdate.TaskId,
+            title: "Updated Title",
+            description: "Updated Description",
+            dueDate: DateTime.UtcNow.AddDays(10).ToUniversalTime(),
+            priority: 3,
+            completed: true,
+            listId: ctx.Tasklists.OrderBy(o => o.CreatedAt).Reverse().FirstOrDefault()
                 .ListId //moving to a different list
-        };
+        );
         var response = await _client.PatchAsJsonAsync(_baseUrl + nameof(TicktickTaskController.UpdateTask), request);
         response.EnsureSuccessStatusCode();
         var updatedTask = await response.Content.ReadFromJsonAsync<TickticktaskDto>();

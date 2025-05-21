@@ -7,6 +7,10 @@ namespace api.Controllers;
 /// </summary>
 public class TotpUnregisterRequestDto
 {
+    public TotpUnregisterRequestDto(string totpCode)
+    {
+        TotpCode = totpCode;
+    }
 
     [Required]
     [StringLength(6, MinimumLength = 6)]

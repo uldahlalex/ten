@@ -4,6 +4,12 @@ namespace api.Controllers;
 
 public class TotpVerifyRequestDto
 {
+    public TotpVerifyRequestDto(string id, string totpCode)
+    {
+        Id = id;
+        TotpCode = totpCode;
+    }
+
     [Required]
     public string Id { get; set; }
 

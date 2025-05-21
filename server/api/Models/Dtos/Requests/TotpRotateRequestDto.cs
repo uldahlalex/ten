@@ -7,6 +7,11 @@ namespace api.Controllers;
 /// </summary>
 public class TotpRotateRequestDto
 {
+    public TotpRotateRequestDto(string currentTotpCode)
+    {
+        CurrentTotpCode = currentTotpCode;
+    }
+
     [Required]
     [StringLength(6, MinimumLength = 6)]
     [RegularExpression(@"^\d{6}$", ErrorMessage = "Code must be exactly 6 digits")]

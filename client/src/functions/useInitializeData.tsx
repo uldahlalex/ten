@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useAtom} from "jotai";
-import {JwtAtom, ListsAtom, TagsAtom} from "../atoms/atoms.ts";
+import {CurrentTasksDisplayView, JwtAtom, ListsAtom, QueryParametersAtom, TagsAtom} from "../atoms/atoms.ts";
 import {taskClient} from "../apiControllerClients.ts";
 
 export default function useInitializeData() {
@@ -8,6 +8,8 @@ export default function useInitializeData() {
     const [jwt] = useAtom(JwtAtom);
     const [, setLists] = useAtom(ListsAtom);
     const [, setTags] = useAtom(TagsAtom);
+    const [, setTasks] = useAtom(CurrentTasksDisplayView);
+    const [params] = useAtom(QueryParametersAtom);
 
     useEffect(() => {
         if (jwt == null || jwt.jwt.length < 1)
@@ -18,6 +20,9 @@ export default function useInitializeData() {
         taskClient.getMyTags(jwt.jwt).then(r => {
             setTags(r);
         });
+        taskClient.getMyTasks(jwt.jwt, params).then(r => {
+            setTasks(r)
+        })
     }, [jwt])
 
 }

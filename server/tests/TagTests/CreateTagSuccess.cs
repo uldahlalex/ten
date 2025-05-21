@@ -39,10 +39,7 @@ public class CreateTagSuccess
     [Test]
     public async Task CreateTag()
     {
-        var tag = new CreateTagRequestDto
-        {
-            TagName = "My new tag"
-        };
+        var tag = new CreateTagRequestDto("My new tag");
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateTag), tag);
         if (response.StatusCode != HttpStatusCode.OK)

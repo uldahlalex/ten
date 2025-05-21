@@ -22,7 +22,7 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
             ctx.Users.Update(user);
             await ctx.SaveChangesAsync();
             var otpauthUrl =
-                $"otpauth://totp/{Uri.EscapeDataString("YourApp")}:{Uri.EscapeDataString(user.UserId)}?secret={user.TotpSecret}&issuer=YourApp";
+                $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(user.UserId)}?secret={user.TotpSecret}&issuer="+nameof(StaticConstants.TickTickClone);
 
 
             return Ok(new TotpRegisterResponseDto
@@ -50,7 +50,7 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
             ctx.Users.Add(user);
             await ctx.SaveChangesAsync();
             var otpauthUrl =
-                $"otpauth://totp/{Uri.EscapeDataString("YourApp")}:{Uri.EscapeDataString(userId)}?secret={totpSecret}&issuer=YourApp";
+                $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(userId)}?secret={totpSecret}&issuer="+nameof(StaticConstants.TickTickClone);
 
 
             return Ok(new TotpRegisterResponseDto
@@ -109,7 +109,7 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
         await ctx.SaveChangesAsync();
 
         var otpauthUrl =
-            $"otpauth://totp/{Uri.EscapeDataString(StaticConstants.TickTickClone)}:{Uri.EscapeDataString(user.UserId)}?secret={newTotpSecret}&issuer=YourApp";
+            $"otpauth://totp/{Uri.EscapeDataString(StaticConstants.TickTickClone)}:{Uri.EscapeDataString(user.UserId)}?secret={newTotpSecret}&issuer="+nameof(StaticConstants.TickTickClone);
 
         return Ok(new TotpRegisterResponseDto
         {

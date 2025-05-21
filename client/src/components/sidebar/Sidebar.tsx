@@ -14,7 +14,12 @@ export default function Sidebar() {
 
     const handleListClick = (list: TasklistDto) => {
         setParams((prevParams) => {
-            const newParams = {...prevParams, listIds: [list.listId]};
+            const exists = (prevParams.listIds?.includes(list.listId))!;
+            let newParams = null;
+            if(!exists)
+                newParams = {...prevParams, listIds: [list.listId]};
+            else
+                newParams = {...prevParams, listIds: prevParams.listIds?.filter((id) => id !== list.listId)};
             taskClient.getMyTasks(
                 jwt!.jwt,
                 (newParams)

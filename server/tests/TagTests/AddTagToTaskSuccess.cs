@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using api.Controllers;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
-using efscaffold;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -49,11 +48,8 @@ public class AddTagToTaskSuccess
             .First(t => !taskIdsThatHaveTheTag.Contains(t.TaskId));
 
 
-        var dto = new ChangeTaskTagRequestDto
-        {
-            TagId = arbitraryTag.TagId,
-            TaskId = firstTaskNotAlreadyForTag.TaskId
-        };
+        var dto = new ChangeTaskTagRequestDto(arbitraryTag.TagId,
+            firstTaskNotAlreadyForTag.TaskId);
 
         var response = await _client.PutAsJsonAsync(_baseUrl + nameof(TicktickTaskController.AddTaskTag), dto);
         if (response.StatusCode != HttpStatusCode.OK)

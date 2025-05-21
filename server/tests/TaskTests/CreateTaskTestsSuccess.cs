@@ -46,13 +46,13 @@ public class CreateTaskTestsSuccess
 
         // _scopedServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
         var request = new CreateTaskRequestDto
-        {
-            ListId = ctx.Tasklists.First().ListId,
-            Title = "Test Task",
-            Description = "Test Description",
-            DueDate = DateTime.Parse("2050-04-25T20:22:50.657021Z").ToUniversalTime(),
-            Priority = 1
-        };
+        (
+            listId: ctx.Tasklists.First().ListId,
+            title: "Test Task",
+            description: "Test Description",
+            dueDate: DateTime.Parse("2050-04-25T20:22:50.657021Z").ToUniversalTime(),
+            priority: 1
+        );
 
 
         // Act

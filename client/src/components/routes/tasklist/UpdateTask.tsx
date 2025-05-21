@@ -63,7 +63,11 @@ export default function UpdateTask(props: UpdateTaskProps) {
                     <label className="label">
                         <span className="label-text">Due Date</span>
                     </label>
-                   <DateTimeInput onChange={date => setUpdateForm({...updateForm,dueDate: date})} value={updateForm.dueDate} />
+                    {
+                        JSON.stringify(updateForm)
+                    }
+                   <DateTimeInput onChange={date => setUpdateForm({...updateForm,dueDate: date.toISOString()})} 
+                                  value={new Date(updateForm.dueDate!)} />
                 </div>
                 <div className="form-control w-full">
                     <label className="label">
@@ -82,41 +86,6 @@ export default function UpdateTask(props: UpdateTaskProps) {
                         ))}
                     </select>
                 </div>
-                {/*<div className="form-control w-full">*/}
-                {/*    <label className="label">*/}
-                {/*        <span className="label-text">Tags</span>*/}
-                {/*    </label>*/}
-                {/*    */}
-                {/*    */}
-                {/*    <select*/}
-                {/*        className="select select-bordered w-full"*/}
-                {/*        value={props.task.taskTags.map(t => t.tagId)}*/}
-                {/*        multiple*/}
-
-                {/*        onChange={(e) => {*/}
-                {/*            console.log(e.target.value)*/}
-                {/*            const selectedTag = myTags.find(tag => tag.tagId === e.target.value);*/}
-                {/*            if (selectedTag) {*/}
-                {/*                // const a: ITaskTagDto = {tagId: selectedTag.tagId, taskId: props.task.taskId, createdAt: new Date()};*/}
-                {/*                // setTaskTags([...taskTags,new TaskTagDto(a) ]);*/}
-                {/*                taskClient.addTaskTag(jwt?.jwt!, new ChangeTaskTagRequestDto({*/}
-                {/*                    tagId: selectedTag.tagId,*/}
-                {/*                    taskId: props.task.taskId*/}
-                {/*                })).then(r => {*/}
-                {/*                    toast.success("Tag updated successfully");*/}
-                {/*                })*/}
-                {/*            }*/}
-                {/*           */}
-                {/*        }}*/}
-                {/*        required*/}
-                {/*    >*/}
-                {/*        {myTags.map((tag) => (*/}
-                {/*            <option key={tag.tagId} value={tag.tagId}>*/}
-                {/*                {tag.name}*/}
-                {/*            </option>*/}
-                {/*        ))}*/}
-                {/*    </select>*/}
-                {/*</div>*/}
                 <TaskTagsDropdown task={props.task}/>
                 <div className="form-control w-full">
                     <label className="label">

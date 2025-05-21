@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface DateTimeInputProps {
-    value: Date | undefined;
+    value: Date;
     onChange: (date: Date) => void;
     className?: string;
     required?: boolean;
@@ -18,8 +18,8 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({
                                                      }) => {
     // Format Date for date input (YYYY-MM-DD)
     const getDateValue = (): string => {
-        if (!value) return '';
-        const year = value.getFullYear();
+        if (value==undefined) return '';
+        const year = value.getUTCFullYear()
         const month = String(value.getMonth() + 1).padStart(2, '0');
         const day = String(value.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;

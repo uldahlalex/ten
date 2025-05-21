@@ -1,12 +1,11 @@
 Aktuelt:
 - revider fly io deployment
-- date input bug
 
-client app
-      - create list, tag, task, update any of these + delete
+client app nye features
+      - create, update, delete list
+      - create, update, delete tag
       - tasklist orderbys og flere filtre evt (eller lav custom filter til at gemme hvis det skal være mere avanceret)
 
 til sidst:
 - skriv en masse dokumentation og visualisering i README
-- fik jeg noget ud af react-error-boundary?
 - hvis tunit test runner aldrig bliver fikset så migrate til andet

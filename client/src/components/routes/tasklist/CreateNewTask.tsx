@@ -11,7 +11,7 @@ interface CreateNewTaskProps {
 export default function CreateNewTask({onSubmit, onCancel}: CreateNewTaskProps) {
     const [newTask, setNewTask] = useState<CreateTaskRequestDto>({
         description: "",
-        dueDate: new Date(),
+        dueDate: new Date().toISOString(),
         listId: '',
         priority: 1,
         tagsIds: [],
@@ -60,8 +60,8 @@ export default function CreateNewTask({onSubmit, onCancel}: CreateNewTaskProps) 
                     <input
                         type="date"
                         className="input input-bordered w-full"
-                        value={newTask.dueDate?.toISOString().split('T')[0]}
-                        onChange={(e) => setNewTask({...newTask, dueDate: new Date(e.target.value)})}
+                        value={new Date(newTask.dueDate!)?.toISOString().split('T')[0]}
+                        onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
                         required
                     />
                 </div>

@@ -10,17 +10,18 @@ public static class GenerateTypescriptClientFromOpenApi
     {
         var document = await app.Services.GetRequiredService<IOpenApiDocumentGenerator>()
             .GenerateAsync("v1");
+
         var settings = new TypeScriptClientGeneratorSettings
         {
             Template = TypeScriptTemplate.Fetch,
             TypeScriptGeneratorSettings =
             {
                 TypeStyle = TypeScriptTypeStyle.Interface,
-                DateTimeType = TypeScriptDateTimeType.Date,
+                DateTimeType = TypeScriptDateTimeType.String,
                 NullValue = TypeScriptNullValue.Undefined,
                 TypeScriptVersion = 5.2m,
                 GenerateCloneMethod = false,
-                MarkOptionalProperties = true
+                MarkOptionalProperties = true,
             }
         };
 

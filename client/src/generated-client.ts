@@ -6,13 +6,12 @@
 
 /* tslint:disable */
 /* eslint-disable */
-
 // ReSharper disable InconsistentNaming
 
 export class AuthClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
@@ -39,6 +38,23 @@ export class AuthClient {
         });
     }
 
+    protected processRegister(response: Response): Promise<JwtResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as JwtResponse;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<JwtResponse>(null as any);
+    }
+
     login(dto: AuthRequestDto): Promise<JwtResponse> {
         let url_ = this.baseUrl + "/Login";
         url_ = url_.replace(/[?&]$/, "");
@@ -59,43 +75,18 @@ export class AuthClient {
         });
     }
 
-    protected processRegister(response: Response): Promise<JwtResponse> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as JwtResponse;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<JwtResponse>(null as any);
-    }
-
     protected processLogin(response: Response): Promise<JwtResponse> {
         const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as JwtResponse;
-                return result200;
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as JwtResponse;
+            return result200;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<JwtResponse>(null as any);
@@ -103,9 +94,9 @@ export class AuthClient {
 }
 
 export class TicktickTaskClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
@@ -133,6 +124,23 @@ export class TicktickTaskClient {
         });
     }
 
+    protected processGetMyTasks(response: Response): Promise<TickticktaskDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TickticktaskDto[]>(null as any);
+    }
+
     createTask(dto: CreateTaskRequestDto, authorization: string | undefined): Promise<TickticktaskDto> {
         let url_ = this.baseUrl + "/CreateTask";
         url_ = url_.replace(/[?&]$/, "");
@@ -152,6 +160,23 @@ export class TicktickTaskClient {
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processCreateTask(_response);
         });
+    }
+
+    protected processCreateTask(response: Response): Promise<TickticktaskDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TickticktaskDto>(null as any);
     }
 
     updateTask(dto: UpdateTaskRequestDto, authorization: string | undefined): Promise<TickticktaskDto> {
@@ -175,6 +200,23 @@ export class TicktickTaskClient {
         });
     }
 
+    protected processUpdateTask(response: Response): Promise<TickticktaskDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TickticktaskDto>(null as any);
+    }
+
     deleteTask(authorization: string | undefined, taskId: string | undefined): Promise<TickticktaskDto> {
         let url_ = this.baseUrl + "/DeleteTask?";
         if (taskId === null)
@@ -196,6 +238,23 @@ export class TicktickTaskClient {
         });
     }
 
+    protected processDeleteTask(response: Response): Promise<TickticktaskDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TickticktaskDto>(null as any);
+    }
+
     getMyTags(authorization: string | undefined): Promise<TagDto[]> {
         let url_ = this.baseUrl + "/GetMyTags";
         url_ = url_.replace(/[?&]$/, "");
@@ -213,6 +272,23 @@ export class TicktickTaskClient {
         });
     }
 
+    protected processGetMyTags(response: Response): Promise<TagDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TagDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TagDto[]>(null as any);
+    }
+
     getMyLists(authorization: string | undefined): Promise<TasklistDto[]> {
         let url_ = this.baseUrl + "/GetMyLists";
         url_ = url_.replace(/[?&]$/, "");
@@ -228,6 +304,23 @@ export class TicktickTaskClient {
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processGetMyLists(_response);
         });
+    }
+
+    protected processGetMyLists(response: Response): Promise<TasklistDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TasklistDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TasklistDto[]>(null as any);
     }
 
     createList(authorization: string | undefined, dto: CreateListRequestDto): Promise<TasklistDto> {
@@ -251,6 +344,23 @@ export class TicktickTaskClient {
         });
     }
 
+    protected processCreateList(response: Response): Promise<TasklistDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TasklistDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TasklistDto>(null as any);
+    }
+
     createTag(authorization: string | undefined, dto: CreateTagRequestDto): Promise<TagDto> {
         let url_ = this.baseUrl + "/CreateTag";
         url_ = url_.replace(/[?&]$/, "");
@@ -270,6 +380,23 @@ export class TicktickTaskClient {
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processCreateTag(_response);
         });
+    }
+
+    protected processCreateTag(response: Response): Promise<TagDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TagDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TagDto>(null as any);
     }
 
     updateList(authorization: string | undefined, dto: UpdateListRequestDto): Promise<TasklistDto> {
@@ -293,6 +420,23 @@ export class TicktickTaskClient {
         });
     }
 
+    protected processUpdateList(response: Response): Promise<TasklistDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TasklistDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TasklistDto>(null as any);
+    }
+
     updateTag(authorization: string | undefined, dto: UpdateTagRequestDto): Promise<TagDto> {
         let url_ = this.baseUrl + "/UpdateTag";
         url_ = url_.replace(/[?&]$/, "");
@@ -312,6 +456,23 @@ export class TicktickTaskClient {
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUpdateTag(_response);
         });
+    }
+
+    protected processUpdateTag(response: Response): Promise<TagDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TagDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TagDto>(null as any);
     }
 
     deleteListWithTasks(authorization: string | undefined, listId: string | undefined): Promise<FileResponse> {
@@ -335,6 +496,28 @@ export class TicktickTaskClient {
         });
     }
 
+    protected processDeleteListWithTasks(response: Response): Promise<FileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse>(null as any);
+    }
+
     deleteTag(authorization: string | undefined, tagId: string | undefined): Promise<FileResponse> {
         let url_ = this.baseUrl + "/DeleteTag?";
         if (tagId === null)
@@ -354,6 +537,28 @@ export class TicktickTaskClient {
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processDeleteTag(_response);
         });
+    }
+
+    protected processDeleteTag(response: Response): Promise<FileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse>(null as any);
     }
 
     addTaskTag(authorization: string | undefined, dto: ChangeTaskTagRequestDto): Promise<TaskTagDto> {
@@ -377,6 +582,23 @@ export class TicktickTaskClient {
         });
     }
 
+    protected processAddTaskTag(response: Response): Promise<TaskTagDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TaskTagDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TaskTagDto>(null as any);
+    }
+
     removeTaskTag(authorization: string | undefined, dto: ChangeTaskTagRequestDto): Promise<FileResponse> {
         let url_ = this.baseUrl + "/RemoveTaskTag";
         url_ = url_.replace(/[?&]$/, "");
@@ -398,300 +620,9 @@ export class TicktickTaskClient {
         });
     }
 
-    protected processGetMyTasks(response: Response): Promise<TickticktaskDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto[];
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TickticktaskDto[]>(null as any);
-    }
-
-    protected processCreateTask(response: Response): Promise<TickticktaskDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TickticktaskDto>(null as any);
-    }
-
-    protected processUpdateTask(response: Response): Promise<TickticktaskDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TickticktaskDto>(null as any);
-    }
-
-    protected processDeleteTask(response: Response): Promise<TickticktaskDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TickticktaskDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TickticktaskDto>(null as any);
-    }
-
-    protected processGetMyTags(response: Response): Promise<TagDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TagDto[];
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TagDto[]>(null as any);
-    }
-
-    protected processGetMyLists(response: Response): Promise<TasklistDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TasklistDto[];
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TasklistDto[]>(null as any);
-    }
-
-    protected processCreateList(response: Response): Promise<TasklistDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TasklistDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TasklistDto>(null as any);
-    }
-
-    protected processCreateTag(response: Response): Promise<TagDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TagDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TagDto>(null as any);
-    }
-
-    protected processUpdateList(response: Response): Promise<TasklistDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TasklistDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TasklistDto>(null as any);
-    }
-
-    protected processUpdateTag(response: Response): Promise<TagDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TagDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TagDto>(null as any);
-    }
-
-    protected processDeleteListWithTasks(response: Response): Promise<FileResponse> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return response.blob().then(blob => {
-                return {fileName: fileName, data: blob, status: status, headers: _headers};
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<FileResponse>(null as any);
-    }
-
-    protected processDeleteTag(response: Response): Promise<FileResponse> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return response.blob().then(blob => {
-                return {fileName: fileName, data: blob, status: status, headers: _headers};
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<FileResponse>(null as any);
-    }
-
-    protected processAddTaskTag(response: Response): Promise<TaskTagDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TaskTagDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TaskTagDto>(null as any);
-    }
-
     protected processRemoveTaskTag(response: Response): Promise<FileResponse> {
         const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200 || status === 206) {
             const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
             let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
@@ -702,12 +633,10 @@ export class TicktickTaskClient {
                 fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
                 fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
             }
-            return response.blob().then(blob => {
-                return {fileName: fileName, data: blob, status: status, headers: _headers};
-            });
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<FileResponse>(null as any);
@@ -715,9 +644,9 @@ export class TicktickTaskClient {
 }
 
 export class TotpClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
@@ -744,6 +673,23 @@ export class TotpClient {
         });
     }
 
+    protected processTotpRegister(response: Response): Promise<TotpRegisterResponseDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TotpRegisterResponseDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TotpRegisterResponseDto>(null as any);
+    }
+
     totpLogin(request: TotpLoginRequestDto): Promise<JwtResponse> {
         let url_ = this.baseUrl + "/TotpLogin";
         url_ = url_.replace(/[?&]$/, "");
@@ -764,6 +710,23 @@ export class TotpClient {
         });
     }
 
+    protected processTotpLogin(response: Response): Promise<JwtResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as JwtResponse;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<JwtResponse>(null as any);
+    }
+
     totpVerify(request: TotpVerifyRequestDto): Promise<FileResponse> {
         let url_ = this.baseUrl + "/TotpVerify";
         url_ = url_.replace(/[?&]$/, "");
@@ -782,6 +745,28 @@ export class TotpClient {
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTotpVerify(_response);
         });
+    }
+
+    protected processTotpVerify(response: Response): Promise<FileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse>(null as any);
     }
 
     totpRotate(request: TotpRotateRequestDto, authorization: string | undefined): Promise<TotpRegisterResponseDto> {
@@ -805,6 +790,23 @@ export class TotpClient {
         });
     }
 
+    protected processTotpRotate(response: Response): Promise<TotpRegisterResponseDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TotpRegisterResponseDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TotpRegisterResponseDto>(null as any);
+    }
+
     toptUnregister(request: TotpUnregisterRequestDto, authorization: string | undefined): Promise<FileResponse> {
         let url_ = this.baseUrl + "/ToptUnregister";
         url_ = url_.replace(/[?&]$/, "");
@@ -826,104 +828,9 @@ export class TotpClient {
         });
     }
 
-    protected processTotpRegister(response: Response): Promise<TotpRegisterResponseDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TotpRegisterResponseDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TotpRegisterResponseDto>(null as any);
-    }
-
-    protected processTotpLogin(response: Response): Promise<JwtResponse> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as JwtResponse;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<JwtResponse>(null as any);
-    }
-
-    protected processTotpVerify(response: Response): Promise<FileResponse> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return response.blob().then(blob => {
-                return {fileName: fileName, data: blob, status: status, headers: _headers};
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<FileResponse>(null as any);
-    }
-
-    protected processTotpRotate(response: Response): Promise<TotpRegisterResponseDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TotpRegisterResponseDto;
-                return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<TotpRegisterResponseDto>(null as any);
-    }
-
     protected processToptUnregister(response: Response): Promise<FileResponse> {
         const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200 || status === 206) {
             const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
             let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
@@ -934,12 +841,10 @@ export class TotpClient {
                 fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
                 fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
             }
-            return response.blob().then(blob => {
-                return {fileName: fileName, data: blob, status: status, headers: _headers};
-            });
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<FileResponse>(null as any);
@@ -960,24 +865,24 @@ export interface TickticktaskDto {
     listId: string;
     title: string;
     description: string;
-    dueDate?: Date | undefined;
+    dueDate?: string | undefined;
     priority: number;
     completed: boolean;
-    createdAt: Date;
-    completedAt?: Date | undefined;
+    createdAt: string;
+    completedAt?: string | undefined;
     taskTags: TaskTagDto[];
 }
 
 export interface TaskTagDto {
     taskId: string;
     tagId: string;
-    createdAt: Date;
+    createdAt: string;
 }
 
 export interface GetTasksFilterAndOrderParameters {
     isCompleted?: boolean | undefined;
-    earliestDueDate?: Date | undefined;
-    latestDueDate?: Date | undefined;
+    earliestDueDate?: string | undefined;
+    latestDueDate?: string | undefined;
     minPriority?: number | undefined;
     maxPriority?: number | undefined;
     searchTerm?: string | undefined;
@@ -991,7 +896,7 @@ export interface CreateTaskRequestDto {
     listId: string;
     title: string;
     description: string;
-    dueDate?: Date | undefined;
+    dueDate?: string | undefined;
     priority: number;
     tagsIds?: string[];
 }
@@ -1002,7 +907,7 @@ export interface UpdateTaskRequestDto {
     completed: boolean;
     title: string;
     description: string;
-    dueDate?: Date | undefined;
+    dueDate?: string | undefined;
     priority: number;
 }
 
@@ -1010,14 +915,14 @@ export interface TagDto {
     tagId: string;
     name: string;
     userId: string;
-    createdAt: Date;
+    createdAt: string;
 }
 
 export interface TasklistDto {
     listId: string;
     userId: string;
     name: string;
-    createdAt: Date;
+    createdAt: string;
 }
 
 export interface CreateListRequestDto {
@@ -1095,7 +1000,6 @@ export class ApiException extends Error {
     response: string;
     headers: { [key: string]: any; };
     result: any;
-    protected isApiException = true;
 
     constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
         super();
@@ -1107,14 +1011,14 @@ export class ApiException extends Error {
         this.result = result;
     }
 
+    protected isApiException = true;
+
     static isApiException(obj: any): obj is ApiException {
         return obj.isApiException === true;
     }
 }
 
-function throwException(message: string, status: number, response: string, headers: {
-    [key: string]: any;
-}, result?: any): any {
+function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
     if (result !== null && result !== undefined)
         throw result;
     else

@@ -21,4 +21,9 @@
         <ProjectReference Include="../efscaffold/efscaffold.csproj"/>
     </ItemGroup>
 
+    <PropertyGroup>
+<!--        Used for XML comments above types for OpenAPI definition -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
 </Project>

@@ -38,11 +38,8 @@ public class RegisterTestsSuccess
     [Test]
     public async Task WhenUserRegistersWithValidCredentials_TheyGetValidJwtBack()
     {
-        var reqDto = new AuthRequestDto
-        {
-            Email = new Random().NextDouble() * 100 + "@email.com",
-            Password = new Random().NextDouble() * 10293809213 + ""
-        };
+        var reqDto = new AuthRequestDto(new Random().NextDouble() * 100 + "@email.com",
+            new Random().NextDouble() * 1238998213 + "");
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Register), reqDto);
 
         if (!response.IsSuccessStatusCode)

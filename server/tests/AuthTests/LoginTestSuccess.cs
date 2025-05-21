@@ -38,11 +38,7 @@ public class LoginTestSuccess
     [Test]
     public async Task Login_CanSuccessfully_Login()
     {
-        var dto = new AuthRequestDto
-        {
-            Email = "test@user.dk",
-            Password = "abc"
-        };
+        var dto = new AuthRequestDto("test@user.dk", "abc");
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Login), dto);
         if (response.StatusCode != HttpStatusCode.OK)

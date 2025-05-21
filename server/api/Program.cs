@@ -59,16 +59,13 @@ public class Program
         {
             if (!app.Environment.IsProduction())
             {
-                app.Services.GetRequiredService<ILogger<Program>>().LogInformation("INSIDE SCOPE");
                 var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
-
                 var schema = ctx.Database.GenerateCreateScript();
                 File.WriteAllText("schema_according_to_dbcontext.sql", schema);
                 scope.ServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
             }
         }
 
-        app.MapGet("/helloworld", () => "Hello World!");
         app.Use(async (context, next) =>
         {
             await next();
@@ -78,8 +75,8 @@ public class Program
                 context.Response.ContentType = "application/json";
                 var problemDetails = new ProblemDetails
                 {
-                    Title = "Not Found",
-                    Detail = $"The route {context.Request.Path} does not exist",
+                    Title = "Route not found",
+                    Detail = $"The route {context.Request.Path} does not exist (no controller methods match)",
                     Status = StatusCodes.Status404NotFound
                 };
 

@@ -855,11 +855,14 @@ export interface JwtResponse {
     jwt: string;
 }
 
+/** Used both for sign in and registration. Password repeat verified client side */
 export interface AuthRequestDto {
+    /** Just to have any unique identifier for the user when signing in and registering */
     email: string;
     password: string;
 }
 
+/** Data annotations on properties are used for validation in tests */
 export interface TickticktaskDto {
     taskId: string;
     listId: string;
@@ -879,6 +882,7 @@ export interface TaskTagDto {
     createdAt: string;
 }
 
+/** deliberately using ? operator for properties such that no default values are assigned and i can always check for nulls */
 export interface GetTasksFilterAndOrderParameters {
     isCompleted?: boolean | undefined;
     earliestDueDate?: string | undefined;
@@ -959,6 +963,7 @@ export interface TotpRegisterRequestDto {
     email: string;
 }
 
+/** Login is when the 6 digit code is sent to the server */
 export interface TotpLoginRequestDto {
     totpCode: string;
     email: string;
@@ -969,10 +974,12 @@ export interface TotpVerifyRequestDto {
     totpCode: string;
 }
 
+/** Used to change the persisted secret to a new random one (not supplied by client) */
 export interface TotpRotateRequestDto {
     currentTotpCode: string;
 }
 
+/** Unregister is basically "delete" */
 export interface TotpUnregisterRequestDto {
     totpCode: string;
 }

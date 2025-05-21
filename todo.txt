@@ -1,5 +1,11 @@
 Aktuelt:
 - revider fly io deployment
+- constructors til DTOs?
+    - type-safe object generation with new keyword
+    - helpful for nswag generated ts client?
+    - hvordan fungerer deserialization når der er flere ctors?
+
+- comments til DTOs    
 
 client app nye features
       - create, update, delete list

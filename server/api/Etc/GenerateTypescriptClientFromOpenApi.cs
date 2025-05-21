@@ -22,6 +22,8 @@ public static class GenerateTypescriptClientFromOpenApi
                 TypeScriptVersion = 5.2m,
                 GenerateCloneMethod = false,
                 MarkOptionalProperties = true,
+                GenerateConstructorInterface = true,
+                ConvertConstructorInterfaceData = true
             }
         };
 

@@ -30,3 +30,5 @@ dotnet ef dbcontext scaffold "$CONN_STR" Npgsql.EntityFrameworkCore.PostgreSQL \
     --context-namespace Infrastructure.Postgres.Scaffolding \
     --schema ticktick \
     --force
+#    --data-annotations 
+#    --force

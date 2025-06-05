@@ -1,6 +1,8 @@
 Aktuelt:
 - revider fly io deployment
- 
+- ctors som extension methods til entities for mindre duplikeret entitets generation
+- datetime provider til tests
+- vil jeg foretrække en seeder uden dynamisk logik? 
 
 client app nye features
       - create, update, delete list

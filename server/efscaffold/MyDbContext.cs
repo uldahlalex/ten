@@ -1,5 +1,7 @@
-﻿using efscaffold.Entities;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using efscaffold.Entities;
 
 namespace Infrastructure.Postgres.Scaffolding;
 

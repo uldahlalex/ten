@@ -32,7 +32,9 @@ public class CreateTaskTestsRejects
         _client = _app.CreateHttpClientWithDefaultTestJwt();
         return Task.CompletedTask;
     }
+    
 
+    
     //Multi case test
     [Test]
     [Arguments("", "asdsa", "2050-04-25T20:22:50.657021Z", 1)] //invalid title: empty

@@ -857,7 +857,8 @@ export interface JwtResponse {
 
 /** Used both for sign in and registration. Password repeat verified client side */
 export interface AuthRequestDto {
-    /** Just to have any unique identifier for the user when signing in and registering */
+    /** Just to have any unique identifier for the user when signing in and registering
+             */
     email: string;
     password: string;
 }
@@ -901,10 +902,12 @@ export interface CreateTaskRequestDto {
     listId: string;
     title: string;
     description: string;
-    /** Due date is optional since tasks may have none */
+    /** Due date is optional since tasks may have none
+             */
     dueDate?: string | undefined;
     priority: number;
-    /** List of tag IDs to add to the task when it is created */
+    /** List of tag IDs to add to the task when it is created
+             */
     tagsIds?: string[];
 }
 
@@ -915,7 +918,8 @@ export interface UpdateTaskRequestDto {
     completed: boolean;
     title: string;
     description: string;
-    /** Due date can be "removed" by assigning it null */
+    /** Due date can be "removed" by assigning it null
+             */
     dueDate?: string | undefined;
     priority: number;
 }
@@ -971,15 +975,18 @@ export interface TotpRegisterResponseDto {
 
 /** When register is performed the client app reveals the QR code */
 export interface TotpRegisterRequestDto {
-    /** TOTP required unique identifier for lookup: Email can be used for this */
+    /** TOTP required unique identifier for lookup: Email can be used for this
+             */
     email: string;
 }
 
 /** Login is when the 6 digit code is sent to the server */
 export interface TotpLoginRequestDto {
-    /** This code is found in the authenticator on the device */
+    /** This code is found in the authenticator on the device
+             */
     totpCode: string;
-    /** Email is relevant because backend needs a unique identifier to make a lookup */
+    /** Email is relevant because backend needs a unique identifier to make a lookup
+             */
     email: string;
 }
 

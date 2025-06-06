@@ -1,8 +1,7 @@
 Aktuelt:
-- revider fly io deployment
-- ctors som extension methods til entities for mindre duplikeret entitets generation
 - datetime provider til tests
-- vil jeg foretrække en seeder uden dynamisk logik? 
+- revider tests efter de mange ændringer
+
 
 client app nye features
       - create, update, delete list
@@ -12,3 +11,4 @@ client app nye features
 til sidst:
 - skriv en masse dokumentation og visualisering i README
 - hvis tunit test runner aldrig bliver fikset så migrate til andet
+- revider fly io deployment

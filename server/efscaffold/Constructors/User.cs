@@ -7,7 +7,7 @@ public partial class User
         string email, 
         string? salt, 
         string? passwordHash, 
-        string role, string? totpSecret,
+        Role role, string? totpSecret,
         DateTime? createdAt = null,
         string? userId = null)
     {
@@ -15,7 +15,7 @@ public partial class User
         Email = email;
         Salt = salt;
         PasswordHash = passwordHash;
-        Role = role;
+        Role = role.GetDescription();
         CreatedAt = createdAt ?? DateTime.UtcNow;
         TotpSecret = totpSecret;
     }

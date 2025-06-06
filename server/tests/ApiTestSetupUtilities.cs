@@ -4,19 +4,22 @@ using api.Etc;
 using api.Models;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Time.Testing;
 using PgCtx;
-
-namespace tests;
+using tests;
 
 public static class ApiTestSetupUtilities
 {
     public static WebApplicationBuilder MakeWebAppBuilderForTesting()
     {
+        throw new Exception("Due to WIP changes: refactors to TimeProvider, constructors, etc, the tests are currently to be revised and therefore deliberately fail.");
         var builder = WebApplication.CreateBuilder();
         builder.Environment.EnvironmentName = "Development";
 
@@ -33,6 +36,8 @@ public static class ApiTestSetupUtilities
         Program.ConfigureServices(builder);
         return builder;
     }
+
+    public static readonly DateTimeOffset FixedTime = new(2024, 1, 15, 10, 0, 0, TimeSpan.Zero);
 
     public static WebApplicationBuilder ModifyServicesForTesting(
         this WebApplicationBuilder builder,
@@ -56,6 +61,11 @@ public static class ApiTestSetupUtilities
                 opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
         }
+        var timeProviderDescriptor = builder.Services.SingleOrDefault(d => d.ServiceType == typeof(TimeProvider));
+        if (timeProviderDescriptor != null)
+            builder.Services.Remove(timeProviderDescriptor);
+                
+        builder.Services.AddSingleton<TimeProvider>(new FakeTimeProvider(FixedTime));
 
         builder.Services.RemoveAll<IWebHostPortAllocationService>();
         builder.Services.AddSingleton<IWebHostPortAllocationService, TestPortAllocationService>();
@@ -69,6 +79,8 @@ public static class ApiTestSetupUtilities
 
     public static WebApplication AddProgramcsMiddleware(this WebApplication app)
     {
+        // Configure static files BEFORE API middleware
+        app.ConfigureStaticFilesForTesting();
         Program.ConfigureApp(app);
         return app;
     }
@@ -79,9 +91,45 @@ public static class ApiTestSetupUtilities
         return app;
     }
 
+    // Extension method to configure static files for testing
+    public static WebApplication ConfigureStaticFilesForTesting(this WebApplication app)
+    {
+        // Serve client dist files from /client/dist/
+        // Navigate up from /server/Start.Tests/ to root, then to /client/dist/
+        var currentDir = Directory.GetCurrentDirectory(); // /server/Start.Tests/
+        var serverDir = Directory.GetParent(currentDir)?.FullName; // /server/
+        var rootDir = Directory.GetParent(serverDir)?.FullName; // /
+        var clientDistPath = Path.Combine(rootDir ?? "", "client", "dist");
+        
+        if (Directory.Exists(clientDistPath))
+        {
+            // Serve SPA at a dedicated path to avoid conflicts with API routes
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(clientDistPath),
+                RequestPath = "/app"
+            });
+            
+            // SPA fallback - serve index.html for any unmatched routes under /app
+            app.MapFallbackToFile("/app/{*path:nonfile}", "/index.html", new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(clientDistPath)
+            });
+            
+            // Optional: Redirect root to SPA
+            app.MapGet("/", () => Results.Redirect("/app"));
+        }
+        else
+        {
+            Console.WriteLine($"Warning: Client dist directory not found at: {clientDistPath}");
+        }
+
+        return app;
+    }
+
     public static HttpClient CreateHttpClientWithDefaultTestJwt(this WebApplication app)
     {
-        var client = new HttpClient();
+        var client = new HttpClient(); // Use the app's test client
         client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q");
         return client;

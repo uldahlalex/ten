@@ -33,7 +33,7 @@ public class IntegrationTests
     [Explicit]
     public Task Waits()
     {
-        //Pause test indefinitely
+        Console.WriteLine(_baseUrl);
         Console.ReadLine();
         return Task.CompletedTask;
     }

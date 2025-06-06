@@ -6,7 +6,7 @@ namespace efscaffold.Entities;
 /// </summary>
 public partial class Tickticktask
 {
-    public Tickticktask( string listId, string title, string description, DateTime? dueDate, int priority, bool completed, DateTime? completedAt, DateTime? createdAt = null, string? taskId = null)
+    public Tickticktask( string listId, string title, string description, DateTime? dueDate, int priority, bool completed, DateTime? completedAt = null, DateTime? createdAt = null, string? taskId = null)
     {
         TaskId = taskId ?? Guid.NewGuid().ToString();
         ListId = listId;

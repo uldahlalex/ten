@@ -40,17 +40,9 @@ public class UpdateTaskSuccess
     public async Task UpdateTask_CanSuccessfullyUpdateTask()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var taskToUpdate = new Tickticktask
-        {
-            Title = "Test task",
-            Description = "Test description",
-            DueDate = DateTime.UtcNow.AddDays(1),
-            Priority = 1,
-            Completed = false,
-            ListId = ctx.Tasklists.OrderBy(o => o.CreatedAt).FirstOrDefault().ListId,
-            TaskId = Guid.NewGuid().ToString(),
-            CreatedAt = DateTime.UtcNow
-        };
+        var listId = ctx.Tasklists.OrderBy(o => o.CreatedAt).FirstOrDefault().ListId;
+        var taskToUpdate =
+            new Tickticktask(listId, "Test title","Test description", DateTime.UtcNow.AddDays(1), 1, false, null);
         ctx.Tickticktasks.Add(taskToUpdate);
         ctx.SaveChanges();
 

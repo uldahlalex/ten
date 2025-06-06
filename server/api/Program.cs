@@ -12,6 +12,7 @@ public class Program
 {
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
+        builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);

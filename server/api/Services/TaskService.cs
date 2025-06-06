@@ -71,19 +71,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         var tags = dto.TagsIds.Select(tagId =>
             ctx.TaskTags.First(tag => tag.TagId == tagId)).ToList();
 
-        var entity = new Tickticktask
-        {
-            TaskId = Guid.NewGuid().ToString(),
-            ListId = dto.ListId,
-            Title = dto.Title,
-            Description = dto.Description,
-            DueDate = dto.DueDate,
-            Priority = dto.Priority,
-            CreatedAt = DateTime.UtcNow,
-            Completed = false,
-            CompletedAt = null,
-            TaskTags = tags
-        };
+        var entity = new Tickticktask(dto.ListId, dto.Title, dto.Description, dto.DueDate, dto.Priority, false, null);
 
         ctx.Tickticktasks.Add(entity);
         ctx.SaveChanges();
@@ -143,27 +131,15 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     {
         if (ctx.Tasklists.Any(t => t.Name == dto.ListName))
             throw new ValidationException("List with this name already exists");
-        var tasList = new Tasklist
-        {
-            CreatedAt = DateTime.UtcNow,
-            ListId = Guid.NewGuid().ToString(),
-            Name = dto.ListName,
-            UserId = claims.Id
-        };
-        ctx.Tasklists.Add(tasList);
+        var taskList = new Tasklist(dto.ListName, claims.Id);
+        ctx.Tasklists.Add(taskList);
         ctx.SaveChanges();
-        return Task.FromResult(tasList.ToDto());
+        return Task.FromResult(taskList.ToDto());
     }
 
     public Task<TagDto> CreateTag(JwtClaims claims, CreateTagRequestDto dto)
     {
-        var tag = new Tag
-        {
-            CreatedAt = DateTime.UtcNow,
-            Name = dto.TagName,
-            UserId = claims.Id,
-            TagId = Guid.NewGuid().ToString()
-        };
+        var tag = new Tag(dto.TagName, claims.Id);
         ctx.Tags.Add(tag);
         ctx.SaveChanges();
         return Task.FromResult(tag.ToDto());
@@ -216,12 +192,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
             throw new ValidationException("Task already has this tag");
 
 
-        var taskTag = new TaskTag
-        {
-            CreatedAt = DateTime.UtcNow,
-            TagId = dto.TagId,
-            TaskId = dto.TaskId
-        };
+        var taskTag = new TaskTag(dto.TaskId, dto.TagId);
         ctx.TaskTags.Add(taskTag);
         ctx.SaveChanges();
         return Task.FromResult(taskTag.ToDto());

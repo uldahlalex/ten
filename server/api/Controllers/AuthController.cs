@@ -20,14 +20,7 @@ public class AuthController(ISecurityService securityService, MyDbContext ctx) :
         var salt = Guid.NewGuid().ToString();
         var uid = Guid.NewGuid().ToString();
 
-        ctx.Users.Add(new User
-        {
-            Email = dto.Email,
-            PasswordHash = securityService.Hash(dto.Password + salt),
-            Role = nameof(User),
-            Salt = salt,
-            UserId = uid
-        });
+        ctx.Users.Add(new User(dto.Email, salt, securityService.Hash(dto.Password + salt), Role.User, null ));
         ctx.SaveChanges();
         var responseDto = new JwtResponse
         {

@@ -44,17 +44,8 @@ public class UpdateTaskFailure
 
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var taskToUpdate = new Tickticktask
-        {
-            Title = "title",
-            Description = "description",
-            DueDate = DateTime.UtcNow.AddDays(1),
-            Priority = 3,
-            Completed = false,
-            ListId = ctx.Tasklists.OrderBy(o => o.CreatedAt).First().ListId,
-            TaskId = Guid.NewGuid().ToString(),
-            CreatedAt = DateTime.UtcNow
-        };
+        var listId = ctx.Tasklists.OrderBy(o => o.CreatedAt).First().ListId;
+        var taskToUpdate = new Tickticktask(listId, "Test title","Test description", DateTime.UtcNow.AddDays(1), 3, false);
         ctx.Tickticktasks.Add(taskToUpdate);
         ctx.SaveChanges();
 

@@ -40,14 +40,7 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
                 throw new Exception("User already exists");
             var userId = Guid.NewGuid().ToString();
             var totpSecret = securityService.GenerateSecretKey();
-            var user = new User
-            {
-                UserId = userId,
-                TotpSecret = totpSecret,
-                Role = nameof(User),
-                CreatedAt = DateTime.UtcNow,
-                Email = dto.Email
-            };
+            var user = new User(dto.Email, null, null, Role.User, totpSecret);
             ctx.Users.Add(user);
             await ctx.SaveChangesAsync();
             var otpauthUrl =

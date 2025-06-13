@@ -6,6 +6,15 @@ namespace efscaffold.Entities;
 /// </summary>
 public partial class TaskTag
 {
+
+    /// <summary>
+    /// Private parameterless constructor to be used by EF Core.
+    /// </summary>
+    private TaskTag()
+    {
+        
+    }
+    
     public TaskTag(string taskId, string tagId, DateTime? createdAt = null)
     {
         CreatedAt = createdAt ?? DateTime.UtcNow;

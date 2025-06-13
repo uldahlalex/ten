@@ -3,6 +3,14 @@ namespace efscaffold.Entities;
 
 public partial class User
 {
+    /// <summary>
+    /// Private parameterless constructor to be used by EF Core.
+    /// </summary>
+    private User ()
+    {
+        
+    }
+    
     public User(
         string email, 
         string? salt, 

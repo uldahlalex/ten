@@ -6,6 +6,14 @@ namespace efscaffold.Entities;
 /// </summary>
 public partial class Tasklist
 {
+    /// <summary>
+    /// Private parameterless constructor to be used by EF Core.
+    /// </summary>
+    private Tasklist()
+    {
+        
+    }
+    
     public Tasklist(string name, string userId, string? id = null, DateTime? createdAt = null)
     {
         ListId = id ?? Guid.NewGuid().ToString();

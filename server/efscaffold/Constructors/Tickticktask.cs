@@ -6,6 +6,14 @@ namespace efscaffold.Entities;
 /// </summary>
 public partial class Tickticktask
 {
+    /// <summary>
+    /// Private parameterless constructor to be used by EF Core.
+    /// </summary>
+    private Tickticktask()
+    {
+        
+    }
+    
     public Tickticktask( string listId, string title, string description, DateTime? dueDate, int priority, bool completed, DateTime? completedAt = null, DateTime? createdAt = null, string? taskId = null)
     {
         TaskId = taskId ?? Guid.NewGuid().ToString();

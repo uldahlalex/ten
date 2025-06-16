@@ -17,6 +17,7 @@ public class Program
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
         builder.Services.AddOpenApiDocument(conf => { conf.AddTypeToSwagger<ProblemDetails>(); });
+        builder.Services.AddSwaggerWithXmlDocs();
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
 

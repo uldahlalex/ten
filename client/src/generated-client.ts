@@ -141,7 +141,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TickticktaskDto[]>(null as any);
     }
 
-    createTask(dto: CreateTaskRequestDto, authorization: string | undefined): Promise<TickticktaskDto> {
+    createTask(authorization: string | undefined, dto: CreateTaskRequestDto): Promise<TickticktaskDto> {
         let url_ = this.baseUrl + "/CreateTask";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -179,7 +179,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TickticktaskDto>(null as any);
     }
 
-    updateTask(dto: UpdateTaskRequestDto, authorization: string | undefined): Promise<TickticktaskDto> {
+    updateTask(authorization: string | undefined, dto: UpdateTaskRequestDto): Promise<TickticktaskDto> {
         let url_ = this.baseUrl + "/UpdateTask";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -769,7 +769,7 @@ export class TotpClient {
         return Promise.resolve<FileResponse>(null as any);
     }
 
-    totpRotate(request: TotpRotateRequestDto, authorization: string | undefined): Promise<TotpRegisterResponseDto> {
+    totpRotate(authorization: string | undefined, request: TotpRotateRequestDto): Promise<TotpRegisterResponseDto> {
         let url_ = this.baseUrl + "/TotpRotate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -807,7 +807,7 @@ export class TotpClient {
         return Promise.resolve<TotpRegisterResponseDto>(null as any);
     }
 
-    toptUnregister(request: TotpUnregisterRequestDto, authorization: string | undefined): Promise<FileResponse> {
+    toptUnregister(authorization: string | undefined, request: TotpUnregisterRequestDto): Promise<FileResponse> {
         let url_ = this.baseUrl + "/ToptUnregister";
         url_ = url_.replace(/[?&]$/, "");
 

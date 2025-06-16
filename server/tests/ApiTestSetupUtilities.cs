@@ -19,7 +19,8 @@ public static class ApiTestSetupUtilities
 {
     public static WebApplicationBuilder MakeWebAppBuilderForTesting()
     {
-        throw new Exception("Due to WIP changes: refactors to TimeProvider, constructors, etc, the tests are currently to be revised and therefore deliberately fail.");
+        throw new Exception(
+            "Due to WIP changes: refactors to TimeProvider, constructors, etc, the tests are currently to be revised and therefore deliberately fail.");
         var builder = WebApplication.CreateBuilder();
         builder.Environment.EnvironmentName = "Development";
 
@@ -61,10 +62,11 @@ public static class ApiTestSetupUtilities
                 opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
         }
+
         var timeProviderDescriptor = builder.Services.SingleOrDefault(d => d.ServiceType == typeof(TimeProvider));
         if (timeProviderDescriptor != null)
             builder.Services.Remove(timeProviderDescriptor);
-                
+
         builder.Services.AddSingleton<TimeProvider>(new FakeTimeProvider(FixedTime));
 
         builder.Services.RemoveAll<IWebHostPortAllocationService>();
@@ -100,7 +102,7 @@ public static class ApiTestSetupUtilities
         var serverDir = Directory.GetParent(currentDir)?.FullName; // /server/
         var rootDir = Directory.GetParent(serverDir)?.FullName; // /
         var clientDistPath = Path.Combine(rootDir ?? "", "client", "dist");
-        
+
         if (Directory.Exists(clientDistPath))
         {
             // Serve SPA at a dedicated path to avoid conflicts with API routes
@@ -109,13 +111,13 @@ public static class ApiTestSetupUtilities
                 FileProvider = new PhysicalFileProvider(clientDistPath),
                 RequestPath = "/app"
             });
-            
+
             // SPA fallback - serve index.html for any unmatched routes under /app
             app.MapFallbackToFile("/app/{*path:nonfile}", "/index.html", new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(clientDistPath)
             });
-            
+
             // Optional: Redirect root to SPA
             app.MapGet("/", () => Results.Redirect("/app"));
         }

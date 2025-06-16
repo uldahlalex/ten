@@ -61,7 +61,6 @@ public class DefaultEnvironment(
         public const string ShoppingTask1Id = "task-buy-laptop";
         public const string ShoppingTask2Id = "task-buy-books";
         
-        // Fixed test dates - now predictable!
         public static readonly DateTime BaseDate = new(2024, 1, 15, 10, 0, 0, DateTimeKind.Utc);
         public static readonly DateTime UserCreatedAt = BaseDate.AddDays(-7);
         public static readonly DateTime TagsCreatedAt = BaseDate.AddDays(-6);

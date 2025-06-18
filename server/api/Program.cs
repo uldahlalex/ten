@@ -16,7 +16,11 @@ public class Program
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
-        builder.Services.AddOpenApiDocument(conf => { conf.AddTypeToSwagger<ProblemDetails>(); });
+        builder.Services.AddOpenApiDocument(conf =>
+        {
+            conf.Title = "Alex' Amazing REST API for training (loosely based on the 'TickTick' Task manager app)";
+            conf.AddTypeToSwagger<ProblemDetails>();
+        });
         builder.Services.AddSwaggerWithXmlDocs();
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));

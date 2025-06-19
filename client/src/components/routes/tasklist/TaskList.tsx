@@ -7,6 +7,7 @@ import ToUpdateDto from "../../../functions/mappings.ts";
 import CreateNewTask from "./CreateNewTask.tsx";
 import {useState} from "react";
 import UpdateTask from "./UpdateTask.tsx";
+import TaskListFilters from "./TaskListFilters.tsx";
 
 export interface EditModal {
     isOpen: boolean;
@@ -43,6 +44,7 @@ export default function TaskList() {
                     Create New Task
                 </button>
 
+                <TaskListFilters />
                 
 
                 <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Tasks:</li>

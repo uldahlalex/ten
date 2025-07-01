@@ -1,4 +1,5 @@
 Aktuelt:
+- update secrets med gh 
 - datetime provider til tests
 - revider tests efter de mange ændringer
 

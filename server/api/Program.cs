@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PgCtx;
 using Scalar.AspNetCore;
-using TaskFactory = api.Etc.TaskFactory;
 
 namespace api;
 
@@ -14,11 +13,7 @@ public class Program
 {
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<UserFactory>();
-        builder.Services.AddSingleton<TagFactory>();
-        builder.Services.AddSingleton<TasklistFactory>();
-        builder.Services.AddSingleton<TaskFactory>();
-        builder.Services.AddSingleton<TestDataRegistry>();
+
         builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
         builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
@@ -37,7 +32,7 @@ public class Program
             options.UseNpgsql(appOptions.DbConnectionString);
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
-        builder.Services.AddScoped<ISeeder, TestEnvironment>();
+        builder.Services.AddScoped<ISeeder, TestDataSeeder>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddSingleton<IWebHostPortAllocationService, ProductionPortAllocationService>();

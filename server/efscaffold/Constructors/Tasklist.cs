@@ -14,12 +14,12 @@ public partial class Tasklist
         
     }
     
-    public Tasklist(string name, string userId, string? id = null, DateTime? createdAt = null)
+    public Tasklist(DateTime createdAt, string name, string userId, string? id = null)
     {
         ListId = id ?? Guid.NewGuid().ToString();
         UserId = userId;
         Name = name;
-        CreatedAt = createdAt ?? DateTime.UtcNow;
+        CreatedAt = createdAt;
         
     }
 }

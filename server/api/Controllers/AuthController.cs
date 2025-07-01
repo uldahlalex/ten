@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace api.Controllers;
 
 [ApiController]
-public class AuthController(ISecurityService securityService, MyDbContext ctx) : ControllerBase
+public class AuthController(ISecurityService securityService, MyDbContext ctx, TimeProvider timeProvider) : ControllerBase
 {
     [Route(nameof(Register))]
     public Task<ActionResult<JwtResponse>> Register([FromBody] AuthRequestDto dto)
@@ -20,7 +20,7 @@ public class AuthController(ISecurityService securityService, MyDbContext ctx) :
         var salt = Guid.NewGuid().ToString();
         var uid = Guid.NewGuid().ToString();
 
-        ctx.Users.Add(new User(dto.Email, salt, securityService.Hash(dto.Password + salt), Role.User, null ));
+        ctx.Users.Add(new User(timeProvider.GetUtcNow().UtcDateTime, dto.Email, salt, securityService.Hash(dto.Password + salt), Role.User, null ));
         ctx.SaveChanges();
         var responseDto = new JwtResponse
         {

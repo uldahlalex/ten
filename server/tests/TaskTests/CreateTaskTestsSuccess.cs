@@ -42,6 +42,7 @@ public class CreateTaskTestsSuccess
     {
         var logger = _scopedServiceProvider.GetRequiredService<ILogger<string>>();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+        var dueDate = _scopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().AddDays(1).UtcDateTime;
 
         // _scopedServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
         var request = new CreateTaskRequestDto
@@ -49,7 +50,7 @@ public class CreateTaskTestsSuccess
             ctx.Tasklists.First().ListId,
             "Test Task",
             "Test Description",
-            DateTime.Parse("2050-04-25T20:22:50.657021Z").ToUniversalTime(),
+            dueDate,
             1
         );
 

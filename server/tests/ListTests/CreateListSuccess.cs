@@ -49,7 +49,7 @@ public class CreateListSuccess
 
         if (responseDto.Name != dto.ListName)
             throw new Exception("Did not succesfully create the list with the given name");
-        if (Math.Abs((DateTime.UtcNow - responseDto.CreatedAt).TotalSeconds) > 1)
+        if (Math.Abs((_scopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().UtcDateTime - responseDto.CreatedAt).TotalSeconds) > 1)
             throw new Exception("CreatedAt timestamp is not within 1 second of now");
         _ = _scopedServiceProvider.GetRequiredService<MyDbContext>().Tasklists
             .First(l => l.ListId == responseDto.ListId); //throws or finds

@@ -19,9 +19,7 @@ public static class ApiTestSetupUtilities
 {
     public static WebApplicationBuilder MakeWebAppBuilderForTesting()
     {
-        throw new Exception(
-            "Due to WIP changes: refactors to TimeProvider, constructors, etc, the tests are currently to be revised and therefore deliberately fail.");
-        var builder = WebApplication.CreateBuilder();
+         var builder = WebApplication.CreateBuilder();
         builder.Environment.EnvironmentName = "Development";
 
         builder.Configuration
@@ -38,8 +36,7 @@ public static class ApiTestSetupUtilities
         return builder;
     }
 
-    public static readonly DateTimeOffset FixedTime = new(2024, 1, 15, 10, 0, 0, TimeSpan.Zero);
-
+    
     public static WebApplicationBuilder ModifyServicesForTesting(
         this WebApplicationBuilder builder,
         bool useTestContainer = true)
@@ -67,7 +64,7 @@ public static class ApiTestSetupUtilities
         if (timeProviderDescriptor != null)
             builder.Services.Remove(timeProviderDescriptor);
 
-        builder.Services.AddSingleton<TimeProvider>(new FakeTimeProvider(FixedTime));
+        builder.Services.AddSingleton<TimeProvider>(new FakeTimeProvider(StaticConstants.BaseDate));
 
         builder.Services.RemoveAll<IWebHostPortAllocationService>();
         builder.Services.AddSingleton<IWebHostPortAllocationService, TestPortAllocationService>();

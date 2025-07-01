@@ -15,9 +15,9 @@ public partial class TaskTag
         
     }
     
-    public TaskTag(string taskId, string tagId, DateTime? createdAt = null)
+    public TaskTag(DateTime createdAt,string taskId, string tagId)
     {
-        CreatedAt = createdAt ?? DateTime.UtcNow;
+        CreatedAt = createdAt;
         TaskId = taskId;
         TagId = tagId;
 

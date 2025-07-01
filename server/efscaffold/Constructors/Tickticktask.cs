@@ -14,7 +14,7 @@ public partial class Tickticktask
         
     }
     
-    public Tickticktask( string listId, string title, string description, DateTime? dueDate, int priority, bool completed, DateTime? completedAt = null, DateTime? createdAt = null, string? taskId = null)
+    public Tickticktask(DateTime createdAt, string listId, string title, string description, DateTime? dueDate, int priority, bool completed, DateTime? completedAt = null,string? taskId = null)
     {
         TaskId = taskId ?? Guid.NewGuid().ToString();
         ListId = listId;
@@ -23,7 +23,7 @@ public partial class Tickticktask
         DueDate = dueDate;
         Priority = priority;
         Completed = completed;
-        CreatedAt = createdAt ?? DateTime.UtcNow;
+        CreatedAt = createdAt;
         CompletedAt = completedAt;
     }
 }

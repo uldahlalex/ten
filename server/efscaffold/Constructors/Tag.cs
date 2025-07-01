@@ -10,12 +10,12 @@ public partial class Tag
     {
         
     }
-    public Tag(string name, string userId, string? id = null, DateTime? createdAt = null)
+    public Tag(DateTime createdAt, string name, string userId, string? id = null)
     {
         TagId = id ?? Guid.NewGuid().ToString();
         Name = name;
         UserId = userId;
-        CreatedAt = createdAt ?? DateTime.UtcNow;
-        
+        CreatedAt = createdAt;
+
     }
 }

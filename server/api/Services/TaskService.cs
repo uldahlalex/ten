@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
 
-public class TaskService(ISecurityService securityService, MyDbContext ctx, ILogger<TaskService> logger) : ITaskService
+public class TaskService(ISecurityService securityService, MyDbContext ctx, ILogger<TaskService> logger, TimeProvider timeProvider) : ITaskService
 {
     public Task<List<TickticktaskDto>> GetMyTasks(GetTasksFilterAndOrderParameters parameters,
         JwtClaims jwtClaims)
@@ -65,13 +65,15 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public Task<TickticktaskDto> CreateTask(CreateTaskRequestDto dto, JwtClaims jwtClaims)
     {
-        if (dto.DueDate != null && dto.DueDate < DateTime.UtcNow)
+        if (dto.DueDate != null && dto.DueDate < timeProvider.GetUtcNow().UtcDateTime)
             throw new ValidationException("Due date cannot be in the past");
 
         var tags = dto.TagsIds.Select(tagId =>
             ctx.TaskTags.First(tag => tag.TagId == tagId)).ToList();
+        var createdAt = timeProvider.GetUtcNow().UtcDateTime;
 
-        var entity = new Tickticktask(dto.ListId, dto.Title, dto.Description, dto.DueDate, dto.Priority, false, null);
+
+        var entity = new Tickticktask(createdAt, dto.ListId, dto.Title, dto.Description, dto.DueDate, dto.Priority, false, null);
 
         ctx.Tickticktasks.Add(entity);
         ctx.SaveChanges();
@@ -92,7 +94,7 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         existing.Priority = dto.Priority;
         existing.List = newList;
         existing.Completed = dto.Completed;
-        existing.CompletedAt = dto.Completed ? DateTime.UtcNow : null;
+        existing.CompletedAt = dto.Completed ? timeProvider.GetUtcNow().UtcDateTime : null;
 
 
         ctx.Tickticktasks.Update(existing);
@@ -131,7 +133,9 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     {
         if (ctx.Tasklists.Any(t => t.Name == dto.ListName))
             throw new ValidationException("List with this name already exists");
-        var taskList = new Tasklist(dto.ListName, claims.Id);
+        var createdAt = timeProvider.GetUtcNow().UtcDateTime;
+
+        var taskList = new Tasklist(createdAt, dto.ListName, claims.Id);
         ctx.Tasklists.Add(taskList);
         ctx.SaveChanges();
         return Task.FromResult(taskList.ToDto());
@@ -139,7 +143,8 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public Task<TagDto> CreateTag(JwtClaims claims, CreateTagRequestDto dto)
     {
-        var tag = new Tag(dto.TagName, claims.Id);
+
+        var tag = new Tag(timeProvider.GetUtcNow().UtcDateTime,dto.TagName, claims.Id);
         ctx.Tags.Add(tag);
         ctx.SaveChanges();
         return Task.FromResult(tag.ToDto());
@@ -191,8 +196,9 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
         if (existsAlready)
             throw new ValidationException("Task already has this tag");
 
+        var createdAt =  timeProvider.GetUtcNow().UtcDateTime;
 
-        var taskTag = new TaskTag(dto.TaskId, dto.TagId);
+        var taskTag = new TaskTag(createdAt, dto.TaskId, dto.TagId);
         ctx.TaskTags.Add(taskTag);
         ctx.SaveChanges();
         return Task.FromResult(taskTag.ToDto());

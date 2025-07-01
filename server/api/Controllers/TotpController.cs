@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace api.Controllers;
 
 [ApiController]
-public class TotpController(ISecurityService securityService, MyDbContext ctx) : ControllerBase
+public class TotpController(ISecurityService securityService, MyDbContext ctx, TimeProvider timeProvider) : ControllerBase
 {
     [HttpPost(nameof(TotpRegister))]
     public async Task<ActionResult<TotpRegisterResponseDto>> TotpRegister([FromBody] TotpRegisterRequestDto dto)
@@ -40,7 +40,8 @@ public class TotpController(ISecurityService securityService, MyDbContext ctx) :
                 throw new Exception("User already exists");
             var userId = Guid.NewGuid().ToString();
             var totpSecret = securityService.GenerateSecretKey();
-            var user = new User(dto.Email, null, null, Role.User, totpSecret);
+            var timestamp = timeProvider.GetUtcNow().UtcDateTime;
+            var user = new User(timestamp,dto.Email, null, null, Role.User, totpSecret);
             ctx.Users.Add(user);
             await ctx.SaveChangesAsync();
             var otpauthUrl =

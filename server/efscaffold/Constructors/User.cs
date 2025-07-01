@@ -11,12 +11,11 @@ public partial class User
         
     }
     
-    public User(
+    public User(DateTime createdAt,
         string email, 
         string? salt, 
         string? passwordHash, 
         Role role, string? totpSecret,
-        DateTime? createdAt = null,
         string? userId = null)
     {
         UserId = userId ?? Guid.NewGuid().ToString();
@@ -24,7 +23,7 @@ public partial class User
         Salt = salt;
         PasswordHash = passwordHash;
         Role = role.GetDescription();
-        CreatedAt = createdAt ?? DateTime.UtcNow;
+        CreatedAt = createdAt;
         TotpSecret = totpSecret;
     }
 }

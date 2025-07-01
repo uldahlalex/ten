@@ -40,9 +40,10 @@ public class UpdateTaskSuccess
     public async Task UpdateTask_CanSuccessfullyUpdateTask()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var listId = ctx.Tasklists.OrderBy(o => o.CreatedAt).FirstOrDefault().ListId;
+        var listId = ctx.Tasklists.OrderBy(o => o.CreatedAt).First().ListId;
+        var createdAt = _scopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().UtcDateTime;
         var taskToUpdate =
-            new Tickticktask(listId, "Test title","Test description", DateTime.UtcNow.AddDays(1), 1, false, null);
+            new Tickticktask(createdAt, listId, "Test title","Test description", createdAt.AddDays(1), 5,false, null);
         ctx.Tickticktasks.Add(taskToUpdate);
         ctx.SaveChanges();
 
@@ -52,7 +53,7 @@ public class UpdateTaskSuccess
             taskToUpdate.TaskId,
             title: "Updated Title",
             description: "Updated Description",
-            dueDate: DateTime.UtcNow.AddDays(10).ToUniversalTime(),
+            dueDate: _scopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().AddDays(10).UtcDateTime.ToUniversalTime(),
             priority: 3,
             completed: true,
             listId: ctx.Tasklists.OrderBy(o => o.CreatedAt).Reverse().FirstOrDefault()

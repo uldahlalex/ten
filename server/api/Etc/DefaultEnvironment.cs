@@ -27,15 +27,26 @@ public class SeededData
 /// <summary>
 ///     Seeds specific, easily referenceable test data with deterministic dates
 /// </summary>
-public class DefaultEnvironment(
-    ILogger<EmptyEnvironment> logger,
-    ISecurityService securityService,
-    TimeProvider timeProvider,
-    string? email = "test@user.dk",
-    string? userId = "user-test-001") : ISeeder
+public class DefaultEnvironment : ISeeder
 {
+    private readonly ILogger<DefaultEnvironment> _logger;
+    private readonly ISecurityService _securityService;
+    private readonly TimeProvider _timeProvider;
+
+    /// <summary>
+    ///     Seeds specific, easily referenceable test data with deterministic dates
+    /// </summary>
+    public DefaultEnvironment(ILogger<DefaultEnvironment> logger,
+        ISecurityService securityService,
+        TimeProvider timeProvider)
+    {
+        _logger = logger;
+        _securityService = securityService;
+        _timeProvider = timeProvider;
+    }
+
     // Specific test data constants for easy reference in tests
-    public static class TestData
+    public class TestData
     {
         public const string UserId = "user-test-001";
         public const string UserEmail = "test@user.dk";
@@ -60,19 +71,20 @@ public class DefaultEnvironment(
         public const string PersonalTask2Id = "task-dentist-appointment";
         public const string ShoppingTask1Id = "task-buy-laptop";
         public const string ShoppingTask2Id = "task-buy-books";
-        
-        public static readonly DateTime BaseDate = new(2024, 1, 15, 10, 0, 0, DateTimeKind.Utc);
-        public static readonly DateTime UserCreatedAt = BaseDate.AddDays(-7);
-        public static readonly DateTime TagsCreatedAt = BaseDate.AddDays(-6);
-        public static readonly DateTime ListsCreatedAt = BaseDate.AddDays(-5);
-        public static readonly DateTime Task1CreatedAt = BaseDate.AddDays(-3);
-        public static readonly DateTime Task1DueDate = BaseDate.AddDays(1);
-        public static readonly DateTime Task2CreatedAt = BaseDate.AddDays(-2);
-        public static readonly DateTime Task2DueDate = BaseDate.AddDays(7);
-        public static readonly DateTime Task3CreatedAt = BaseDate.AddDays(-4);
-        public static readonly DateTime Task3DueDate = BaseDate.AddDays(3);
-        public static readonly DateTime Task3CompletedAt = BaseDate.AddDays(-1);
     }
+
+    // Helper method to get deterministic dates based on TimeProvider
+    private DateTime GetBaseDate() => _timeProvider.GetUtcNow().DateTime;
+    private DateTime GetUserCreatedAt() => GetBaseDate().AddDays(-7);
+    private DateTime GetTagsCreatedAt() => GetBaseDate().AddDays(-6);
+    private DateTime GetListsCreatedAt() => GetBaseDate().AddDays(-5);
+    private DateTime GetTask1CreatedAt() => GetBaseDate().AddDays(-3);
+    private DateTime GetTask1DueDate() => GetBaseDate().AddDays(1);
+    private DateTime GetTask2CreatedAt() => GetBaseDate().AddDays(-2);
+    private DateTime GetTask2DueDate() => GetBaseDate().AddDays(7);
+    private DateTime GetTask3CreatedAt() => GetBaseDate().AddDays(-4);
+    private DateTime GetTask3DueDate() => GetBaseDate().AddDays(3);
+    private DateTime GetTask3CompletedAt() => GetBaseDate().AddDays(-1);
 
     public void CreateEnvironment(MyDbContext ctx)
     {
@@ -91,29 +103,27 @@ public class DefaultEnvironment(
         ctx.Tags.RemoveRange(ctx.Tags);
         ctx.Users.RemoveRange(ctx.Users);
 
-        var now = timeProvider.GetUtcNow().DateTime;
-
-        // Create test user using constructor with fixed date
+        // Create test user using constructor with TimeProvider-based date
         var user = new User(
             email: TestData.UserEmail,
             salt: "6cbf8487-8f2c-48bc-a15c-33d88eae8b9e",
             passwordHash: "TJlSDc2mvpBmYKoi+2hnIOFx6ykf/V6JpmU7irhpoRcDT3KKUMwH7BWL/WlDTGrL11ud+5Q1BNxBEy3ZD1RRuQ==",
             role: Role.User,
-            totpSecret: securityService.GenerateSecretKey(),
-            createdAt: TestData.UserCreatedAt,
+            totpSecret: _securityService.GenerateSecretKey(),
+            createdAt: GetUserCreatedAt(),
             userId: TestData.UserId
         );
         ctx.Users.Add(user);
         ctx.SaveChanges();
 
-        // Create specific tags using constructors with fixed dates
+        // Create specific tags using constructors with fixed dates (createdAt first)
         var tags = new List<Tag>
         {
-            new Tag("urgent", TestData.UserId, TestData.UrgentTagId, TestData.TagsCreatedAt),
-            new Tag("important", TestData.UserId, TestData.ImportantTagId, TestData.TagsCreatedAt),
-            new Tag("bug", TestData.UserId, TestData.BugTagId, TestData.TagsCreatedAt),
-            new Tag("feature", TestData.UserId, TestData.FeatureTagId, TestData.TagsCreatedAt),
-            new Tag("testing", TestData.UserId, TestData.TestingTagId, TestData.TagsCreatedAt)
+            new Tag(GetTagsCreatedAt(), "urgent", TestData.UserId, TestData.UrgentTagId),
+            new Tag(GetTagsCreatedAt(), "important", TestData.UserId, TestData.ImportantTagId),
+            new Tag(GetTagsCreatedAt(), "bug", TestData.UserId, TestData.BugTagId),
+            new Tag(GetTagsCreatedAt(), "feature", TestData.UserId, TestData.FeatureTagId),
+            new Tag(GetTagsCreatedAt(), "testing", TestData.UserId, TestData.TestingTagId)
         };
 
         ctx.Tags.AddRange(tags);
@@ -122,9 +132,9 @@ public class DefaultEnvironment(
         // Create specific lists using constructors with fixed dates
         var lists = new List<Tasklist>
         {
-            new Tasklist("Work", TestData.UserId, TestData.WorkListId, TestData.ListsCreatedAt),
-            new Tasklist("Personal", TestData.UserId, TestData.PersonalListId, TestData.ListsCreatedAt),
-            new Tasklist("Shopping", TestData.UserId, TestData.ShoppingListId, TestData.ListsCreatedAt)
+            new Tasklist(GetListsCreatedAt(), "Work", TestData.UserId, TestData.WorkListId),
+            new Tasklist(GetListsCreatedAt(), "Personal", TestData.UserId, TestData.PersonalListId),
+            new Tasklist(GetListsCreatedAt(), "Shopping", TestData.UserId, TestData.ShoppingListId)
         };
 
         ctx.Tasklists.AddRange(lists);
@@ -133,56 +143,56 @@ public class DefaultEnvironment(
         // Create specific tasks using constructors with fixed dates
         var tasks = new List<Tickticktask>
         {
-            new Tickticktask(TestData.WorkListId, "Fix login authentication bug", 
+            new Tickticktask(GetTask1CreatedAt(), TestData.WorkListId, "Fix login authentication bug", 
                 "Users are unable to login with valid credentials. Critical bug affecting production.",
-                TestData.Task1DueDate, 5, false, null, TestData.Task1CreatedAt, TestData.WorkTask1Id),
+                GetTask1DueDate(), 5, false, null, TestData.WorkTask1Id),
             
-            new Tickticktask(TestData.WorkListId, "Implement search functionality",
+            new Tickticktask(GetTask2CreatedAt(), TestData.WorkListId, "Implement search functionality",
                 "Add full-text search capability to the main dashboard with filters and sorting.",
-                TestData.Task2DueDate, 3, false, null, TestData.Task2CreatedAt, TestData.WorkTask2Id),
+                GetTask2DueDate(), 3, false, null, TestData.WorkTask2Id),
             
-            new Tickticktask(TestData.WorkListId, "Update API documentation",
+            new Tickticktask(GetTask3CreatedAt(), TestData.WorkListId, "Update API documentation",
                 "Update OpenAPI documentation to reflect recent endpoint changes.",
-                TestData.Task3DueDate, 2, true, TestData.Task3CompletedAt, TestData.Task3CreatedAt, TestData.WorkTask3Id),
+                GetTask3DueDate(), 2, true, GetTask3CompletedAt(), TestData.WorkTask3Id),
             
-            new Tickticktask(TestData.PersonalListId, "Grocery shopping",
+            new Tickticktask(GetBaseDate().AddDays(-1), TestData.PersonalListId, "Grocery shopping",
                 "Buy weekly groceries: milk, bread, eggs, vegetables, and fruits.",
-                TestData.BaseDate.AddDays(2), 2, false, null, TestData.BaseDate.AddDays(-1), TestData.PersonalTask1Id),
+                GetBaseDate().AddDays(2), 2, false, null, TestData.PersonalTask1Id),
             
-            new Tickticktask(TestData.PersonalListId, "Schedule dentist appointment",
+            new Tickticktask(GetBaseDate().AddDays(-2), TestData.PersonalListId, "Schedule dentist appointment",
                 "Call dentist office to schedule routine cleaning and checkup.",
-                TestData.BaseDate.AddDays(5), 1, true, TestData.BaseDate.AddHours(-2), TestData.BaseDate.AddDays(-2), TestData.PersonalTask2Id),
+                GetBaseDate().AddDays(5), 1, true, GetBaseDate().AddHours(-2), TestData.PersonalTask2Id),
             
-            new Tickticktask(TestData.ShoppingListId, "Buy new laptop",
+            new Tickticktask(GetBaseDate().AddDays(-3), TestData.ShoppingListId, "Buy new laptop",
                 "Research and purchase a new development laptop with 32GB RAM and SSD.",
-                TestData.BaseDate.AddDays(14), 4, false, null, TestData.BaseDate.AddDays(-3), TestData.ShoppingTask1Id),
+                GetBaseDate().AddDays(14), 4, false, null, TestData.ShoppingTask1Id),
             
-            new Tickticktask(TestData.ShoppingListId, "Buy programming books",
+            new Tickticktask(GetBaseDate().AddDays(-1), TestData.ShoppingListId, "Buy programming books",
                 "Purchase books on clean architecture and design patterns.",
-                TestData.BaseDate.AddDays(10), 1, false, null, TestData.BaseDate.AddDays(-1), TestData.ShoppingTask2Id)
+                GetBaseDate().AddDays(10), 1, false, null, TestData.ShoppingTask2Id)
         };
 
         ctx.Tickticktasks.AddRange(tasks);
         ctx.SaveChanges();
 
-        // Create specific task-tag relationships using constructors with fixed dates
+        // Create specific task-tag relationships using constructors with fixed dates (createdAt first)
         var taskTags = new List<TaskTag>
         {
-            new TaskTag(TestData.WorkTask1Id, TestData.UrgentTagId, TestData.Task1CreatedAt),
-            new TaskTag(TestData.WorkTask1Id, TestData.BugTagId, TestData.Task1CreatedAt),
-            new TaskTag(TestData.WorkTask2Id, TestData.FeatureTagId, TestData.Task2CreatedAt),
-            new TaskTag(TestData.WorkTask2Id, TestData.ImportantTagId, TestData.Task2CreatedAt),
-            new TaskTag(TestData.WorkTask3Id, TestData.TestingTagId, TestData.Task3CreatedAt),
-            new TaskTag(TestData.PersonalTask1Id, TestData.ImportantTagId, TestData.BaseDate.AddDays(-1)),
-            new TaskTag(TestData.PersonalTask2Id, TestData.UrgentTagId, TestData.BaseDate.AddDays(-2)),
-            new TaskTag(TestData.ShoppingTask1Id, TestData.ImportantTagId, TestData.BaseDate.AddDays(-3)),
-            new TaskTag(TestData.ShoppingTask2Id, TestData.FeatureTagId, TestData.BaseDate.AddDays(-1))
+            new TaskTag(GetTask1CreatedAt(), TestData.WorkTask1Id, TestData.UrgentTagId),
+            new TaskTag(GetTask1CreatedAt(), TestData.WorkTask1Id, TestData.BugTagId),
+            new TaskTag(GetTask2CreatedAt(), TestData.WorkTask2Id, TestData.FeatureTagId),
+            new TaskTag(GetTask2CreatedAt(), TestData.WorkTask2Id, TestData.ImportantTagId),
+            new TaskTag(GetTask3CreatedAt(), TestData.WorkTask3Id, TestData.TestingTagId),
+            new TaskTag(GetBaseDate().AddDays(-1), TestData.PersonalTask1Id, TestData.ImportantTagId),
+            new TaskTag(GetBaseDate().AddDays(-2), TestData.PersonalTask2Id, TestData.UrgentTagId),
+            new TaskTag(GetBaseDate().AddDays(-3), TestData.ShoppingTask1Id, TestData.ImportantTagId),
+            new TaskTag(GetBaseDate().AddDays(-3), TestData.ShoppingTask2Id, TestData.FeatureTagId)
         };
 
         ctx.TaskTags.AddRange(taskTags);
         ctx.SaveChanges();
 
-        logger.LogInformation("DefaultEnvironment seeded successfully with deterministic test data");
+        _logger.LogInformation("DefaultEnvironment seeded successfully with deterministic test data");
 
         return new SeededData
         {

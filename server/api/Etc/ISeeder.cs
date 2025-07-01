@@ -4,5 +4,5 @@ namespace api.Etc;
 
 public interface ISeeder
 {
-    void CreateEnvironment(MyDbContext ctx);
+    void SeedDatabase(MyDbContext ctx);
 }

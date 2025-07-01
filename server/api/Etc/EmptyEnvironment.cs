@@ -4,7 +4,7 @@ namespace api.Etc;
 
 public class EmptyEnvironment : ISeeder
 {
-    public void CreateEnvironment(MyDbContext ctx)
+    public void SeedDatabase(MyDbContext ctx)
     {
         ctx.Database.EnsureDeleted(); //only use this if using testcontainers
         ctx.Database.EnsureCreated();

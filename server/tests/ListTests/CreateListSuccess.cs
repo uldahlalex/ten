@@ -30,7 +30,7 @@ public class CreateListSuccess
 
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = _app.CreateHttpClientWithDefaultTestJwt();
+        _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
         return Task.CompletedTask;
     }
 

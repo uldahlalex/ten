@@ -1,1 +1,0 @@
-gh secret set -f - < myfile.txt

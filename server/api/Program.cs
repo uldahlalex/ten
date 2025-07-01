@@ -25,12 +25,7 @@ public class Program
         builder.Services.AddSwaggerWithXmlDocs();
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
         Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
-        var isGithubActions = appOptions.RunsOn == "GitHub";
-        if (!isGithubActions)
-        {
-            var pgctx = new PgCtxSetup<MyDbContext>();
-            appOptions.DbConnectionString = pgctx._postgres.GetConnectionString();
-        }
+ 
         builder.Services.AddDbContext<MyDbContext>(options =>
         {
             options.UseNpgsql(appOptions.DbConnectionString);

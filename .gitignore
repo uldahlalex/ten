@@ -5,6 +5,7 @@
 appsettings.json
 # dotenv files
 .env
+secrets.txt
 
 # User-specific files
 *.rsuser

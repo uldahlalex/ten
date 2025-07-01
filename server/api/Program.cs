@@ -64,7 +64,7 @@ public class Program
                 var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
                 var schema = ctx.Database.GenerateCreateScript();
                 File.WriteAllText("schema_according_to_dbcontext.sql", schema);
-                scope.ServiceProvider.GetRequiredService<ISeeder>().SeedDatabase(ctx);
+              //  scope.ServiceProvider.GetRequiredService<ISeeder>().SeedDatabase(ctx);
             }
         }
 

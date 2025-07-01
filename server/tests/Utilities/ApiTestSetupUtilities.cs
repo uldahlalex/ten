@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using PgCtx;
@@ -41,21 +42,28 @@ public static class ApiTestSetupUtilities
         this WebApplicationBuilder builder,
         bool useTestContainer = true)
     {
+        // Configure logging to show actual exceptions instead of hiding them
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole();
+        builder.Logging.SetMinimumLevel(LogLevel.Information);
+        
         var appOptions = builder.Services
             .BuildServiceProvider()
             .GetRequiredService<IOptionsMonitor<AppOptions>>()
             .CurrentValue;
         if (useTestContainer || appOptions.RunsOn == "GitHub")
         {
+            // Create a unique test database for each test to avoid concurrency issues
+            var testId = Guid.NewGuid().ToString("N")[..8];
             var pgctx = new PgCtxSetup<MyDbContext>();
             var startingDbCtx = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(MyDbContext));
             builder.Services.Remove(startingDbCtx);
             builder.Services.AddDbContext<MyDbContext>(opt =>
             {
-                opt.UseNpgsql(pgctx._postgres.GetConnectionString());
-                Console.WriteLine(pgctx._postgres.GetConnectionString());
+                var connectionString = pgctx._postgres.GetConnectionString() + $";SearchPath=test_{testId}";
+                opt.UseNpgsql(connectionString);
                 opt.EnableSensitiveDataLogging();
-                opt.LogTo(_ => { });
+                opt.EnableDetailedErrors();
                 opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
         }
@@ -126,11 +134,11 @@ public static class ApiTestSetupUtilities
         return app;
     }
 
-    public static HttpClient CreateHttpClientWithDefaultTestJwt(this WebApplication app)
+    public static HttpClient CreateHttpClientWithDefaultTestJwt()
     {
-        var client = new HttpClient(); // Use the app's test client
+        var client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q");
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjI2NjM3NTdmLTAyNDktNDk4My1iZjBkLTg3NGM2NGRlMDkzYSJ9.MsB8pH4h4YsjOA4E0ix0Yb3f1C--Modcw9Kgga5BqWo");
         return client;
     }
 }

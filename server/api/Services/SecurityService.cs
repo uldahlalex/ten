@@ -2,17 +2,19 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
 using api.Models;
+using Infrastructure.Postgres.Scaffolding;
 using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Serializers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OtpNet;
 using QRCoder;
 
 namespace api.Services;
 
-public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor) : ISecurityService
+public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor, MyDbContext ctx) : ISecurityService
 {
     public string GenerateJwt(string id)
     {
@@ -37,6 +39,7 @@ public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor) : ISecu
             .WithJsonSerializer(new JsonNetSerializer())
             .MustVerifySignature().Decode<JwtClaims>(jwt);
         Validator.ValidateObject(claims, new ValidationContext(claims), true);
+        _ = ctx.Users.FirstOrDefault(u => u.UserId == claims.Id) ?? throw new Exception("User does not exist"); //throws if doesnt exist
         return claims;
     }
 

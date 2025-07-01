@@ -13,8 +13,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Server (ASP.NET Core + .NET 9)
 - `cd server/api && dotnet run` - Start development server
 - `cd server/api && dotnet build` - Build the API project
-- `cd server/tests && dotnet test -c Release -- --report-trx --coverage` - Run tests with coverage
-- `cd server/tests && dotnet test --treenode-filter /*/*/GetMyTags/* --verbosity normal` - Run filtered tests with specific output
+- `cd server/tests && dotnet run -c Release` - Run all TUnit tests
+- `cd server/tests && dotnet run -c Release --output Detailed` - Run tests with detailed output
+- `cd server/tests && dotnet run -c Release --treenode-filter /*/*/GetMyTags/*` - Run filtered tests
 
 ### Database
 - `cd server/efscaffold && ./scaffold.sh` - Regenerate Entity Framework models from database schema
@@ -56,10 +57,14 @@ Core entities: `User`, `Tasklist`, `Tickticktask`, `Tag`, `TaskTag` (many-to-man
 1. **Password Auth**: Register/Login with email/password
 2. **TOTP Auth**: Optional 2FA setup with QR code generation
 3. **JWT Tokens**: Used for API authorization via Authorization header
-4. **Protected Routes**: Frontend routes require valid JWT
+
 
 ### Development Notes
 - Server auto-generates TypeScript client on startup
 - Database seeding happens automatically in non-production environments
 - Both client and server have Fly.io deployment configurations
 - Tests include integration tests that spin up the full API
+- The seeder makes all users with password "password" (uses hashing and salting)
+- The testing environment uses a prebuilt JWT which corresponds with user-1's JWT like: {
+  "id": "2663757f-0249-4983-bf0d-874c64de093a"
+  }

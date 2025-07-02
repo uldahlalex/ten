@@ -79,7 +79,7 @@ export default function SignInWithPassword() {
         <div>
             <h1>test login button below:</h1>
             <button className="btn btn-primary" onClick={() =>
-                authClient.login(({email: "test@user.dk", password: "abc"})).then(r => {
+                authClient.login(({email: "john@example.com", password: "password"})).then(r => {
                     toast("welcome!")
                     setJwt(r);
                     navigate(TaskListRoute)

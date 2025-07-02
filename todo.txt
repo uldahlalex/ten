@@ -1,7 +1,5 @@
 Aktuelt:
-refactor client app med code
-imports / exports samt depcruiser
-eslint (imports / exports)
+
 
 playwright ui tests
 

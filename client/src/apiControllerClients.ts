@@ -1,4 +1,4 @@
-import {AuthClient, ProblemDetails, TicktickTaskClient, TotpClient} from "./generated-client.ts";
+import {AuthClient, ProblemDetails, TicktickTaskClient, TotpClient} from "@/models";
 import toast from "react-hot-toast";
 
 
@@ -9,17 +9,13 @@ const prod = import.meta.env.PROD
 function createHttpClientWithErrorHandling() {
     return {
         fetch: async (url: RequestInfo, init?: RequestInit) => {
-            try {
-                const response = await fetch(url, init);
-                if (response.status == 400) {
-                    const error = await response.json() as ProblemDetails;
-                    toast.error(error.title!);
-                    throw error;
-                }
-                return response;
-            } catch (error) {
+            const response = await fetch(url, init);
+            if (response.status == 400) {
+                const error = await response.json() as ProblemDetails;
+                toast.error(error.title!);
                 throw error;
             }
+            return response;
         }
     };
 }

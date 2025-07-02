@@ -1,12 +1,12 @@
 import {useAtom} from "jotai";
-import {CurrentTasksDisplayView, JwtAtom, QueryParametersAtom} from "../../../atoms/atoms.ts";
+import {CurrentTasksDisplayView, JwtAtom, QueryParametersAtom} from "@/atoms";
 import {useEffect} from "react";
-import {taskClient} from "../../../apiControllerClients.ts";
+import {taskClient} from "../../../apiControllerClients";
 
 export default function TaskListFilters() {
     
     const [queryParams, setQueryParams] = useAtom(QueryParametersAtom)
-    const [tasks, setTasks] = useAtom(CurrentTasksDisplayView);
+    const [, setTasks] = useAtom(CurrentTasksDisplayView);
     const [jwt] = useAtom(JwtAtom);
     
     useEffect(() => {

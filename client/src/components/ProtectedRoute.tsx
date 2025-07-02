@@ -1,7 +1,7 @@
-import {useAtom} from "jotai/index";
-import {JwtAtom} from "../atoms/atoms.ts";
+import {useAtom} from "jotai";
+import {JwtAtom} from "@/atoms";
 import {useNavigate} from "react-router-dom";
-import {AuthenticationRoute} from "./ApplicationRoutes.tsx";
+import {AuthenticationRoute} from "./routes";
 import {useEffect} from "react";
 
 export interface ProtectedRouteProps {

@@ -1,9 +1,9 @@
 import {useAtom} from "jotai";
-import {CurrentTasksDisplayView, JwtAtom, ListsAtom, QueryParametersAtom, TagsAtom} from "../../atoms/atoms.ts";
-import {taskClient} from "../../apiControllerClients.ts";
-import {GetTasksFilterAndOrderParameters, TagDto, TasklistDto} from "../../generated-client.ts";
+import {CurrentTasksDisplayView, JwtAtom, ListsAtom, QueryParametersAtom, TagsAtom} from "@/atoms";
+import {taskClient} from "../../apiControllerClients";
+import {GetTasksFilterAndOrderParameters, TagDto, TasklistDto} from "@/models";
 import {useCallback} from "react";
-import SignOut from "../../functions/signOut.tsx";
+import {SignOut} from "@/functions";
 
 export default function Sidebar() {
     const [lists] = useAtom(ListsAtom);
@@ -14,7 +14,7 @@ export default function Sidebar() {
 
     const handleListClick = (list: TasklistDto) => {
         setParams((prevParams) => {
-            const exists = (prevParams.listIds?.includes(list.listId))!;
+            const exists = prevParams.listIds?.includes(list.listId) ?? false;
             let newParams = null;
             if(!exists)
                 newParams = {...prevParams, listIds: [list.listId]};
@@ -23,8 +23,8 @@ export default function Sidebar() {
             taskClient.getMyTasks(
                 jwt!.jwt,
                 (newParams)
-            ).then(r => {
-                setTasks(r);
+            ).then(result => {
+                setTasks(result);
             });
             return newParams;
         });
@@ -41,8 +41,8 @@ export default function Sidebar() {
 
         setParams((existingParams) => {
             const newObject = {...existingParams, tagIds: duplicateTagIds};
-            taskClient.getMyTasks(jwt!.jwt, (newObject)).then(r => {
-                setTasks(r);
+            taskClient.getMyTasks(jwt!.jwt, (newObject)).then(result => {
+                setTasks(result);
             });
             return newObject;
         })

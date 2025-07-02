@@ -1,11 +1,11 @@
-import {authClient} from "../../../../apiControllerClients.ts";
+import {authClient} from "../../../../apiControllerClients";
 import toast from "react-hot-toast";
 import {useAtom} from "jotai";
-import {JwtAtom} from "../../../../atoms/atoms.ts";
+import {JwtAtom} from "@/atoms";
 import {useNavigate} from "react-router-dom";
-import {TaskListRoute} from "../../../ApplicationRoutes.tsx";
+import {TaskListRoute} from "../../../routes";
 import {useState} from "react";
-import {AuthRequestDto} from "../../../../generated-client.ts";
+import {AuthRequestDto} from "@/models";
 
 export default function SignInWithPassword() {
 

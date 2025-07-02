@@ -1,11 +1,11 @@
-import {useNavigate} from "react-router-dom";
-import {PasswordSignInRoute, TaskListRoute, TotpRoute} from "../../routes";
-import {useEffect} from "react";
-import {useAtom} from "jotai";
-import {JwtAtom} from "@/atoms";
-import {JwtResponse} from "@/models";
+import { useNavigate } from "react-router-dom";
+import { PasswordSignInRoute, TaskListRoute, TotpRoute } from "@/components";
+import { useEffect } from "react";
+import { useAtom } from "jotai";
+import { JwtAtom } from "@/atoms";
+import { JwtResponse } from "@/models";
 
-export default function Authentication() {
+export default function AuthenticationPage() {
     const navigate = useNavigate();
     const [jwt] = useAtom<JwtResponse | undefined>(JwtAtom);
 
@@ -14,7 +14,6 @@ export default function Authentication() {
             navigate(TaskListRoute)
         }
     }, [jwt]);
-
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-4 h-max">

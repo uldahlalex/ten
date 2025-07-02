@@ -1,12 +1,11 @@
-import {useAtom} from "jotai/index";
-import {JwtAtom} from "../atoms/atoms.ts";
-import Sidebar from "./sidebar/Sidebar.tsx";
-import {Outlet, useNavigate} from "react-router-dom";
-import {Breadcrumbs} from "./Breadcrumbs.tsx";
+import {useAtom} from "jotai";
+import {JwtAtom} from "@/atoms";
+import Sidebar from "./sidebar/Sidebar";
+import {Outlet} from "react-router-dom";
+import {Breadcrumbs} from "./Breadcrumbs";
 
 export const MainLayout = () => {
     const [jwt] = useAtom(JwtAtom)
-    const navigate = useNavigate();
 
     return (
         <div className="flex h-screen">

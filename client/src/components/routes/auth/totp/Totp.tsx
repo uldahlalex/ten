@@ -1,11 +1,10 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import React from "react";
-import {TotpRegisterRoute, TotpSignInRoute} from "../../../ApplicationRoutes.tsx";
+import {TotpRegisterRoute, TotpSignInRoute} from "../../../routes";
 
 export default function Totp() {
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     return (<div className="flex flex-col justify-center">
         <button className="btn btn-primary" onClick={() => navigate(TotpSignInRoute)}>

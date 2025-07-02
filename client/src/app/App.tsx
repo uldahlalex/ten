@@ -1,5 +1,5 @@
 import {ErrorBoundary} from "react-error-boundary";
-import ApplicationRoutes from "./ApplicationRoutes.tsx";
+import { ApplicationRoutes } from "@/components";
 import {DevTools} from "jotai-devtools";
 import 'jotai-devtools/styles.css'
 

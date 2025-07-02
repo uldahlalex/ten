@@ -1,9 +1,9 @@
 import {useEffect, useState} from 'react';
-import {taskClient} from "../../../apiControllerClients.ts";
-import {ChangeTaskTagRequestDto, TickticktaskDto} from "../../../generated-client.ts";
+import {taskClient} from "../../../apiControllerClients";
+import {ChangeTaskTagRequestDto, TickticktaskDto} from "@/models";
 import toast from "react-hot-toast";
 import {useAtom} from "jotai";
-import {CurrentTasksDisplayView, JwtAtom, QueryParametersAtom, TagsAtom} from "../../../atoms/atoms.ts";
+import {CurrentTasksDisplayView, JwtAtom, QueryParametersAtom, TagsAtom} from "@/atoms";
 
 export interface TaskTagsDropdownProps {
     task: TickticktaskDto;
@@ -14,7 +14,7 @@ const TaskTagsDropdown = (props: TaskTagsDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [myTags] = useAtom(TagsAtom);
     const [jwt] = useAtom(JwtAtom)
-    const [tasks, setTasks] = useAtom(CurrentTasksDisplayView)
+    const [, setTasks] = useAtom(CurrentTasksDisplayView)
     const [queryParams] = useAtom(QueryParametersAtom);
 
     useEffect(() => {
@@ -27,16 +27,8 @@ const TaskTagsDropdown = (props: TaskTagsDropdownProps) => {
             taskClient.removeTaskTag(jwt?.jwt, {
                 tagId: tagId,
                 taskId: props.task.taskId
-            }).then(async r => {
-                tasks.map(task => {
-                    if (task.taskId === props.task.taskId) {
-                        return {
-                            ...task,
-                            taskTags: task.taskTags.filter(tag => tag.tagId !== tagId)
-                        };
-                    }
-                    return task;
-                });
+            }).then(async () => {
+                // Update local state will be handled by the refresh
                 toast.success("Tag removed successfully");
                 setSelectedTags(selectedTags.filter(id => id !== tagId));
                 setTasks(await taskClient.getMyTasks(jwt?.jwt, queryParams));
@@ -46,19 +38,8 @@ const TaskTagsDropdown = (props: TaskTagsDropdownProps) => {
                 tagId: tagId,
                 taskId: props.task.taskId
             }
-            taskClient.addTaskTag(jwt?.jwt, param).then(async r => {
-                tasks.map(task => {
-                    if (task.taskId === props.task.taskId) {
-                        return {
-                            ...task,
-                            taskTags: [...task.taskTags, {
-                                tagId: tagId,
-                                name: myTags.find(tag => tag.tagId === tagId)?.name
-                            }]
-                        };
-                    }
-                    return task;
-                });
+            taskClient.addTaskTag(jwt?.jwt, param).then(async () => {
+                // Update local state will be handled by the refresh
                 toast.success("Tag added successfully");
                 setSelectedTags([...selectedTags, tagId]);
                 setTasks(await taskClient.getMyTasks(jwt?.jwt, queryParams));

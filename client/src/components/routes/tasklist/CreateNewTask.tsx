@@ -1,7 +1,7 @@
-import {CreateTaskRequestDto} from '../../../generated-client';
+import {CreateTaskRequestDto} from "@/models";
 import React, {FormEvent, useState} from "react";
 import {useAtom} from "jotai";
-import {ListsAtom, TagsAtom} from "../../../atoms/atoms.ts";
+import {ListsAtom, TagsAtom} from "@/atoms";
 
 interface CreateNewTaskProps {
     onSubmit: (task: CreateTaskRequestDto) => void;

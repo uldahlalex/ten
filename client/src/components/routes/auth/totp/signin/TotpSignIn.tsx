@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {totpClient} from "../../../../../apiControllerClients.ts";
+import {totpClient} from "../../../../../apiControllerClients";
 import {useAtom} from 'jotai';
 import toast from "react-hot-toast";
-import {JwtAtom} from "../../../../../atoms/atoms.ts";
-import SignOut from "../../../../../functions/signOut.tsx";
+import {JwtAtom} from "@/atoms";
+import SignOut from "../../../../../functions/signOut";
 
 export default function TotpSignIn() {
     const [jwt, setJwt] = useAtom(JwtAtom);
@@ -21,7 +21,7 @@ export default function TotpSignIn() {
             setJwt(response);
             toast.success('Login successful!');
             setTotpCode('');
-        } catch (error) {
+        } catch {
             toast.error('Invalid code');
             setTotpCode('');
         }
@@ -56,7 +56,7 @@ export default function TotpSignIn() {
 
             SignOut()
 
-        } catch (error) {
+        } catch {
             toast.error('Failed to unregister device');
             setTotpCode('');
         }

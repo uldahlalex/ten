@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deps:validate": "depcruise --validate .dependency-cruiser.cjs src",
+    "deps:graph": "depcruise --include-only '^src' --output-type dot src | dot -T svg > dependency-graph.svg"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.*",
@@ -24,10 +26,20 @@
     "tailwindcss": "^4.*"
   },
   "devDependencies": {
+    "@eslint/js": "^9.30.1",
     "@types/react": "^19.*",
     "@types/react-dom": "^19.*",
+    "@typescript-eslint/eslint-plugin": "^8.*",
+    "@typescript-eslint/parser": "^8.*",
     "@vitejs/plugin-react": "^4.*",
+    "dependency-cruiser": "^16.*",
+    "eslint": "^9.*",
+    "eslint-plugin-import": "^2.*",
+    "eslint-plugin-react-hooks": "5.*",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
     "typescript": "^5.*",
+    "typescript-eslint": "^8.35.1",
     "vite": "^6.*"
   }
 }

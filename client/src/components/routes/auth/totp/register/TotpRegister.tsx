@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {totpClient} from "../../../../../apiControllerClients.ts";
+import {totpClient} from "../../../../../apiControllerClients";
 import toast from "react-hot-toast";
 
 export default function TotpRegister() {
@@ -15,7 +15,7 @@ export default function TotpRegister() {
             }));
             setQrCode(`data:image/png;base64,${response.qrCodeBase64}`);
             toast.success('Scan QR code with your authenticator app');
-        } catch (error) {
+        } catch {
             toast.error('Registration failed');
         }
     };

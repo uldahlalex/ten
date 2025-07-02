@@ -1,9 +1,9 @@
-import {TickticktaskDto, UpdateTaskRequestDto} from '../../../generated-client';
+import {TickticktaskDto, UpdateTaskRequestDto} from "@/models";
 import {useState} from "react";
 import {useAtom} from "jotai";
-import {ListsAtom} from "../../../atoms/atoms.ts";
-import TaskTagsDropdown from "./updateTags.tsx";
-import DateTimeInput from "../../reusables/DateTime.tsx";
+import {ListsAtom} from "@/atoms";
+import TaskTagsDropdown from "./updateTags";
+import DateTimeInput from "../../reusables/DateTime";
 
 export interface UpdateTaskProps {
     task: TickticktaskDto;

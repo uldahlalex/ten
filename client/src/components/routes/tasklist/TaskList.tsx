@@ -1,13 +1,13 @@
 import {useAtom} from "jotai";
-import {CurrentTasksDisplayView, JwtAtom} from "../../../atoms/atoms.ts";
-import {taskClient} from "../../../apiControllerClients.ts";
-import {TickticktaskDto} from "../../../generated-client.ts";
+import {CurrentTasksDisplayView, JwtAtom} from "@/atoms";
+import {taskClient} from "../../../apiControllerClients";
+import {TickticktaskDto} from "@/models";
 import toast from "react-hot-toast";
-import ToUpdateDto from "../../../functions/mappings.ts";
-import CreateNewTask from "./CreateNewTask.tsx";
+import {ToUpdateDto} from "@/functions";
+import CreateNewTask from "./CreateNewTask";
 import {useState} from "react";
-import UpdateTask from "./UpdateTask.tsx";
-import TaskListFilters from "./TaskListFilters.tsx";
+import UpdateTask from "./UpdateTask";
+import TaskListFilters from "./TaskListFilters";
 
 export interface EditModal {
     isOpen: boolean;

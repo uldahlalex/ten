@@ -1,18 +1,8 @@
-import {atom} from 'jotai';
-import {
-    GetTasksFilterAndOrderParameters,
-    JwtResponse,
-    TagDto,
-    TasklistDto,
-    TickticktaskDto
-} from "../generated-client.ts";
-import {atomWithStorage} from "jotai/utils";
-
-export const JwtAtom = atomWithStorage<JwtResponse | undefined>('jwt', undefined);
+import { atom } from 'jotai';
+import { TasklistDto, TagDto, TickticktaskDto, GetTasksFilterAndOrderParameters } from '@/models';
 
 export const ListsAtom = atom<TasklistDto[]>([]);
 export const TagsAtom = atom<TagDto[]>([]);
-
 export const CurrentTasksDisplayView = atom<TickticktaskDto[]>([]);
 
 export const QueryParametersAtom = atom<GetTasksFilterAndOrderParameters>({

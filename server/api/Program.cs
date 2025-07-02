@@ -60,7 +60,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             conf.DocumentPath = "/openapi/v1.json";
         });
         app.MapControllers();
-        app.GenerateTypeScriptClientFromOpenApi("/../../client/src/generated-client.ts").Wait();
+        app.GenerateTypeScriptClientFromOpenApi("/../../client/src/models/generated-client.ts").Wait();
         app.MapScalarApiReference();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         var environment = app.Environment.EnvironmentName;

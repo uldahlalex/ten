@@ -1,7 +1,5 @@
 Aktuelt:
-- update secrets med gh 
-- datetime provider til tests
-- revider tests efter de mange ændringer
+- opdater resterende tests
 
 
 client app nye features
@@ -11,5 +9,3 @@ client app nye features
 
 til sidst:
 - skriv en masse dokumentation og visualisering i README
-- hvis tunit test runner aldrig bliver fikset så migrate til andet
-- revider fly io deployment

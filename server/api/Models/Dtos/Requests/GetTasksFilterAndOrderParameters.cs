@@ -16,8 +16,8 @@ public class GetTasksFilterAndOrderParameters
 
     public int? MaxPriority { get; set; }
     public string? SearchTerm { get; set; }
-    public List<string>? TagIds { get; set; }
-    public List<string>? ListIds { get; set; }
+    public List<string>? TagIds { get; set; } = new List<string>();
+    public List<string>? ListIds { get; set; } = new List<string>();
     public string? OrderBy { get; set; }
     public bool? IsDescending { get; set; }
 }

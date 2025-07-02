@@ -16,6 +16,10 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
     {
         IQueryable<Tickticktask> query = ctx.Tickticktasks.Include(t => t.TaskTags);
 
+        //Filter by user
+        query = query
+            .Where(task => task.List.UserId == jwtClaims.Id);
+        
         if (parameters.ListIds != null && parameters.ListIds?.Count > 0)
             //Logical OR inclusion (list belongs to user, so no need to check for user)
             query = query.Where(task => parameters.ListIds.Contains(task.ListId));
@@ -131,7 +135,8 @@ public class TaskService(ISecurityService securityService, MyDbContext ctx, ILog
 
     public Task<TasklistDto> CreateList(JwtClaims claims, CreateListRequestDto dto)
     {
-        if (ctx.Tasklists.Any(t => t.Name == dto.ListName))
+        var myLists = ctx.Tasklists.Where(l => l.UserId == claims.Id);
+        if (myLists.Any(l => l.Name == dto.ListName))
             throw new ValidationException("List with this name already exists");
         var createdAt = timeProvider.GetUtcNow().UtcDateTime;
 

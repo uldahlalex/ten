@@ -5,170 +5,220 @@ using Infrastructure.Postgres.Scaffolding;
 namespace api.Etc;
 
 /// <summary>
-/// Single source of truth for test data with direct object creation
+/// Simple singleton service that holds test data IDs for consistent test data
 /// </summary>
-public class TestDataSeeder(ISecurityService securityService, TimeProvider timeProvider, ILogger<TestDataSeeder> logger)
-    : ISeeder
+public interface ITestDataIds
 {
-    private DateTime BaseTime => timeProvider.GetUtcNow().UtcDateTime;
+    // User IDs
+    string JohnId { get; }
+    string JaneId { get; }
+    string AdminId { get; }
+    
+    // Tag IDs
+    string UrgentTagId { get; }
+    string BugTagId { get; }
+    string FeatureTagId { get; }
+    string ImportantTagId { get; }
+    string PersonalTagId { get; }
+    
+    // Tasklist IDs
+    string WorkListId { get; }
+    string PersonalListId { get; }
+    string JanePersonalListId { get; }
+    string ShoppingListId { get; }
+    
+    // Task IDs
+    string CriticalBugTaskId { get; }
+    string SearchFeatureTaskId { get; }
+    string UpdateDocsTaskId { get; }
+    string GroceriesTaskId { get; }
+    string DentistTaskId { get; }
+}
 
-    // Test data properties - created on demand with consistent BaseTime
-    public User John => new User(
-        email: "john@example.com",
-        salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
-        passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
-        role: Role.User,
-        totpSecret: securityService.GenerateSecretKey(),
-        createdAt: BaseTime.AddDays(-30),
-        userId: "user-1"
-    );
+/// <summary>
+/// Implementation with hardcoded test IDs
+/// </summary>
+public class TestDataIds : ITestDataIds
+{
+    // User IDs
+    public string JohnId => "user-1";
+    public string JaneId => "jane-002";
+    public string AdminId => "admin-003";
+    
+    // Tag IDs
+    public string UrgentTagId => "tag-urgent";
+    public string BugTagId => "tag-bug";
+    public string FeatureTagId => "tag-feature";
+    public string ImportantTagId => "tag-important";
+    public string PersonalTagId => "tag-personal";
+    
+    // Tasklist IDs
+    public string WorkListId => "list-work";
+    public string PersonalListId => "list-personal";
+    public string JanePersonalListId => "list-jane-personal";
+    public string ShoppingListId => "list-shopping";
+    
+    // Task IDs
+    public string CriticalBugTaskId => "task-critical-bug";
+    public string SearchFeatureTaskId => "task-search";
+    public string UpdateDocsTaskId => "task-docs";
+    public string GroceriesTaskId => "task-groceries";
+    public string DentistTaskId => "task-dentist";
+}
 
-    public User Jane => new User(
-        email: "jane@example.com",
-        salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
-        passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
-        role: Role.User,
-        totpSecret: securityService.GenerateSecretKey(),
-        createdAt: BaseTime.AddDays(-25),
-        userId: "jane-002"
-    );
+/// <summary>
+/// Test database seeder that creates objects using the test IDs
+/// </summary>
+public class TestDataSeeder(ITestDataIds ids,
+    ISecurityService securityService, TimeProvider timeProvider, ILogger<TestDataSeeder> logger, MyDbContext ctx) : ISeeder
+{
+    private readonly DateTime _baseTime = timeProvider.GetUtcNow().UtcDateTime;
 
-    public User Admin => new User(
-        email: "admin@example.com",
-        salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
-        passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
-        role: Role.User,
-        totpSecret: securityService.GenerateSecretKey(),
-        createdAt: BaseTime.AddDays(-35),
-        userId: "admin-003"
-    );
-
-    // Tags
-    public Tag UrgentTag => new Tag(BaseTime.AddDays(-25), "Urgent", John.UserId, "tag-urgent");
-    public Tag BugTag => new Tag(BaseTime.AddDays(-25), "Bug", John.UserId, "tag-bug");
-    public Tag FeatureTag => new Tag(BaseTime.AddDays(-25), "Feature", John.UserId, "tag-feature");
-    public Tag ImportantTag => new Tag(BaseTime.AddDays(-25), "Important", John.UserId, "tag-important");
-    public Tag PersonalTag => new Tag(BaseTime.AddDays(-20), "Personal", Jane.UserId, "tag-personal");
-
-    // Task Lists
-    public Tasklist WorkList => new Tasklist(BaseTime.AddDays(-20), "Work Tasks", John.UserId, "list-work");
-    public Tasklist PersonalList => new Tasklist(BaseTime.AddDays(-20), "Personal Tasks", John.UserId, "list-personal");
-    public Tasklist JanePersonalList => new Tasklist(BaseTime.AddDays(-18), "Jane's Tasks", Jane.UserId, "list-jane-personal");
-    public Tasklist ShoppingList => new Tasklist(BaseTime.AddDays(-15), "Shopping", John.UserId, "list-shopping");
-
-    // Tasks
-    public Tickticktask CriticalBugTask => new Tickticktask(
-        createdAt: BaseTime.AddDays(-5),
-        listId: WorkList.ListId,
-        title: "Fix critical login bug",
-        description: "Users cannot log in, blocking all functionality",
-        dueDate: BaseTime.AddDays(1),
-        priority: 5,
-        completed: false,
-        completedAt: null,
-        taskId: "task-critical-bug"
-    );
-
-    public Tickticktask SearchFeatureTask => new Tickticktask(
-        createdAt: BaseTime.AddDays(-3),
-        listId: WorkList.ListId,
-        title: "Implement search feature",
-        description: "Add full-text search to dashboard",
-        dueDate: BaseTime.AddDays(7),
-        priority: 3,
-        completed: false,
-        completedAt: null,
-        taskId: "task-search"
-    );
-
-    public Tickticktask UpdateDocsTask => new Tickticktask(
-        createdAt: BaseTime.AddDays(-4),
-        listId: WorkList.ListId,
-        title: "Update API documentation",
-        description: "Update OpenAPI specs for new endpoints",
-        dueDate: BaseTime.AddDays(3),
-        priority: 2,
-        completed: true,
-        completedAt: BaseTime.AddDays(-1),
-        taskId: "task-docs"
-    );
-
-    public Tickticktask GroceriesTask => new Tickticktask(
-        createdAt: BaseTime.AddDays(-1),
-        listId: PersonalList.ListId,
-        title: "Buy groceries",
-        description: "Weekly shopping: milk, bread, eggs",
-        dueDate: BaseTime.AddDays(2),
-        priority: 2,
-        completed: false,
-        completedAt: null,
-        taskId: "task-groceries"
-    );
-
-    public Tickticktask DentistTask => new Tickticktask(
-        createdAt: BaseTime.AddDays(-2),
-        listId: JanePersonalList.ListId,
-        title: "Schedule dentist appointment",
-        description: "Annual checkup and cleaning",
-        dueDate: BaseTime.AddDays(5),
-        priority: 1,
-        completed: false,
-        completedAt: null,
-        taskId: "task-dentist"
-    );
-
-    // Task-Tag relationships
-    public (Tickticktask Task, Tag Tag)[] TaskTagPairs => new[]
-    {
-        (CriticalBugTask, UrgentTag),
-        (CriticalBugTask, BugTag),
-        (SearchFeatureTask, FeatureTag),
-        (SearchFeatureTask, ImportantTag),
-        (GroceriesTask, ImportantTag),
-        (DentistTask, PersonalTag)
-    };
-
-    public void SeedDatabase(MyDbContext ctx)
+    public void SeedDatabase()
     {
         try
         {
             ctx.Database.EnsureCreated();
             
-            // Check if already seeded to avoid duplicate seeding
-            if (ctx.Users.Any())
-            {
-                logger.LogInformation("Database already seeded, skipping seeding");
-                return;
-            }
-            
             ClearDatabase(ctx);
 
             // Create users
-            var users = new[] { John, Jane, Admin };
+            var john = new User(
+                email: "john@example.com",
+                salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
+                passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
+                role: Role.User,
+                totpSecret: securityService.GenerateSecretKey(),
+                createdAt: _baseTime.AddDays(-30),
+                userId: ids.JohnId
+            );
+
+            var jane = new User(
+                email: "jane@example.com",
+                salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
+                passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
+                role: Role.User,
+                totpSecret: securityService.GenerateSecretKey(),
+                createdAt: _baseTime.AddDays(-25),
+                userId: ids.JaneId
+            );
+
+            var admin = new User(
+                email: "admin@example.com",
+                salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
+                passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
+                role: Role.User,
+                totpSecret: securityService.GenerateSecretKey(),
+                createdAt: _baseTime.AddDays(-35),
+                userId: ids.AdminId
+            );
+
+            var users = new[] { john, jane, admin };
             ctx.Users.AddRange(users);
             ctx.SaveChanges();
 
             // Create tags
-            var tags = new[] { UrgentTag, BugTag, FeatureTag, ImportantTag, PersonalTag };
+            var urgentTag = new Tag(_baseTime.AddDays(-25), "Urgent", john.UserId, ids.UrgentTagId);
+            var bugTag = new Tag(_baseTime.AddDays(-25), "Bug", john.UserId, ids.BugTagId);
+            var featureTag = new Tag(_baseTime.AddDays(-25), "Feature", john.UserId, ids.FeatureTagId);
+            var importantTag = new Tag(_baseTime.AddDays(-25), "Important", john.UserId, ids.ImportantTagId);
+            var personalTag = new Tag(_baseTime.AddDays(-20), "Personal", jane.UserId, ids.PersonalTagId);
+
+            var tags = new[] { urgentTag, bugTag, featureTag, importantTag, personalTag };
             ctx.Tags.AddRange(tags);
             ctx.SaveChanges();
 
             // Create task lists
-            var tasklists = new[] { WorkList, PersonalList, JanePersonalList, ShoppingList };
+            var workList = new Tasklist(_baseTime.AddDays(-20), "Work Tasks", john.UserId, ids.WorkListId);
+            var personalList = new Tasklist(_baseTime.AddDays(-20), "Personal Tasks", john.UserId, ids.PersonalListId);
+            var janePersonalList = new Tasklist(_baseTime.AddDays(-18), "Jane's Tasks", jane.UserId, ids.JanePersonalListId);
+            var shoppingList = new Tasklist(_baseTime.AddDays(-15), "Shopping", john.UserId, ids.ShoppingListId);
+
+            var tasklists = new[] { workList, personalList, janePersonalList, shoppingList };
             ctx.Tasklists.AddRange(tasklists);
             ctx.SaveChanges();
 
             // Create tasks
-            var tasks = new[] { CriticalBugTask, SearchFeatureTask, UpdateDocsTask, GroceriesTask, DentistTask };
+            var criticalBugTask = new Tickticktask(
+                createdAt: _baseTime.AddDays(-5),
+                listId: workList.ListId,
+                title: "Fix critical login bug",
+                description: "Users cannot log in, blocking all functionality",
+                dueDate: _baseTime.AddDays(1),
+                priority: 5,
+                completed: false,
+                completedAt: null,
+                taskId: ids.CriticalBugTaskId
+            );
+
+            var searchFeatureTask = new Tickticktask(
+                createdAt: _baseTime.AddDays(-3),
+                listId: workList.ListId,
+                title: "Implement search feature",
+                description: "Add full-text search to dashboard",
+                dueDate: _baseTime.AddDays(7),
+                priority: 3,
+                completed: false,
+                completedAt: null,
+                taskId: ids.SearchFeatureTaskId
+            );
+
+            var updateDocsTask = new Tickticktask(
+                createdAt: _baseTime.AddDays(-4),
+                listId: workList.ListId,
+                title: "Update API documentation",
+                description: "Update OpenAPI specs for new endpoints",
+                dueDate: _baseTime.AddDays(3),
+                priority: 2,
+                completed: true,
+                completedAt: _baseTime.AddDays(-1),
+                taskId: ids.UpdateDocsTaskId
+            );
+
+            var groceriesTask = new Tickticktask(
+                createdAt: _baseTime.AddDays(-1),
+                listId: personalList.ListId,
+                title: "Buy groceries",
+                description: "Weekly shopping: milk, bread, eggs",
+                dueDate: _baseTime.AddDays(2),
+                priority: 2,
+                completed: false,
+                completedAt: null,
+                taskId: ids.GroceriesTaskId
+            );
+
+            var dentistTask = new Tickticktask(
+                createdAt: _baseTime.AddDays(-2),
+                listId: janePersonalList.ListId,
+                title: "Schedule dentist appointment",
+                description: "Annual checkup and cleaning",
+                dueDate: _baseTime.AddDays(5),
+                priority: 1,
+                completed: false,
+                completedAt: null,
+                taskId: ids.DentistTaskId
+            );
+
+            var tasks = new[] { criticalBugTask, searchFeatureTask, updateDocsTask, groceriesTask, dentistTask };
             ctx.Tickticktasks.AddRange(tasks);
             ctx.SaveChanges();
 
             // Create task-tag relationships
-            var taskTags = TaskTagPairs.Select(pair => 
+            var taskTagPairs = new[]
+            {
+                (criticalBugTask, urgentTag),
+                (criticalBugTask, bugTag),
+                (searchFeatureTask, featureTag),
+                (searchFeatureTask, importantTag),
+                (groceriesTask, importantTag),
+                (dentistTask, personalTag)
+            };
+
+            var taskTags = taskTagPairs.Select(pair => 
                 new TaskTag(
-                    createdAt: BaseTime.AddDays(-3),
-                    taskId: pair.Task.TaskId,
-                    tagId: pair.Tag.TagId
+                    createdAt: _baseTime.AddDays(-3),
+                    taskId: pair.Item1.TaskId,
+                    tagId: pair.Item2.TagId
                 )).ToList();
                 
             ctx.TaskTags.AddRange(taskTags);
@@ -186,8 +236,7 @@ public class TestDataSeeder(ISecurityService securityService, TimeProvider timeP
 
     private void ClearDatabase(MyDbContext ctx)
     {
-        try
-        {
+       
             // Clear in dependency order to avoid foreign key constraint violations
             if (ctx.TaskTags.Any()) ctx.TaskTags.RemoveRange(ctx.TaskTags);
             if (ctx.Tickticktasks.Any()) ctx.Tickticktasks.RemoveRange(ctx.Tickticktasks);
@@ -195,11 +244,12 @@ public class TestDataSeeder(ISecurityService securityService, TimeProvider timeP
             if (ctx.Tags.Any()) ctx.Tags.RemoveRange(ctx.Tags);
             if (ctx.Users.Any()) ctx.Users.RemoveRange(ctx.Users);
             ctx.SaveChanges();
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Warning: Could not clear database - may be due to concurrent access");
-            // Continue anyway - fresh schema per test should handle this
-        }
+     
     }
 }
+
+public interface ISeeder
+{
+    public void SeedDatabase();
+}
+

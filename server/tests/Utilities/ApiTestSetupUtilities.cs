@@ -3,6 +3,10 @@ using api;
 using api.Etc;
 using api.Models;
 using Infrastructure.Postgres.Scaffolding;
+using JWT;
+using JWT.Algorithms;
+using JWT.Builder;
+using JWT.Serializers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -138,7 +142,10 @@ public static class ApiTestSetupUtilities
     {
         var client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjI2NjM3NTdmLTAyNDktNDk4My1iZjBkLTg3NGM2NGRlMDkzYSJ9.MsB8pH4h4YsjOA4E0ix0Yb3f1C--Modcw9Kgga5BqWo");
+         Jwt   );
         return client;
     }
+
+    public static string Jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q";
+    public static string UserId = "user-1";
 }

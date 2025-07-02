@@ -2,9 +2,9 @@ using Infrastructure.Postgres.Scaffolding;
 
 namespace api.Etc;
 
-public class EmptyEnvironment : ISeeder
+public class EmptyEnvironment(MyDbContext ctx) : ISeeder
 {
-    public void SeedDatabase(MyDbContext ctx)
+    public void SeedDatabase()
     {
         ctx.Database.EnsureDeleted(); //only use this if using testcontainers
         ctx.Database.EnsureCreated();

@@ -4,7 +4,6 @@ using api.Services;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PgCtx;
 using Scalar.AspNetCore;
 
 namespace api;
@@ -32,7 +31,8 @@ public class Program
             options.UseNpgsql(appOptions.DbConnectionString);
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
-        builder.Services.AddScoped<ISeeder, TestDataSeeder>();
+        builder.Services.AddSingleton<ITestDataIds, TestDataIds>();
+builder.Services.AddTransient<ISeeder, TestDataSeeder>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddSingleton<IWebHostPortAllocationService, ProductionPortAllocationService>();
@@ -64,7 +64,7 @@ public class Program
                 var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
                 var schema = ctx.Database.GenerateCreateScript();
                 File.WriteAllText("schema_according_to_dbcontext.sql", schema);
-              //  scope.ServiceProvider.GetRequiredService<ISeeder>().SeedDatabase(ctx);
+                scope.ServiceProvider.GetRequiredService<ISeeder>().SeedDatabase();
             }
         }
 

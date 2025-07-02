@@ -1,11 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
 using api.Controllers;
+using api.Etc;
 using api.Mappers;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -38,26 +40,30 @@ public class GetTasksTests
 
 
     [Test]
-    public Task GetTasks_ShouldReturnAllTasks_WhenNoFiltersApplied()
+    public Task GetTasks_ShouldReturnAllMyTasks_WhenNoFiltersApplied()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var count = ctx.Tickticktasks.Count();
-        if (count == 0)
-            throw new Exception("There are no tasks starting out");
-        var allTasksAsDtos = ctx.Tickticktasks.Select(d => d.ToDto()).ToList();
+        var johnId = _scopedServiceProvider.GetRequiredService<ITestDataIds>().JohnId;
+        var johnsTasks = ctx.Tickticktasks
+            .Include(t => t.List)
+            .Where(t => t.List.UserId == johnId);
+
         var query = new GetTasksFilterAndOrderParameters();
 
-
-        var response = _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query).GetAwaiter()
+        var response = _client
+            .PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query)
+            .GetAwaiter()
             .GetResult();
 
         if (response.StatusCode != HttpStatusCode.OK)
             throw new Exception("Did not get success status code. Received: " + response.StatusCode + " with body: " +
                                 response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
-        var tasksResponse = response.Content.ReadFromJsonAsync<List<TickticktaskDto>>().GetAwaiter().GetResult();
-        if (tasksResponse!.Count != allTasksAsDtos.Count)
-            throw new Exception("Did not get all tasks. Expected: " + JsonSerializer.Serialize(allTasksAsDtos) +
-                                " but got: " + JsonSerializer.Serialize(tasksResponse));
+        var tasksResponse = response.Content
+            .ReadFromJsonAsync<List<TickticktaskDto>>()
+            .GetAwaiter()
+            .GetResult();
+        if (johnsTasks.Count() != tasksResponse!.Count)
+            throw new Exception("Did not get all tasks");
         return Task.CompletedTask;
     }
 
@@ -95,8 +101,8 @@ public class GetTasksTests
         var tasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
         if (tasks.Any(t => t.DueDate > query.LatestDueDate || t.DueDate < query.EarliestDueDate))
             throw new Exception("There should not be any tasks outside of the date range");
-        if (tasks.Count != 80)
-            throw new Exception("Expected exactly 80 tasks from the default seeder");
+        if (tasks.Count != 4)
+            throw new Exception("Expected exactly 4 tasks from the default seeder");
     }
 
     [Test]

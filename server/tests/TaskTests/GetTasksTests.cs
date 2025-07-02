@@ -42,16 +42,18 @@ public class GetTasksTests
     [Test]
     public Task GetTasks_ShouldReturnAllMyTasks_WhenNoFiltersApplied()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
         
-        // Get expected tasks from DB using known IDs
-        var expectedTasks = ctx.Tickticktasks
-            .Include(t => t.List)
-            .Where(t => t.List.UserId == ids.JohnId)
-            .ToList();
+        // John should have these specific tasks based on TestDataSeeder
+        var expectedJohnTaskIds = new HashSet<string>
+        {
+            ids.CriticalBugTaskId,    // Work list task
+            ids.SearchFeatureTaskId, // Work list task  
+            ids.UpdateDocsTaskId,    // Work list task
+            ids.GroceriesTaskId      // Personal list task
+        };
 
-        var query = new GetTasksFilterAndOrderParameters() { };
+        var query = new GetTasksFilterAndOrderParameters();
 
         var response = _client
             .PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query)
@@ -69,15 +71,13 @@ public class GetTasksTests
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");
             
-        if (expectedTasks.Count != actualTasks.Count)
-            throw new Exception($"Expected {expectedTasks.Count} tasks for John but got {actualTasks.Count} tasks");
+        if (actualTasks.Count != expectedJohnTaskIds.Count)
+            throw new Exception($"Expected {expectedJohnTaskIds.Count} tasks for John but got {actualTasks.Count} tasks");
             
-        // Verify specific expected tasks are present
-        var expectedTaskIds = expectedTasks.Select(t => t.TaskId).ToHashSet();
         var actualTaskIds = actualTasks.Select(t => t.TaskId).ToHashSet();
         
-        if (!expectedTaskIds.SetEquals(actualTaskIds))
-            throw new Exception($"Task IDs don't match. Expected: [{string.Join(", ", expectedTaskIds)}], Actual: [{string.Join(", ", actualTaskIds)}]");
+        if (!expectedJohnTaskIds.SetEquals(actualTaskIds))
+            throw new Exception($"Task IDs don't match. Expected: [{string.Join(", ", expectedJohnTaskIds)}], Actual: [{string.Join(", ", actualTaskIds)}]");
             
         return Task.CompletedTask;
     }
@@ -86,16 +86,15 @@ public class GetTasksTests
     [Test]
     public async Task GetTasks_ShouldFilterByCompletion()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
         
-        // Get expected completed tasks from DB
-        var expectedCompletedTasks = ctx.Tickticktasks
-            .Include(t => t.List)
-            .Where(t => t.List.UserId == ids.JohnId && t.Completed == true)
-            .ToList();
+        // Based on TestDataSeeder, only UpdateDocsTask is completed for John
+        var expectedCompletedTaskIds = new HashSet<string>
+        {
+            ids.UpdateDocsTaskId // This is the only completed task in test data
+        };
 
-        var query = new GetTasksFilterAndOrderParameters { IsCompleted = true};
+        var query = new GetTasksFilterAndOrderParameters { IsCompleted = true };
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query);
 
@@ -106,39 +105,40 @@ public class GetTasksTests
         
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");
-
-        if (expectedCompletedTasks.Count == 0)
-            throw new Exception("Test data should contain at least one completed task for John");
             
-        if (actualTasks.Count != expectedCompletedTasks.Count)
-            throw new Exception($"Expected {expectedCompletedTasks.Count} completed tasks but got {actualTasks.Count}");
+        if (actualTasks.Count != expectedCompletedTaskIds.Count)
+            throw new Exception($"Expected {expectedCompletedTaskIds.Count} completed task but got {actualTasks.Count}");
 
         if (actualTasks.Any(t => t.Completed == false))
             throw new Exception("All returned tasks should be completed when filtering by IsCompleted=true");
             
-        // Verify we got the specific completed task from test data
-        var expectedTaskId = ids.UpdateDocsTaskId; // This is the completed task in test data
-        if (!actualTasks.Any(t => t.TaskId == expectedTaskId))
-            throw new Exception($"Expected to find completed task {expectedTaskId} in results");
+        var actualTaskIds = actualTasks.Select(t => t.TaskId).ToHashSet();
+        
+        if (!expectedCompletedTaskIds.SetEquals(actualTaskIds))
+            throw new Exception($"Expected completed task IDs: [{string.Join(", ", expectedCompletedTaskIds)}], but got: [{string.Join(", ", actualTaskIds)}]");
     }
 
     [Test]
     public async Task GetTasks_ShouldFilterByDateRange()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
         var timeProvider = _scopedServiceProvider.GetRequiredService<TimeProvider>();
         
         var earliestDate = timeProvider.GetUtcNow().AddDays(-7).UtcDateTime;
-        var latestDate = timeProvider.GetUtcNow().AddDays(8).UtcDateTime;
+        var latestDate = timeProvider.GetUtcNow().AddDays(6).UtcDateTime;
         
-        // Get expected tasks within date range from DB
-        var expectedTasks = ctx.Tickticktasks
-            .Include(t => t.List)
-            .Where(t => t.List.UserId == ids.JohnId && 
-                       t.DueDate >= earliestDate && 
-                       t.DueDate <= latestDate)
-            .ToList();
+        // Based on TestDataSeeder, John's tasks have these due dates:
+        // - CriticalBugTask: _baseTime.AddDays(1) -> should be in range
+        // - SearchFeatureTask: _baseTime.AddDays(7) -> should NOT be in range  
+        // - UpdateDocsTask: _baseTime.AddDays(3) -> should be in range
+        // - GroceriesTask: _baseTime.AddDays(2) -> should be in range
+        // All tasks should be within the -7 to +8 day range
+        var expectedTaskIdsInRange = new HashSet<string>
+        {
+            ids.CriticalBugTaskId,
+            ids.UpdateDocsTaskId,
+            ids.GroceriesTaskId
+        };
 
         var query = new GetTasksFilterAndOrderParameters
         {
@@ -159,33 +159,34 @@ public class GetTasksTests
         if (actualTasks.Any(t => t.DueDate > query.LatestDueDate || t.DueDate < query.EarliestDueDate))
             throw new Exception($"All tasks should be within date range {earliestDate:yyyy-MM-dd} to {latestDate:yyyy-MM-dd}");
             
-        if (actualTasks.Count != expectedTasks.Count)
-            throw new Exception($"Expected {expectedTasks.Count} tasks within date range but got {actualTasks.Count}");
+        if (actualTasks.Count != expectedTaskIdsInRange.Count)
+            throw new Exception($"Expected {expectedTaskIdsInRange.Count} tasks within date range but got {actualTasks.Count}");
             
-        // Verify specific tasks that should be in this range based on test data
-        var expectedTaskIds = expectedTasks.Select(t => t.TaskId).ToHashSet();
         var actualTaskIds = actualTasks.Select(t => t.TaskId).ToHashSet();
         
-        if (!expectedTaskIds.SetEquals(actualTaskIds))
-            throw new Exception($"Task IDs don't match expected. Expected: [{string.Join(", ", expectedTaskIds)}], Actual: [{string.Join(", ", actualTaskIds)}]");
+        if (!expectedTaskIdsInRange.SetEquals(actualTaskIds))
+            throw new Exception($"Expected task IDs in range: [{string.Join(", ", expectedTaskIdsInRange)}], but got: [{string.Join(", ", actualTaskIds)}]");
     }
 
     [Test]
     public async Task GetTasks_ShouldFilterByPriorityRange()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
         
         var minPriority = 2;
         var maxPriority = 3;
         
-        // Get expected tasks within priority range from DB
-        var expectedTasks = ctx.Tickticktasks
-            .Include(t => t.List)
-            .Where(t => t.List.UserId == ids.JohnId && 
-                       t.Priority >= minPriority && 
-                       t.Priority <= maxPriority)
-            .ToList();
+        // Based on TestDataSeeder, John's tasks have these priorities:
+        // - CriticalBugTask: priority 5 -> outside range
+        // - SearchFeatureTask: priority 3 -> in range
+        // - UpdateDocsTask: priority 2 -> in range  
+        // - GroceriesTask: priority 2 -> in range
+        var expectedTaskIdsInPriorityRange = new HashSet<string>
+        {
+            ids.SearchFeatureTaskId, // priority 3
+            ids.UpdateDocsTaskId,    // priority 2
+            ids.GroceriesTaskId      // priority 2
+        };
 
         var query = new GetTasksFilterAndOrderParameters
         {
@@ -209,21 +210,13 @@ public class GetTasksTests
         if (actualTasks.Any(t => t.Priority > maxPriority))
             throw new Exception($"Found tasks with priority above maximum {maxPriority}");
             
-        if (actualTasks.Count != expectedTasks.Count)
-            throw new Exception($"Expected {expectedTasks.Count} tasks with priority {minPriority}-{maxPriority} but got {actualTasks.Count}");
+        if (actualTasks.Count != expectedTaskIdsInPriorityRange.Count)
+            throw new Exception($"Expected {expectedTaskIdsInPriorityRange.Count} tasks with priority {minPriority}-{maxPriority} but got {actualTasks.Count}");
             
-        // Verify specific tasks that should be in this priority range
-        var expectedTaskIds = expectedTasks.Select(t => t.TaskId).ToHashSet();
         var actualTaskIds = actualTasks.Select(t => t.TaskId).ToHashSet();
         
-        if (!expectedTaskIds.SetEquals(actualTaskIds))
-            throw new Exception($"Task IDs don't match expected. Expected: [{string.Join(", ", expectedTaskIds)}], Actual: [{string.Join(", ", actualTaskIds)}]");
-
-        // Based on test data, tasks with priority 2-3 should include UpdateDocsTask (priority 2) and SearchFeatureTask (priority 3)
-        if (!actualTasks.Any(t => t.TaskId == ids.UpdateDocsTaskId))
-            throw new Exception($"Expected to find UpdateDocsTask (priority 2) in results");
-        if (!actualTasks.Any(t => t.TaskId == ids.SearchFeatureTaskId))
-            throw new Exception($"Expected to find SearchFeatureTask (priority 3) in results");
+        if (!expectedTaskIdsInPriorityRange.SetEquals(actualTaskIds))
+            throw new Exception($"Expected task IDs in priority range: [{string.Join(", ", expectedTaskIdsInPriorityRange)}], but got: [{string.Join(", ", actualTaskIds)}]");
     }
     
    

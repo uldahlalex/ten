@@ -1,6 +1,5 @@
 Aktuelt:
-- opdater resterende tests
-
+refactor client app med code
 
 client app nye features
       - create, update, delete list
@@ -9,3 +8,4 @@ client app nye features
 
 til sidst:
 - skriv en masse dokumentation og visualisering i README
+

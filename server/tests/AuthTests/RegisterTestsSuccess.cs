@@ -37,22 +37,40 @@ public class RegisterTestsSuccess
     [Test]
     public async Task WhenUserRegistersWithValidCredentials_TheyGetValidJwtBack()
     {
-        var reqDto = new AuthRequestDto(new Random().NextDouble() * 100 + "@email.com",
-            new Random().NextDouble() * 1238998213 + "");
+        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+        
+        // Create unique credentials for this test
+        var uniqueEmail = $"testuser_{Guid.NewGuid():N}@example.com";
+        var password = "TestPassword123!";
+        var reqDto = new AuthRequestDto(uniqueEmail, password);
+        
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Register), reqDto);
 
         if (!response.IsSuccessStatusCode)
-            throw new Exception("Did not get success status code. " +
-                                $"Status code: {response.StatusCode}, " +
-                                $"Response: {await response.Content.ReadAsStringAsync()}");
+            throw new Exception($"Expected success status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
 
         var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
+        
+        if (jwt == null)
+            throw new Exception("Response body was null when deserializing to JwtResponse");
+            
         var jwtService = _scopedServiceProvider.GetRequiredService<IJwtService>();
         var userService = _scopedServiceProvider.GetRequiredService<IUserDataService>();
-        var claims = jwtService.VerifyJwt(jwt.Jwt); //throws if JWT issued is invalid
+        
+        var claims = jwtService.VerifyJwt(jwt.Jwt); // throws if JWT is invalid
+        
+        if (string.IsNullOrEmpty(claims.Id))
+            throw new Exception("JWT claims should contain a valid user ID");
+            
         if (!await userService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        _ = _scopedServiceProvider.GetRequiredService<MyDbContext>().Users
-            .First(u => u.Email == reqDto.Email); //throws if not found
+            throw new Exception($"User with ID {claims.Id} should exist in database after registration");
+            
+        // Verify the user was created in database with correct email
+        var createdUser = ctx.Users.FirstOrDefault(u => u.Email == reqDto.Email);
+        if (createdUser == null)
+            throw new Exception($"User with email {reqDto.Email} should exist in database after registration");
+            
+        if (createdUser.UserId != claims.Id)
+            throw new Exception($"User ID in database {createdUser.UserId} should match JWT claims {claims.Id}");
     }
 }

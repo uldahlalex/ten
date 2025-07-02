@@ -51,35 +51,68 @@ public static class ApiTestSetupUtilities
         builder.Logging.AddConsole();
         builder.Logging.SetMinimumLevel(LogLevel.Information);
         
-        var appOptions = builder.Services
+        // Get the current AppOptions to copy other settings
+        var currentAppOptions = builder.Services
             .BuildServiceProvider()
             .GetRequiredService<IOptionsMonitor<AppOptions>>()
             .CurrentValue;
-        if (useTestContainer || appOptions.RunsOn == "GitHub")
-        {
-            // Create a unique test database for each test to avoid concurrency issues
-            var testId = Guid.NewGuid().ToString("N")[..8];
-            var pgctx = new PgCtxSetup<MyDbContext>();
-            var startingDbCtx = builder.Services.FirstOrDefault(t => t.ServiceType == typeof(MyDbContext));
-            builder.Services.Remove(startingDbCtx);
-            builder.Services.AddDbContext<MyDbContext>(opt =>
-            {
-                var connectionString = pgctx._postgres.GetConnectionString() + $";SearchPath=test_{testId}";
-                opt.UseNpgsql(connectionString);
-                opt.EnableSensitiveDataLogging();
-                opt.EnableDetailedErrors();
-                opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            });
-        }
 
+        // Create a unique test database for each test to avoid concurrency issues
+        var testId = Guid.NewGuid().ToString("N")[..8];
+        var pgctx = new PgCtxSetup<MyDbContext>();
+        
+        // Remove existing DbContext registration
+        var dbContextDescriptor = builder.Services.FirstOrDefault(s => s.ServiceType == typeof(DbContextOptions<MyDbContext>));
+        if (dbContextDescriptor != null)
+            builder.Services.Remove(dbContextDescriptor);
+            
+        var dbContextServiceDescriptor = builder.Services.FirstOrDefault(s => s.ServiceType == typeof(MyDbContext));
+        if (dbContextServiceDescriptor != null)
+            builder.Services.Remove(dbContextServiceDescriptor);
+
+        // Remove existing AppOptions registrations
+        builder.Services.RemoveAll<IOptions<AppOptions>>();
+        builder.Services.RemoveAll<IOptionsMonitor<AppOptions>>();
+        builder.Services.RemoveAll<IOptionsSnapshot<AppOptions>>();
+        
+        // Create new AppOptions with test database connection string
+        var testConnectionString = pgctx._postgres.GetConnectionString() + $";SearchPath=test_{testId}";
+        var testAppOptions = new AppOptions
+        {
+            DbConnectionString = testConnectionString,
+            JwtSecret = currentAppOptions.JwtSecret,
+            RunsOn = currentAppOptions.RunsOn
+        };
+        
+        // Register new AppOptions
+        builder.Services.Configure<AppOptions>(options =>
+        {
+            //use testAppOption
+            options.DbConnectionString = testAppOptions.DbConnectionString;
+            options.JwtSecret = testAppOptions.JwtSecret;
+            options.RunsOn = testAppOptions.RunsOn;
+        });
+
+        // Register new DbContext with test connection string
+        builder.Services.AddDbContext<MyDbContext>(options =>
+        {
+            options.UseNpgsql(testConnectionString);
+            options.EnableSensitiveDataLogging();
+            options.EnableDetailedErrors();
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
+
+        // Replace TimeProvider with test version
         var timeProviderDescriptor = builder.Services.SingleOrDefault(d => d.ServiceType == typeof(TimeProvider));
         if (timeProviderDescriptor != null)
             builder.Services.Remove(timeProviderDescriptor);
 
         builder.Services.AddSingleton<TimeProvider>(new FakeTimeProvider(StaticConstants.BaseDate));
 
+        // Replace port allocation service for testing
         builder.Services.RemoveAll<IWebHostPortAllocationService>();
         builder.Services.AddSingleton<IWebHostPortAllocationService, TestPortAllocationService>();
+        
         return builder;
     }
 

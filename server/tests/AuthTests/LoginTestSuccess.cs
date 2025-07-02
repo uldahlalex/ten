@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using api.Controllers;
+using api.Etc;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 using api.Services;
@@ -38,16 +39,31 @@ public class LoginTestSuccess
     [Test]
     public async Task Login_CanSuccessfully_Login()
     {
-        var dto = new AuthRequestDto("test@user.dk", "abc");
+        var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
+        
+        // Login using John's credentials from TestDataSeeder
+        var dto = new AuthRequestDto("john@example.com", "password");
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Login), dto);
+        
         if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Login failed: {response.StatusCode}");
+            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
+            
         var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
+        
+        if (jwt == null)
+            throw new Exception("Response body was null when deserializing to JwtResponse");
+            
         var jwtService = _scopedServiceProvider.GetRequiredService<IJwtService>();
         var userService = _scopedServiceProvider.GetRequiredService<IUserDataService>();
-        var claims = jwtService.VerifyJwt(jwt.Jwt); //throws if JWT issued is invalid
+        
+        var claims = jwtService.VerifyJwt(jwt.Jwt); // throws if JWT is invalid
+        
+        // Verify the JWT contains John's ID from test data
+        if (claims.Id != ids.JohnId)
+            throw new Exception($"Expected JWT to contain John's ID {ids.JohnId} but got {claims.Id}");
+            
         if (!await userService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
+            throw new Exception($"User with ID {claims.Id} should exist in database");
     }
 }

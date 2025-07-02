@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 using api.Controllers;
+using api.Etc;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 using Infrastructure.Postgres.Scaffolding;
@@ -40,33 +41,56 @@ public class CreateTaskTestsSuccess
     [Test]
     public async Task CreateTask_ShouldReturnOk_WhenValidRequest()
     {
-        var logger = _scopedServiceProvider.GetRequiredService<ILogger<string>>();
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var dueDate = _scopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().AddDays(1).UtcDateTime;
+        var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
+        var timeProvider = _scopedServiceProvider.GetRequiredService<TimeProvider>();
+        
+        var dueDate = timeProvider.GetUtcNow().AddDays(1).UtcDateTime;
 
-        // _scopedServiceProvider.GetRequiredService<ISeeder>().CreateEnvironment(ctx);
+        // Use John's Work list from test data
         var request = new CreateTaskRequestDto
         (
-            ctx.Tasklists.First().ListId,
+            ids.WorkListId,
             "Test Task",
             "Test Description",
             dueDate,
             1
         );
 
-
-        // Act
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateTask), request);
 
-        // Assert
-        if (HttpStatusCode.OK != response.StatusCode)
-            throw new Exception("Did not get status 200. Received: " + response.StatusCode + " and body :" +
-                                await response.Content.ReadAsStringAsync());
-        var responseBodyAsDto = await response.Content.ReadFromJsonAsync<TickticktaskDto>() ??
-                                throw new Exception("Could not deserialize to " + nameof(TickticktaskDto));
-        // Assert the default data validation put on response DTO class are all valid (throws exc if not)
+        if (response.StatusCode != HttpStatusCode.OK)
+            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
+            
+        var responseBodyAsDto = await response.Content.ReadFromJsonAsync<TickticktaskDto>();
+        
+        if (responseBodyAsDto == null)
+            throw new Exception("Response body was null when deserializing to TickticktaskDto");
+            
+        // Validate the response DTO
         Validator.ValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), true);
-        var lookup = ctx.Tickticktasks.First(t => t.TaskId == responseBodyAsDto.TaskId);
-        Validator.ValidateObject(lookup, new ValidationContext(lookup), true);
+        
+        if (responseBodyAsDto.Title != "Test Task")
+            throw new Exception($"Expected task title to be 'Test Task' but got '{responseBodyAsDto.Title}'");
+            
+        if (responseBodyAsDto.Description != "Test Description")
+            throw new Exception($"Expected task description to be 'Test Description' but got '{responseBodyAsDto.Description}'");
+            
+        if (responseBodyAsDto.ListId != ids.WorkListId)
+            throw new Exception($"Expected task to be in Work list {ids.WorkListId} but got {responseBodyAsDto.ListId}");
+            
+        if (responseBodyAsDto.Priority != 1)
+            throw new Exception($"Expected task priority to be 1 but got {responseBodyAsDto.Priority}");
+            
+        // Verify task exists in database
+        var dbTask = ctx.Tickticktasks.FirstOrDefault(t => t.TaskId == responseBodyAsDto.TaskId);
+        if (dbTask == null)
+            throw new Exception($"Task with ID {responseBodyAsDto.TaskId} should exist in database after creation");
+            
+        Validator.ValidateObject(dbTask, new ValidationContext(dbTask), true);
+        
+        // Verify CreatedAt is recent
+        if (Math.Abs((timeProvider.GetUtcNow().UtcDateTime - responseBodyAsDto.CreatedAt).TotalSeconds) > 2)
+            throw new Exception("CreatedAt timestamp should be within 2 seconds of now");
     }
 }

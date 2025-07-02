@@ -33,7 +33,6 @@ public class Program
         });
         builder.Services.AddSwaggerWithXmlDocs();
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
-        Console.WriteLine("App options: " + JsonSerializer.Serialize(appOptions));
  
         builder.Services.AddDbContext<MyDbContext>(options =>
         {

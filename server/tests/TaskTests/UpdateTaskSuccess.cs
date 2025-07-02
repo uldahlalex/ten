@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
 using api.Controllers;
+using api.Etc;
 using api.Mappers;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
@@ -40,44 +41,64 @@ public class UpdateTaskSuccess
     public async Task UpdateTask_CanSuccessfullyUpdateTask()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var listId = ctx.Tasklists.OrderBy(o => o.CreatedAt).First().ListId;
-        var createdAt = _scopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().UtcDateTime;
-        var taskToUpdate =
-            new Tickticktask(createdAt, listId, "Test title","Test description", createdAt.AddDays(1), 5,false, null);
-        ctx.Tickticktasks.Add(taskToUpdate);
-        ctx.SaveChanges();
-
+        var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
+        var timeProvider = _scopedServiceProvider.GetRequiredService<TimeProvider>();
+        
+        // Use existing CriticalBugTask from test data to update
+        var taskToUpdateId = ids.CriticalBugTaskId;
 
         var request = new UpdateTaskRequestDto
         (
-            taskToUpdate.TaskId,
+            taskToUpdateId,
             title: "Updated Title",
             description: "Updated Description",
-            dueDate: _scopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().AddDays(10).UtcDateTime.ToUniversalTime(),
+            dueDate: timeProvider.GetUtcNow().AddDays(10).UtcDateTime.ToUniversalTime(),
             priority: 3,
             completed: true,
-            listId: ctx.Tasklists.OrderBy(o => o.CreatedAt).Reverse().FirstOrDefault()
-                .ListId //moving to a different list
+            listId: ids.PersonalListId // Moving from Work list to Personal list
         );
+        
         var response = await _client.PatchAsJsonAsync(_baseUrl + nameof(TicktickTaskController.UpdateTask), request);
-        response.EnsureSuccessStatusCode();
+        
+        if (!response.IsSuccessStatusCode)
+            throw new Exception($"Expected success status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
+            
         var updatedTask = await response.Content.ReadFromJsonAsync<TickticktaskDto>();
+        
+        if (updatedTask == null)
+            throw new Exception("Response body was null when deserializing to TickticktaskDto");
 
-        var taskInDb = ctx.Tickticktasks.First(t => t.TaskId == request.Id).ToDto();
-        Validator.ValidateObject(taskInDb, new ValidationContext(taskInDb), true);
-        if (request.Title != updatedTask.Title)
-            throw new Exception("Title was not updated");
-        if (request.Description != updatedTask.Description)
-            throw new Exception("Description was not updated");
-        if (request.DueDate != updatedTask.DueDate)
-            throw new Exception("DueDate was not updated");
-        if (request.Priority != updatedTask.Priority)
-            throw new Exception("Priority was not updated");
-        if (request.Completed != updatedTask.Completed)
-            throw new Exception("Expected completed to be " + request.Completed + " but was " + updatedTask.Completed);
-        if (request.ListId != updatedTask.ListId)
-            throw new Exception("ListId was not updated");
+        // Verify task was updated in database
+        var taskInDb = ctx.Tickticktasks.FirstOrDefault(t => t.TaskId == taskToUpdateId);
+        if (taskInDb == null)
+            throw new Exception($"Task with ID {taskToUpdateId} should exist in database");
+            
+        var taskDto = taskInDb.ToDto();
+        Validator.ValidateObject(taskDto, new ValidationContext(taskDto), true);
+        
+        if (updatedTask.Title != request.Title)
+            throw new Exception($"Expected title to be '{request.Title}' but got '{updatedTask.Title}'");
+            
+        if (updatedTask.Description != request.Description)
+            throw new Exception($"Expected description to be '{request.Description}' but got '{updatedTask.Description}'");
+            
+        if (updatedTask.DueDate != request.DueDate)
+            throw new Exception($"Expected due date to be {request.DueDate} but got {updatedTask.DueDate}");
+            
+        if (updatedTask.Priority != request.Priority)
+            throw new Exception($"Expected priority to be {request.Priority} but got {updatedTask.Priority}");
+            
+        if (updatedTask.Completed != request.Completed)
+            throw new Exception($"Expected completed to be {request.Completed} but got {updatedTask.Completed}");
+            
+        if (updatedTask.ListId != request.ListId)
+            throw new Exception($"Expected task to be moved to list {request.ListId} but got {updatedTask.ListId}");
+            
         if (updatedTask.CompletedAt == null)
-            throw new Exception("CompletedAt timestamp was not added when the task was marked as completed");
+            throw new Exception("CompletedAt timestamp should be set when task is marked as completed");
+            
+        // Verify CompletedAt is recent since we just completed it
+        if (Math.Abs((timeProvider.GetUtcNow().UtcDateTime - updatedTask.CompletedAt.Value).TotalSeconds) > 2)
+            throw new Exception("CompletedAt timestamp should be within 2 seconds of now");
     }
 }

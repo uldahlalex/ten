@@ -52,34 +52,31 @@ public class CreateListFailure
     [Test]
     public async Task CreateList_ShouldReturnBadRequest_WhenTakenName()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
-        var myLists = ctx.Tasklists.Where(l => l.UserId == ids.JohnId).ToList();
-        var listName = myLists.First().Name;
-        var request = new CreateListRequestDto(
-            listName
-            );
+        
+        // Based on TestDataSeeder, John already has a list named "Work Tasks"
+        var existingListName = "Work Tasks";
+        var request = new CreateListRequestDto(existingListName);
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);
 
         if (response.StatusCode != HttpStatusCode.BadRequest)
-            throw new Exception("Expected status 400 but got: " + response.StatusCode + " and message: " +
-                                await response.Content.ReadAsStringAsync());
+            throw new Exception($"Expected BadRequest status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
     }
     
     [Test]
     public async Task CreateList_ShouldAllowTakenName_IfItsSomeoneElsesList()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
         var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
-        var someoneElsesLists = ctx.Tasklists.Where(l => l.UserId != ids.JohnId);
-
-        var request = new CreateListRequestDto(someoneElsesLists.First().Name);
+        
+        // Based on TestDataSeeder, Jane has a list named "Jane's Tasks"
+        // John should be able to create a list with the same name since it's someone else's
+        var janeListName = "Jane's Tasks";
+        var request = new CreateListRequestDto(janeListName);
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);
 
         if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception("Expected status OK but got: " + response.StatusCode + " and message: " +
-                                await response.Content.ReadAsStringAsync());
+            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
     }
 }

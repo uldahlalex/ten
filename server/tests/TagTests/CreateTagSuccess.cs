@@ -38,20 +38,40 @@ public class CreateTagSuccess
     [Test]
     public async Task CreateTag()
     {
-        var tag = new CreateTagRequestDto("My new tag");
+        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+        var timeProvider = _scopedServiceProvider.GetRequiredService<TimeProvider>();
+        
+        var newTagName = "My new tag";
+        var tag = new CreateTagRequestDto(newTagName);
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateTag), tag);
+        
         if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception("Response status code expected OK but got " + response.StatusCode + " with message: " +
-                                await response.Content.ReadAsStringAsync());
+            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
 
-
-        var result = await response.Content.ReadFromJsonAsync<TagDto>() ??
-                     throw new Exception("Response content is null");
+        var result = await response.Content.ReadFromJsonAsync<TagDto>();
+        
+        if (result == null)
+            throw new Exception("Response body was null when deserializing to TagDto");
+            
         Validator.ValidateObject(result, new ValidationContext(result), true);
-        if (result.Name != tag.TagName)
-            throw new Exception("Expected tag name to be " + tag.TagName + " but got: " + result.Name);
-        _ = _scopedServiceProvider.GetRequiredService<MyDbContext>()
-            .Tags.First(t => t.TagId == result.TagId); //throws or finds
+        
+        if (result.Name != newTagName)
+            throw new Exception($"Expected tag name to be '{newTagName}' but got '{result.Name}'");
+            
+        if (string.IsNullOrEmpty(result.TagId))
+            throw new Exception("Created tag should have a non-empty TagId");
+            
+        // Verify tag exists in database
+        var dbTag = ctx.Tags.FirstOrDefault(t => t.TagId == result.TagId);
+        if (dbTag == null)
+            throw new Exception($"Tag with ID {result.TagId} should exist in database after creation");
+            
+        if (dbTag.Name != newTagName)
+            throw new Exception($"Database tag name should be '{newTagName}' but got '{dbTag.Name}'");
+            
+        // Verify CreatedAt is recent
+        if (Math.Abs((timeProvider.GetUtcNow().UtcDateTime - result.CreatedAt).TotalSeconds) > 2)
+            throw new Exception("CreatedAt timestamp should be within 2 seconds of now");
     }
 }

@@ -47,7 +47,7 @@ public class TotpController(IAuthenticationService authenticationService) : Cont
     public async Task<ActionResult> ToptUnregister([FromBody] TotpUnregisterRequestDto request,
         [FromHeader] string authorization)
     {
-        authenticationService.TotpUnregister(request, authorization);
+        await authenticationService.TotpUnregister(request, authorization);
 
         return Ok();
     }

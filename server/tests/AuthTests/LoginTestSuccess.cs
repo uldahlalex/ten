@@ -44,7 +44,10 @@ public class LoginTestSuccess
         if (response.StatusCode != HttpStatusCode.OK)
             throw new Exception($"Login failed: {response.StatusCode}");
         var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
-        _scopedServiceProvider.GetRequiredService<ISecurityService>()
-            .VerifyJwtOrThrowReturnClaims(jwt.Jwt); //throws if JWT issued is invalid
+        var jwtService = _scopedServiceProvider.GetRequiredService<IJwtService>();
+        var userService = _scopedServiceProvider.GetRequiredService<IUserDataService>();
+        var claims = jwtService.VerifyJwt(jwt.Jwt); //throws if JWT issued is invalid
+        if (!await userService.UserExistsAsync(claims.Id))
+            throw new Exception("User does not exist");
     }
 }

@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using api.Controllers;
+using api.Etc;
 using api.Models.Dtos.Requests;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
@@ -52,7 +53,8 @@ public class CreateListFailure
     public async Task CreateList_ShouldReturnBadRequest_WhenTakenName()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var myLists = ctx.Tasklists.Where(l => l.UserId == ApiTestSetupUtilities.UserId).ToList();
+        var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
+        var myLists = ctx.Tasklists.Where(l => l.UserId == ids.JohnId).ToList();
         var listName = myLists.First().Name;
         var request = new CreateListRequestDto(
             listName
@@ -69,8 +71,8 @@ public class CreateListFailure
     public async Task CreateList_ShouldAllowTakenName_IfItsSomeoneElsesList()
     {
         var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var myLists = ctx.Tasklists.Where(l => l.UserId == ApiTestSetupUtilities.UserId);
-        var someoneElsesLists = ctx.Tasklists.Where(l => l.UserId != ApiTestSetupUtilities.UserId);
+        var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
+        var someoneElsesLists = ctx.Tasklists.Where(l => l.UserId != ids.JohnId);
 
         var request = new CreateListRequestDto(someoneElsesLists.First().Name);
 

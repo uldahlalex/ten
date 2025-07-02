@@ -12,21 +12,21 @@ namespace api.Controllers;
 public class AuthController(IAuthenticationService authenticationService) : ControllerBase
 {
     [Route(nameof(Register))]
-    public Task<ActionResult<JwtResponse>> Register([FromBody] AuthRequestDto dto)
+    public async Task<ActionResult<JwtResponse>> Register([FromBody] AuthRequestDto dto)
     {
-        var responseDto = authenticationService.Register(dto);
+        var responseDto = await authenticationService.Register(dto);
 
-        return Task.FromResult<ActionResult<JwtResponse>>(Ok(responseDto));
+        return Ok(responseDto);
     }
 
 
 
     [HttpPost]
     [Route(nameof(Login))]
-    public Task<ActionResult<JwtResponse>> Login([FromBody] AuthRequestDto dto)
+    public async Task<ActionResult<JwtResponse>> Login([FromBody] AuthRequestDto dto)
     {
-        var responseDto =  authenticationService.Login(dto);
-        return Task.FromResult<ActionResult<JwtResponse>>(Ok(responseDto));
+        var responseDto = await authenticationService.Login(dto);
+        return Ok(responseDto);
     }
 
   

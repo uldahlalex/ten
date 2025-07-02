@@ -6,14 +6,16 @@ public class EmptyEnvironment(MyDbContext ctx) : ISeeder
 {
     public void SeedDatabase()
     {
-        ctx.Database.EnsureDeleted(); //only use this if using testcontainers
         ctx.Database.EnsureCreated();
 
-        // Clear existing data
-        ctx.TaskTags.RemoveRange(ctx.TaskTags);
-        ctx.Tickticktasks.RemoveRange(ctx.Tickticktasks);
-        ctx.Tasklists.RemoveRange(ctx.Tasklists);
-        ctx.Tags.RemoveRange(ctx.Tags);
-        ctx.Users.RemoveRange(ctx.Users);
+      
+            if (ctx.TaskTags.Any()) ctx.TaskTags.RemoveRange(ctx.TaskTags);
+            if (ctx.Tickticktasks.Any()) ctx.Tickticktasks.RemoveRange(ctx.Tickticktasks);
+            if (ctx.Tasklists.Any()) ctx.Tasklists.RemoveRange(ctx.Tasklists);
+            if (ctx.Tags.Any()) ctx.Tags.RemoveRange(ctx.Tags);
+            if (ctx.Users.Any()) ctx.Users.RemoveRange(ctx.Users);
+            ctx.SaveChanges();
+     
+        
     }
 }

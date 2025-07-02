@@ -146,6 +146,8 @@ public static class ApiTestSetupUtilities
         return client;
     }
 
+    /// <summary>
+    /// Decoded it becomes {"id": "user-1" }
+    /// </summary>
     public static string Jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMSJ9.LUnCy-TvtvyRhFyyg2qFFwhGMLYAFFFqrKEcBLFAf1Q";
-    public static string UserId = "user-1";
 }

@@ -24,10 +24,6 @@
         <ProjectReference Include="../efscaffold/efscaffold.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Factories\" />
-    </ItemGroup>
-
     <PropertyGroup>
         <!--        Used for XML comments above types for OpenAPI definition -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>

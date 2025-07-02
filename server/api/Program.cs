@@ -14,7 +14,16 @@ public class Program
     {
 
         builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
-        builder.Services.AddScoped<ISecurityService, SecurityService>();
+        // Level 0: Foundation services (no dependencies)
+        builder.Services.AddScoped<ICryptographyService, CryptographyService>();
+        builder.Services.AddScoped<IJwtService, JwtService>();
+        builder.Services.AddScoped<ITotpService, TotpService>();
+        
+        // Level 1: Data services (depend on DbContext + Level 0)
+        builder.Services.AddScoped<IUserDataService, UserDataService>();
+        builder.Services.AddScoped<ITaskDataService, TaskDataService>();
+        
+        // Level 2: Business services (depend on Level 0 + Level 1)
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
         builder.Services.AddOpenApiDocument(conf =>

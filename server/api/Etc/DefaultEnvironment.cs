@@ -70,7 +70,7 @@ public class TestDataIds : ITestDataIds
 /// Test database seeder that creates objects using the test IDs
 /// </summary>
 public class TestDataSeeder(ITestDataIds ids,
-    ISecurityService securityService, TimeProvider timeProvider, ILogger<TestDataSeeder> logger, MyDbContext ctx) : ISeeder
+    ITotpService totpService, TimeProvider timeProvider, ILogger<TestDataSeeder> logger, MyDbContext ctx) : ISeeder
 {
     private readonly DateTime _baseTime = timeProvider.GetUtcNow().UtcDateTime;
 
@@ -88,7 +88,7 @@ public class TestDataSeeder(ITestDataIds ids,
                 salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
                 passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
                 role: Role.User,
-                totpSecret: securityService.GenerateSecretKey(),
+                totpSecret: totpService.GenerateSecretKey(),
                 createdAt: _baseTime.AddDays(-30),
                 userId: ids.JohnId
             );
@@ -98,7 +98,7 @@ public class TestDataSeeder(ITestDataIds ids,
                 salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
                 passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
                 role: Role.User,
-                totpSecret: securityService.GenerateSecretKey(),
+                totpSecret: totpService.GenerateSecretKey(),
                 createdAt: _baseTime.AddDays(-25),
                 userId: ids.JaneId
             );
@@ -108,7 +108,7 @@ public class TestDataSeeder(ITestDataIds ids,
                 salt: "f50528c0-0292-4e71-a2b3-bc6cd41ab884",
                 passwordHash: "6z29FedE+NmCXtu/ANEyxMBKys5F9yAoh3AKgRMosei+Q+nJowkSoaV/RFxzpsRMnp1L1l+tVnH5qTx3Mgc4tA==",
                 role: Role.User,
-                totpSecret: securityService.GenerateSecretKey(),
+                totpSecret: totpService.GenerateSecretKey(),
                 createdAt: _baseTime.AddDays(-35),
                 userId: ids.AdminId
             );

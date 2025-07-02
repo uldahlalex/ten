@@ -47,8 +47,11 @@ public class RegisterTestsSuccess
                                 $"Response: {await response.Content.ReadAsStringAsync()}");
 
         var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
-        _scopedServiceProvider.GetRequiredService<ISecurityService>()
-            .VerifyJwtOrThrowReturnClaims(jwt.Jwt); //throws if JWT issued is invalid
+        var jwtService = _scopedServiceProvider.GetRequiredService<IJwtService>();
+        var userService = _scopedServiceProvider.GetRequiredService<IUserDataService>();
+        var claims = jwtService.VerifyJwt(jwt.Jwt); //throws if JWT issued is invalid
+        if (!await userService.UserExistsAsync(claims.Id))
+            throw new Exception("User does not exist");
         _ = _scopedServiceProvider.GetRequiredService<MyDbContext>().Users
             .First(u => u.Email == reqDto.Email); //throws if not found
     }

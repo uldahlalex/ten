@@ -28,7 +28,7 @@ public class SecurityService(IOptionsMonitor<AppOptions> optionsMonitor, MyDbCon
     }
 
 
-    public JwtClaims VerifyJwtOrThrow(string jwt)
+    public JwtClaims VerifyJwtOrThrowReturnClaims(string jwt)
     {
         if (string.IsNullOrEmpty(jwt))
             throw new Exception("No JWT attached!");

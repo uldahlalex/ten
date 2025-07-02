@@ -48,7 +48,7 @@ public class RegisterTestsSuccess
 
         var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
         _scopedServiceProvider.GetRequiredService<ISecurityService>()
-            .VerifyJwtOrThrow(jwt.Jwt); //throws if JWT issued is invalid
+            .VerifyJwtOrThrowReturnClaims(jwt.Jwt); //throws if JWT issued is invalid
         _ = _scopedServiceProvider.GetRequiredService<MyDbContext>().Users
             .First(u => u.Email == reqDto.Email); //throws if not found
     }

@@ -33,6 +33,7 @@ public class Program
         });
         builder.Services.AddSingleton<ITestDataIds, TestDataIds>();
 builder.Services.AddTransient<ISeeder, TestDataSeeder>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddSingleton<IWebHostPortAllocationService, ProductionPortAllocationService>();

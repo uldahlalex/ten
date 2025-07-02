@@ -45,6 +45,6 @@ public class LoginTestSuccess
             throw new Exception($"Login failed: {response.StatusCode}");
         var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
         _scopedServiceProvider.GetRequiredService<ISecurityService>()
-            .VerifyJwtOrThrow(jwt.Jwt); //throws if JWT issued is invalid
+            .VerifyJwtOrThrowReturnClaims(jwt.Jwt); //throws if JWT issued is invalid
     }
 }

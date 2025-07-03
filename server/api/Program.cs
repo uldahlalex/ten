@@ -59,6 +59,33 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             conf.Path = "/swagger";
             conf.DocumentPath = "/openapi/v1.json";
         });
+        
+        // Serve static files from wwwroot (React build output) or client folder in development
+        if (app.Environment.IsDevelopment())
+        {
+            var clientPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "../../client/dist"));
+            app.Services.GetRequiredService<ILogger<Program>>().LogInformation($"Looking for client files at: {clientPath}");
+            
+            if (Directory.Exists(clientPath))
+            {
+                app.Services.GetRequiredService<ILogger<Program>>().LogInformation("Serving React app from client/dist folder");
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(clientPath),
+                    RequestPath = ""
+                });
+            }
+            else
+            {
+                app.Services.GetRequiredService<ILogger<Program>>().LogWarning($"Client dist folder not found at: {clientPath}");
+                app.UseStaticFiles(); // Fallback to wwwroot
+            }
+        }
+        else
+        {
+            app.UseStaticFiles();
+        }
+        
         app.MapControllers();
         app.GenerateTypeScriptClientFromOpenApi("/../../client/src/models/generated-client.ts").Wait();
         app.MapScalarApiReference();
@@ -77,6 +104,26 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             }
         }
 
+        // Fallback routing for React Router (SPA)
+        if (app.Environment.IsDevelopment())
+        {
+            var clientPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "../../client/dist"));
+            if (Directory.Exists(clientPath))
+            {
+                app.MapFallbackToFile("index.html", new StaticFileOptions
+                {
+                    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(clientPath)
+                });
+            }
+            else
+            {
+                app.MapFallbackToFile("index.html");
+            }
+        }
+        else
+        {
+            app.MapFallbackToFile("index.html");
+        }
 
         return app;
     }

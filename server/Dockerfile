@@ -1,3 +1,12 @@
+# Build React app
+FROM node:18-alpine AS client-build
+WORKDIR /client
+COPY ["../client/package*.json", "./"]
+RUN npm ci
+COPY ["../client/", "./"]
+RUN npm run build
+
+# Build .NET API
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 WORKDIR /src
 COPY [".", "."]
@@ -7,6 +16,9 @@ RUN dotnet publish "api/api.csproj" \
     --runtime linux-musl-x64 \
     --self-contained true \
     /p:PublishSingleFile=true
+
+# Copy React build output to wwwroot
+COPY --from=client-build /client/dist /app/publish/wwwroot
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:9.0-alpine
 WORKDIR /app

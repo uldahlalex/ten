@@ -14,8 +14,6 @@
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.10.0" />
         <PackageReference Include="TUnit" Version="0.25.21" />
         <PackageReference Include="Moq" Version="4.20.72"/>
-        <PackageReference Include="Microsoft.Playwright" Version="1.53.0" />
-        <PackageReference Include="Docker.DotNet" Version="3.125.15" />
     </ItemGroup>
 
     <ItemGroup>

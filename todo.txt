@@ -1,11 +1,8 @@
 Aktuelt:
-playwright ui tests with docker
+- diagrams og docs
+    - 
 
-client app nye features
+- client app nye features
       - create, update, delete list
       - create, update, delete tag
       - tasklist orderbys og flere filtre evt (eller lav custom filter til at gemme hvis det skal være mere avanceret)
-
-til sidst:
-- skriv en masse dokumentation og visualisering i README
-

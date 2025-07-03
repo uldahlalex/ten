@@ -63,22 +63,6 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         app.GenerateTypeScriptClientFromOpenApi("/../../client/src/models/generated-client.ts").Wait();
         app.MapScalarApiReference();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-        
-        // Serve static files from client/dist
-        var clientDistPath = Path.Combine(Directory.GetCurrentDirectory(), "../../client/dist");
-        if (Directory.Exists(clientDistPath))
-        {
-            app.UseDefaultFiles(new DefaultFilesOptions
-            {
-                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(clientDistPath),
-                RequestPath = ""
-            });
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(clientDistPath),
-                RequestPath = ""
-            });
-        }
         var environment = app.Environment.EnvironmentName;
         app.Services.GetRequiredService<ILogger<Program>>().LogInformation("ENV: " + environment);
 
@@ -93,41 +77,6 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             }
         }
 
-        app.Use(async (context, next) =>
-        {
-            await next();
-
-            if (context.Response.StatusCode == 404)
-            {
-                // If this is an API route, return JSON error
-                if (context.Request.Path.StartsWithSegments("/api") || 
-                    context.Request.Path.StartsWithSegments("/swagger") || 
-                    context.Request.Path.StartsWithSegments("/openapi") ||
-                    context.Request.Path.StartsWithSegments("/scalar"))
-                {
-                    context.Response.ContentType = "application/json";
-                    var problemDetails = new ProblemDetails
-                    {
-                        Title = "Route not found",
-                        Detail = $"The route {context.Request.Path} does not exist (no controller methods match)",
-                        Status = StatusCodes.Status404NotFound
-                    };
-                    await context.Response.WriteAsJsonAsync(problemDetails);
-                }
-                else
-                {
-                    // For non-API routes, serve the SPA fallback (index.html) if it exists
-                    var clientDistPath = Path.Combine(Directory.GetCurrentDirectory(), "../../client/dist");
-                    var indexPath = Path.Combine(clientDistPath, "index.html");
-                    if (File.Exists(indexPath))
-                    {
-                        context.Response.StatusCode = 200;
-                        context.Response.ContentType = "text/html";
-                        await context.Response.SendFileAsync(indexPath);
-                    }
-                }
-            }
-        });
 
         return app;
     }

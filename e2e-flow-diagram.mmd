@@ -1,0 +1,64 @@
+graph TB
+    %% E2E Test Architecture Flow
+    
+    subgraph Host["💻 Host Machine (Arch Linux)"]
+        subgraph Build["🔨 Build Process"]
+            ReactBuild["⚛️ React Build<br/>npm run build<br/>→ client/dist/"]
+        end
+        
+        subgraph TestRunner["🧪 Test Execution"]
+            TUnit["🧪 TUnit/NUnit<br/>E2E Test Runner<br/>C# .NET 9"]
+            API["🌐 .NET API Server<br/>Port: 808x<br/>Serves: API + SPA"]
+        end
+        
+        subgraph Connection["🔗 Connections"]
+            WSClient["📡 WebSocket Client<br/>PW_TEST_CONNECT_WS_ENDPOINT<br/>ws://127.0.0.1:3000/"]
+            HTTPClient["🌐 HTTP Client<br/>API Requests<br/>+ JWT Auth"]
+        end
+    end
+    
+    subgraph Docker["🐳 Docker Environment"]
+        subgraph PWServer["🎭 Playwright Server Container"]
+            PWService["🎭 Playwright Service<br/>mcr.microsoft.com/playwright:v1.53.0-noble<br/>Port: 3000"]
+            Browsers["🌐 Browser Engines<br/>• Chromium<br/>• Firefox<br/>• WebKit"]
+        end
+        
+        subgraph TestContainers["📦 TestContainers (Per Test)"]
+            Postgres["🐘 PostgreSQL<br/>Schema: test_{guid}<br/>Seeded Data:<br/>• 3 users<br/>• 5 tags<br/>• 5 tasks"]
+        end
+    end
+    
+    subgraph TestFlow["🔄 Test Execution Flow"]
+        Step1["1️⃣ Setup Phase<br/>• Build React<br/>• Start Playwright Server<br/>• Create Test DB"]
+        Step2["2️⃣ Test Initialization<br/>• Connect to Playwright<br/>• Start API Server<br/>• Configure Static Files"]
+        Step3["3️⃣ Browser Actions<br/>• Navigate to SPA<br/>• UI Interactions<br/>• Form Submissions"]
+        Step4["4️⃣ API Testing<br/>• HTTP Requests<br/>• Authentication<br/>• Data Validation"]
+        Step5["5️⃣ Cleanup<br/>• Close Browser<br/>• Stop API<br/>• Destroy DB"]
+    end
+    
+    %% Connections
+    ReactBuild --> API
+    TUnit --> WSClient
+    TUnit --> HTTPClient
+    WSClient -.->|WebSocket| PWService
+    HTTPClient -.->|HTTP/API| API
+    PWService --> Browsers
+    API -.->|Database| Postgres
+    TUnit --> TestContainers
+    
+    %% Flow connections
+    Step1 --> Step2
+    Step2 --> Step3
+    Step3 --> Step4
+    Step4 --> Step5
+    
+    %% Styling
+    classDef dockerClass fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef hostClass fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    classDef flowClass fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef reactClass fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    
+    class Docker,PWServer,TestContainers dockerClass
+    class Host,Build,TestRunner,Connection hostClass
+    class TestFlow,Step1,Step2,Step3,Step4,Step5 flowClass
+    class ReactBuild reactClass

@@ -1,7 +1,5 @@
 Aktuelt:
-
-
-playwright ui tests
+playwright ui tests with docker
 
 client app nye features
       - create, update, delete list

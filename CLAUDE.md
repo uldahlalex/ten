@@ -16,6 +16,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `cd server/tests && dotnet run -c Release` - Run all TUnit tests
 - `cd server/tests && dotnet run -c Release --output Detailed` - Run tests with detailed output
 - `cd server/tests && dotnet run -c Release --treenode-filter /*/*/GetMyTags/*` - Run filtered tests
+- `./run-e2e-with-docker.sh` - Run E2E tests using Playwright server in Docker (recommended)
+- `cd server/tests && PW_TEST_CONNECT_WS_ENDPOINT=ws://127.0.0.1:3000/ dotnet run -c Release` - Run E2E tests with TUnit (requires Playwright server running)
+- `cd server/tests-e2e && PW_TEST_CONNECT_WS_ENDPOINT=ws://127.0.0.1:3000/ dotnet test` - Run E2E tests with NUnit (requires Playwright server running)
 
 ### Database
 - `cd server/efscaffold && ./scaffold.sh` - Regenerate Entity Framework models from database schema

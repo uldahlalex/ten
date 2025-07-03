@@ -1,11 +1,14 @@
 import React, {useState} from "react";
 import {totpClient} from "../../../../../apiControllerClients";
 import toast from "react-hot-toast";
+import {useNavigate} from "react-router-dom";
+import {TotpSignInRoute} from "../../../../routes.ts";
 
 export default function TotpRegister() {
 
     const [email, setEmail] = useState<string>('');
     const [qrCode, setQrCode] = useState('');
+    const navigate = useNavigate();
 
 
     const handleRegister = async () => {
@@ -48,6 +51,7 @@ export default function TotpRegister() {
                     <p className="text-sm text-gray-600">
                         Scan this QR code with your authenticator app
                     </p>
+                <button className="btn btn-primary" onClick={() => navigate(TotpSignInRoute)}>I have now scanned the code with my device</button>
                 </div>)
 
             }

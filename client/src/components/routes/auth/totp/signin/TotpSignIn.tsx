@@ -4,11 +4,14 @@ import {useAtom} from 'jotai';
 import toast from "react-hot-toast";
 import {JwtAtom} from "@/atoms";
 import SignOut from "../../../../../functions/signOut";
+import {useNavigate} from "react-router-dom";
+import {mainLayoutPath} from "../../../../routes.ts";
 
 export default function TotpSignIn() {
     const [jwt, setJwt] = useAtom(JwtAtom);
     const [totpCode, setTotpCode] = useState('');
     const [email, setEmail] = useState('');
+    const navigate = useNavigate();
 
 
     const handleLogin = async () => {
@@ -21,6 +24,7 @@ export default function TotpSignIn() {
             setJwt(response);
             toast.success('Login successful!');
             setTotpCode('');
+            navigate(mainLayoutPath)
         } catch {
             toast.error('Invalid code');
             setTotpCode('');
@@ -94,15 +98,7 @@ export default function TotpSignIn() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-
-                    {/*<button*/}
-                    {/*    onClick={handleRotate}*/}
-                    {/*    disabled={totpCode.length !== 6}*/}
-                    {/*    className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 */}
-                    {/*                 disabled:bg-gray-300 disabled:cursor-not-allowed"*/}
-                    {/*>*/}
-                    {/*    Rotate Secret*/}
-                    {/*</button>*/}
+                    
                 </div>
 
                 <button

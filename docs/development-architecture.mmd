@@ -1,0 +1,49 @@
+---
+title: "Development Architecture - Building and Serving"
+---
+
+flowchart TD
+    %% Source Code
+    REACTSRC["📱 React & Vite app code"]
+    
+    %% Build Process
+    BUILD["⚙️ Build Process<br/>npm run build<br/>Creates optimized files"]
+    
+    %% Static Files
+    STATIC["📦 Static Files<br/>HTML, CSS, JS<br/>Ready to serve"]
+    
+    %% Server
+    SERVER["🖥️ .NET Server<br/>localhost:5000<br/>Serves both:<br/>• Static files (React app)<br/>• JSON API data"]
+    
+    %% Database
+    DB["🗄️ Database<br/>Stores your data"]
+    
+    %% Browser
+    BROWSER["🌐 Browser<br/>localhost:5000"]
+    
+    %% Build Flow
+    REACTSRC --> BUILD
+    BUILD --> STATIC
+    STATIC --> SERVER
+    
+    %% Runtime Flow
+    SERVER --> DB
+    BROWSER --> SERVER
+    
+    %% Labels
+    BUILD -.->|"Compiles & optimizes"| STATIC
+    SERVER -.->|"Serves React app<br/>& handles API calls"| BROWSER
+    SERVER -.->|"DB queries and commands"| DB
+    
+    %% Styling
+    classDef source fill:transparent,stroke:#7b1fa2,stroke-width:2px
+    classDef build fill:transparent,stroke:#f57c00,stroke-width:2px
+    classDef server fill:transparent,stroke:#1976d2,stroke-width:2px
+    classDef browser fill:transparent,stroke:#c2185b,stroke-width:2px
+    classDef database fill:transparent,stroke:#263238,stroke-width:2px
+    
+    class REACTSRC source
+    class BUILD,STATIC build
+    class SERVER server
+    class BROWSER browser
+    class DB database

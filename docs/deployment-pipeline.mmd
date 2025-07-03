@@ -1,0 +1,34 @@
+---
+config:
+  layout: fixed
+title: Deployment Pipeline - From Code to Production
+---
+flowchart TD
+    REACTSRC["📱 React & vite code"] --> BUILD["🏗️ Docker Build<br>1. Builds React app<br>2. Builds .NET API<br>3. Combines into container"]
+    DOTNETSRC["🔷 .NET Code<br>C# API"] --> BUILD
+    DOCKERFILE["📄 Dockerfile<br>Build instructions<br>How to create container"] --> BUILD
+    FLYTOML["⚙️ fly.toml<br>App configuration<br>Regions, scaling"] --> DEPLOY["🚀 fly deploy<br>Reads fly.toml<br>Builds &amp; uploads container"]
+    BUILD --> DEPLOY
+    DEPLOY --> PRODSERVER["🌐 Production Server<br>Single server on internet<br>Serves both:<br>• Static files (React app)<br>• JSON API data"]
+    SECRETS["🔐 Fly Secrets<br>Database passwords<br>API keys"] --> PRODSERVER
+    PRODSERVER --> DB["🗄️ Database<br>Stores your data"]
+    USERS["👥 Users<br>Access your app<br>from anywhere"] --> PRODSERVER
+    BUILD -. Creates container .-> DEPLOY
+    DEPLOY -. Deploys to cloud .-> PRODSERVER
+    REACTSRC:::source
+    BUILD:::build
+    DOTNETSRC:::source
+    DOCKERFILE:::config
+    FLYTOML:::config
+    DEPLOY:::deploy
+    PRODSERVER:::deploy
+    SECRETS:::secrets
+    DB:::database
+    USERS:::users
+    classDef source fill:transparent,stroke:#7b1fa2,stroke-width:2px
+    classDef config fill:transparent,stroke:#f57c00,stroke-width:2px
+    classDef build fill:transparent,stroke:#0288d1,stroke-width:2px
+    classDef deploy fill:transparent,stroke:#388e3c,stroke-width:2px
+    classDef secrets fill:transparent,stroke:#d32f2f,stroke-width:2px
+    classDef database fill:transparent,stroke:#263238,stroke-width:2px
+    classDef users fill:transparent,stroke:#c2185b,stroke-width:2px

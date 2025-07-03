@@ -1,0 +1,35 @@
+---
+title: "Development Workflow - Two Servers During Development"
+---
+
+flowchart TD
+    %% Browser
+    BROWSER["🌐 Browser<br/>localhost:5173"]
+    
+    %% Two servers
+    VITE["⚡ Vite Server<br/>localhost:5173<br/>Serves React app<br/>Fast refresh"]
+    
+    API["🔌 API Server<br/>localhost:5000<br/>Serves JSON data<br/>Database access"]
+    
+    %% Database
+    DB["🗄️ Database<br/>Stores your data"]
+    
+    %% Connections
+    BROWSER --> VITE
+    BROWSER --> API
+    API --> DB
+    
+    %% Labels
+    BROWSER -.->|"Gets web pages"| VITE
+    BROWSER -.->|"Gets/sends data"| API
+    
+    %% Styling
+    classDef browser fill:transparent,stroke:#c2185b,stroke-width:2px
+    classDef vite fill:transparent,stroke:#646cff,stroke-width:2px
+    classDef api fill:transparent,stroke:#1976d2,stroke-width:2px
+    classDef database fill:transparent,stroke:#263238,stroke-width:2px
+    
+    class BROWSER browser
+    class VITE vite
+    class API api
+    class DB database

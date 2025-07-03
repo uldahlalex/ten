@@ -1,12 +1,15 @@
 Aktuelt:
+- mermaid.js editor
 
 - Bruger jeg stadig swashbuckle og nswag på samme tid? kan dette simplificeres/optimeres?
     - Fik jeg kommentarer konverteret?
 
 
-- diagrams og docs (og kan jeg få kode snippets i diagrammerne?)
+- diagrams og docs
+    - Basic development mode with kestrel serving static files setup
     - Program.cs setup
     - Test setup with WebApplication & test containers
+    - Github Actions
     - NSwag http client from generatd openapi
     - DB Scaffolding and re-scaffolding
     - Global exception handler

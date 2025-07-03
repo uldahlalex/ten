@@ -1,0 +1,58 @@
+---
+title: "AppOptions Configuration Hierarchy"
+---
+
+flowchart TD
+    %% Configuration Sources (Priority Order)
+    ENV["`**Environment Variables**
+    *Highest Priority*`"]
+    ASD["`**appsettings.Development.json**
+    *Environment-Specific*`"]
+    AS["`**appsettings.json**
+    *Base Configuration*`"]
+    
+    %% Configuration System
+    CONFIG["`**IConfiguration**
+    *Merged Configuration*`"]
+    
+    %% Registration Process
+    BIND["`**Configuration Binding**
+    *GetSection('AppOptions')*`"]
+    VAL["`**Validation**
+    *DataAnnotations*`"]
+    
+    %% Dependency Injection
+    DI["`**Dependency Injection**
+    *IOptionsMonitor<AppOptions>*`"]
+    
+    %% Usage
+    SERVICES["`**Application Services**
+    *Consume AppOptions*`"]
+    
+    %% Flow - Configuration Hierarchy
+    ENV --> CONFIG
+    ASD --> CONFIG
+    AS --> CONFIG
+    
+    %% Flow - DI Registration
+    CONFIG --> BIND
+    BIND --> VAL
+    VAL --> DI
+    DI --> SERVICES
+    
+    %% Priority annotations
+    ENV -.->|"Overrides"| ASD
+    ASD -.->|"Overrides"| AS
+    
+    %% Styling
+    classDef high fill:#ffcdd2,stroke:#d32f2f,stroke-width:2px
+    classDef medium fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef low fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef system fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef consume fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    class ENV high
+    class ASD medium
+    class AS low
+    class CONFIG,BIND,VAL system
+    class DI,SERVICES consume

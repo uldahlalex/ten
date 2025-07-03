@@ -74,11 +74,13 @@ if [ "$CHOICE" = "1" ]; then
     fi
 else
     echo "Running TUnit tests (all tests including E2E)..."
+    echo "Note: TUnit will run ALL tests (API + E2E) due to filtering limitations."
+    echo "For E2E-only tests, use the NUnit option instead."
     cd server/tests
     if dotnet run -c Release; then
-        echo "E2E tests completed successfully!"
+        echo "All tests (including E2E) completed successfully!"
     else
-        echo "E2E tests failed!"
+        echo "Tests failed!"
         exit 1
     fi
 fi

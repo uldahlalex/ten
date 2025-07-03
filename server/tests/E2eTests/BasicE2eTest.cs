@@ -4,6 +4,7 @@ using TUnit.Core;
 
 namespace tests.E2eTests;
 
+[Category("E2E")]
 public class BasicE2eTest : E2eTestBase
 {
     [Test]

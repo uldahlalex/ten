@@ -1,8 +1,11 @@
 Aktuelt:
 - diagrams og docs
-    - 
+    - configuration system with options pattern, appsettings, environment variables, gh secrets, 
+    - docker build and deploy to fly with secrets?
+    - Program.cs setup
+    - Test setup with WebApplication & test containers
+    - NSwag http client from generatd openapi
+    - DB Scaffolding and re-scaffolding
+    - Feature operations
+       - Get task by ID (from UI activity, dispatching http request, mapping, etc)
 
-- client app nye features
-      - create, update, delete list
-      - create, update, delete tag
-      - tasklist orderbys og flere filtre evt (eller lav custom filter til at gemme hvis det skal være mere avanceret)

@@ -20,6 +20,7 @@ export default tseslint.config(
       'import': importPlugin,
     },
     rules: {
+      '@typescript-eslint/no-unused-vars': "warn",
       ...reactHooks.configs.recommended.rules,
       'react-hooks/exhaustive-deps': 'off',
       'react-refresh/only-export-components': [
@@ -27,7 +28,7 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       'import/no-restricted-paths': [
-        'error',
+        'warn',
         {
           zones: [
             {
@@ -54,7 +55,7 @@ export default tseslint.config(
         }
       ],
       'no-restricted-imports': [
-        'error',
+        'warn',
         {
           patterns: [
             {

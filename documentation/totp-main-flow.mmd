@@ -1,0 +1,57 @@
+sequenceDiagram
+    participant U as User/Phone
+    participant C as Client App  
+    participant S as Server
+    participant DB as Database
+    participant A as Authenticator App
+
+    rect rgb(0, 0, 0, 0)
+        Note over U,A: PASSWORDLESS TOTP REGISTRATION
+        U->>C: Request new account with email
+        C->>S: POST /TotpRegister {email}
+        
+        alt User already exists
+            S->>DB: Check if email exists
+            S-->>C: Error: "User already exists"
+            C-->>U: Registration failed
+        else New user registration
+            S->>S: Generate TOTP secret (20 bytes → Base32)
+            S->>DB: Create user: {email, totpSecret, no password}
+            S->>S: Create otpauth URL:<br/>otpauth://totp/TickTickClone:userId?<br/>secret=SECRET&issuer=TickTickClone
+            S->>S: Generate QR code from URL
+            S-->>C: Return {userId, qrCodeBase64, secretKey, message}
+            
+            C-->>U: Display QR code + instructions
+            U->>A: Scan QR code with authenticator app
+            Note over A: App extracts and stores:<br/>- App: TickTickClone<br/>- Account: userId<br/>- Secret: BASE32_SECRET
+            Note over A: Starts generating 6-digit codes<br/>(refreshes every 30 seconds)
+        end
+    end
+
+    rect rgb(0, 0, 0, 0)
+        Note over U,A: PASSWORDLESS TOTP LOGIN
+        Note over U: User wants to sign in
+        Note over A: Shows current 6-digit TOTP code
+        U->>C: Enter email + current TOTP code
+        C->>S: POST /TotpLogin {email, totpCode}
+        
+        S->>DB: Get user by email
+        alt User not found
+            S-->>C: Error: "User not found" 
+            C-->>U: Login failed
+        else User found
+            S->>S: Validate TOTP code:<br/>1. Decode stored Base32 secret<br/>2. Generate expected code for current time<br/>3. Check against provided code<br/>4. Allow ±1 time window (90 seconds total)
+            
+            alt Valid TOTP code
+                S->>S: Generate JWT token with user claims
+                S-->>C: Return {jwt}
+                C->>C: Store JWT for API calls
+                C-->>U: Login successful → redirect to app
+            else Invalid TOTP code
+                S-->>C: Error: "Invalid TOTP code"
+                C-->>U: Login failed → try again
+            end
+        end
+    end
+
+    Note over U,A: User is now authenticated and can access protected resources<br/>using JWT token for API authorization

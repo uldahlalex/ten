@@ -2,6 +2,7 @@ import {CreateTaskRequestDto} from "@/models";
 import React, {FormEvent, useState} from "react";
 import {useAtom} from "jotai";
 import {ListsAtom, TagsAtom} from "@/atoms";
+import DateTimeInput from "../../reusables/DateTime.tsx";
 
 interface CreateNewTaskProps {
     onSubmit: (task: CreateTaskRequestDto) => void;
@@ -57,13 +58,17 @@ export default function CreateNewTask({onSubmit, onCancel}: CreateNewTaskProps) 
                     <label className="label">
                         <span className="label-text">Due Date</span>
                     </label>
-                    <input
-                        type="date"
-                        className="input input-bordered w-full"
-                        value={new Date(newTask.dueDate!)?.toISOString().split('T')[0]}
-                        onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
-                        required
+                    <DateTimeInput
+                        onChange={date => setNewTask({...newTask,dueDate: date.toISOString()})}
+                        value={new Date(newTask.dueDate!)}
                     />
+                    {/*<input*/}
+                    {/*    type="date"*/}
+                    {/*    className="input input-bordered w-full"*/}
+                    {/*    value={new Date(newTask.dueDate!)?.toISOString().split('T')[0]}*/}
+                    {/*    onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}*/}
+                    {/*    required*/}
+                    {/*/>*/}
                 </div>
 
                 <div className="form-control w-full">

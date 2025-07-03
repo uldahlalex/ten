@@ -90,6 +90,8 @@ export default function TaskList() {
                                     setTasks([...tasks, result]);
                                     toast.success("Task created successfully");
                                     setCreateModalControl(false);
+                                }).catch(e => {
+                                    toast.error('Failed: '+e)
                                 })
                             }}/>
                         </div>

@@ -1,0 +1,78 @@
+sequenceDiagram
+    participant U as User/Phone
+    participant C as Client App  
+    participant S as Server
+    participant DB as Database
+    participant A as Authenticator App
+
+    rect rgb(0, 0, 0, 0)
+        Note over U,A: TOTP SECRET ROTATION (Security Maintenance)
+        Note over U,C: User wants to change TOTP secret<br/>(device lost, security concern, etc.)
+        Note over A: Generate current TOTP code
+        U->>C: Current TOTP code + rotation request
+        C->>S: POST /TotpRotate {currentTotpCode}<br/>Authorization: Bearer JWT
+        
+        S->>S: Verify JWT token → extract user.id
+        S->>DB: Get user by JWT.id
+        S->>S: Validate current TOTP code against stored secret
+        
+        alt Invalid current TOTP code
+            S-->>C: Error: "Invalid TOTP code"
+            C-->>U: Rotation failed - incorrect code
+        else Valid current TOTP code
+            S->>S: Generate NEW TOTP secret (20 bytes → Base32)
+            S->>DB: Update user.TotpSecret = newSecret
+            S->>S: Create new otpauth URL with new secret
+            S->>S: Generate new QR code
+            S-->>C: Return {userId, qrCodeBase64, secretKey, message}
+            
+            C-->>U: Display new QR code + instructions
+            Note over U: Must scan NEW QR code
+            U->>A: Scan new QR code → replaces old secret
+            Note over A: Old secret deleted<br/>New secret starts generating codes
+            Note over U,A: Old TOTP codes no longer work<br/>Only new secret generates valid codes
+        end
+    end
+
+    rect rgb(0, 0, 0, 0)
+        Note over U,A: TOTP ACCOUNT DELETION (Complete Removal)
+        Note over U,C: User wants to permanently delete account
+        Note over A: Generate current TOTP code
+        U->>C: TOTP code + deletion confirmation
+        C->>S: DELETE /ToptUnregister {totpCode}<br/>Authorization: Bearer JWT
+        
+        S->>S: Verify JWT token → extract user.id
+        S->>DB: Get user by JWT.id
+        S->>S: Validate TOTP code against stored secret
+        
+        alt Invalid TOTP code
+            S-->>C: Error: "Invalid TOTP code" 
+            C-->>U: Deletion failed - incorrect code
+        else Valid TOTP code
+            S->>DB: DELETE user account completely<br/>(user data, tasks, lists, tags, etc.)
+            S-->>C: Success: Account deleted
+            C->>C: Clear stored JWT and user data
+            C-->>U: Account permanently deleted
+            Note over U,A: User must register again<br/>to create new account
+            Note over A: Can delete TickTickClone entry<br/>from authenticator app
+        end
+    end
+
+    rect rgb(0, 0, 0, 0)
+        Note over U,A: STANDALONE TOTP VERIFICATION
+        Note over U,C: For sensitive operations<br/>(settings change, data export, etc.)
+        Note over A: Generate current TOTP code
+        U->>C: Enter TOTP code for verification
+        C->>S: POST /TotpVerify {id, totpCode}
+        
+        S->>DB: Get user by provided ID
+        S->>S: Validate TOTP code against stored secret
+        
+        alt Valid TOTP code
+            S-->>C: Success: Operation authorized
+            C-->>U: Verification successful → proceed
+        else Invalid TOTP code
+            S-->>C: Error: "Invalid TOTP code"
+            C-->>U: Verification failed → operation blocked
+        end
+    end

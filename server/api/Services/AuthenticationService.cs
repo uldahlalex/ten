@@ -50,44 +50,24 @@ public class AuthenticationService(
     
     public async Task<TotpRegisterResponseDto> RegisterTotp(TotpRegisterRequestDto dto)
     {
-        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+        // Check if user already exists
+        if (await userDataService.UserExistsByEmailAsync(dto.Email))
+            throw new Exception("User already exists");
+            
+        // Always create passwordless TOTP-only user (same behavior in all environments)
+        var totpSecret = totpService.GenerateSecretKey();
+        var user = await userDataService.CreateUserAsync(dto.Email, null, null, Role.User, totpSecret);
+        var otpauthUrl =
+            $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(user.UserId)}?secret={totpSecret}&issuer=" +
+            nameof(StaticConstants.TickTickClone);
+
+        return (new TotpRegisterResponseDto
         {
-            var user = await userDataService.GetUserByEmailAsync(dto.Email) ?? throw new Exception("No development user found");
-            user.TotpSecret = totpService.GenerateSecretKey();
-            await userDataService.UpdateUserAsync(user);
-            var otpauthUrl =
-                $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(user.UserId)}?secret={user.TotpSecret}&issuer=" +
-                nameof(StaticConstants.TickTickClone);
-
-
-            return (new TotpRegisterResponseDto
-            {
-                UserId = user.UserId,
-                Message = "Scan the QR code with your authenticator app",
-                QrCodeBase64 = totpService.GenerateQrCodeBase64(otpauthUrl),
-                SecretKey = user.TotpSecret
-            });
-        }
-        else
-        {
-            if (await userDataService.UserExistsByEmailAsync(dto.Email))
-                throw new Exception("User already exists");
-                
-            var totpSecret = totpService.GenerateSecretKey();
-            var user = await userDataService.CreateUserAsync(dto.Email, null, null, Role.User, totpSecret);
-            var otpauthUrl =
-                $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(user.UserId)}?secret={totpSecret}&issuer=" +
-                nameof(StaticConstants.TickTickClone);
-
-
-            return (new TotpRegisterResponseDto
-            {
-                UserId = user.UserId,
-                Message = "Scan the QR code with your authenticator app",
-                QrCodeBase64 = totpService.GenerateQrCodeBase64(otpauthUrl),
-                SecretKey = totpSecret
-            });
-        }
+            UserId = user.UserId,
+            Message = "Scan the QR code with your authenticator app",
+            QrCodeBase64 = totpService.GenerateQrCodeBase64(otpauthUrl),
+            SecretKey = totpSecret
+        });
     }
 
 

@@ -1,15 +1,15 @@
 # Build React app
 FROM node:18-alpine AS client-build
 WORKDIR /client
-COPY ["../client/package*.json", "./"]
+COPY ["client/package*.json", "./"]
 RUN npm ci
-COPY ["../client/", "./"]
+COPY ["client/", "./"]
 RUN npm run build
 
 # Build .NET API
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 WORKDIR /src
-COPY [".", "."]
+COPY ["server/", "."]
 RUN dotnet publish "api/api.csproj" \
     -c Release \
     -o /app/publish \

@@ -1,23 +1,10 @@
 Aktuelt:
-- mermaid.js editor
+
+
+Skal jeg lave en seeder middleware som dynamisk bliver erstattet?
+Tetst til middleware, logging og andre etc features så jeg ikke sletter kode efter færdigt produkt som er til hjælp
+
 
 - Bruger jeg stadig swashbuckle og nswag på samme tid? kan dette simplificeres/optimeres?
     - Fik jeg kommentarer konverteret?
 
-
-- diagrams og docs
-    - Basic development mode with kestrel serving static files setup
-    - Program.cs setup
-    - Test setup with WebApplication & test containers
-    - Github Actions
-    - NSwag http client from generatd openapi
-    - DB Scaffolding and re-scaffolding
-    - Global exception handler
-    - Middleware and controllers triggering and routing
-    - Dependency injection and service lifetimes and hierarchy and resolving
-    - Feature operations
-       - Get task by ID (from UI activity, dispatching http request, mapping, etc)
-    - client specifics for crash course:
-        - Vite and browser basics visualization? and client server model in general?
-        - Ui trigger -> network request -> promise resolving -> outcomes -> setting state -> re-render
-        - Nginx and docker deployment? Maybe in line with the vite and browser basics visualization

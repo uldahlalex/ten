@@ -1,0 +1,52 @@
+graph TD
+    A[HTTP Request] --> B[Kestrel Web Server]
+    B --> C[ASP.NET Core Pipeline]
+    
+    C --> D[Exception Handler Middleware]
+    D --> E[Static Files Middleware]
+    E --> F[CORS Middleware]
+    F --> G[Routing Middleware]
+    G --> H[Controller Action Selection]
+    
+    H --> I[Model Binding]
+    I --> J[Action Filters]
+    J --> K[Controller Constructor]
+    K --> L[Action Method Execution]
+    
+    L --> M[Action Result]
+    M --> N[Result Filters]
+    N --> O[HTTP Response]
+    
+    %% Exception handling path
+    D -.->|Exception Occurs| P[GlobalExceptionHandler]
+    P --> Q[ProblemDetails Response]
+    Q --> O
+    
+    %% Static file path
+    E -.->|Static File Request| R[File System]
+    R --> S[Static File Response]
+    S --> O
+    
+    %% CORS preflight
+    F -.->|OPTIONS Request| T[CORS Preflight Response]
+    T --> O
+    
+    %% Fallback routing
+    G -.->|No Route Match| U[Fallback to index.html]
+    U --> O
+    
+    %% Dependency injection
+    K -.->|DI Container| V[Service Resolution]
+    V -.-> W[IAuthenticationService]
+    V -.-> X[ITaskService]
+    V -.-> Y[MyDbContext]
+    
+    classDef middleware stroke:#2196f3
+    classDef controller stroke:#9c27b0
+    classDef response stroke:#4caf50
+    classDef exception stroke:#f44336
+    
+    class D,E,F,G middleware
+    class H,I,J,K,L controller
+    class M,N,O,S,T,U response
+    class P,Q exception

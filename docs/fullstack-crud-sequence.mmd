@@ -1,0 +1,96 @@
+sequenceDiagram
+    participant User
+    participant ReactComponent
+    participant StateManager
+    participant NSwagClient
+    participant Controller
+    participant AuthService
+    participant ServiceLayer
+    participant GlobalExceptionHandler
+    participant EntityFramework
+    participant Database
+
+    Note over User,NSwagClient: FRONTEND (Browser/React App)
+    Note over Controller,Database: BACKEND (ASP.NET Core API)
+
+    Note over User,Database: Full-Stack CRUD Operation: Create/Update/Delete Task
+
+    User->>ReactComponent: Clicks button (e.g., "Save Task")
+    ReactComponent->>StateManager: Prepare data for request
+    StateManager->>NSwagClient: POST/PUT/DELETE with JSON payload
+    NSwagClient->>Controller: HTTP Request (Authorization: Bearer JWT)
+    
+    alt Valid JWT Token
+        rect rgb(144, 238, 144)
+            Note over Controller,AuthService: ✅ HAPPY PATH - Valid JWT
+            Controller->>AuthService: Validate JWT token
+            AuthService-->>Controller: Token valid, extract user claims
+            Controller->>Controller: Model binding & data annotation validation
+            
+            alt Model validation passes
+                rect rgb(152, 251, 152)
+                    Note over Controller,ServiceLayer: ✅ Valid Model Data
+                    Controller->>ServiceLayer: Call service method (e.g., CreateTaskAsync)
+                    ServiceLayer->>ServiceLayer: Business logic validation
+                    
+                    alt Business logic valid
+                        rect rgb(173, 255, 173)
+                            Note over ServiceLayer,Database: ✅ SUCCESS - Business Logic Valid
+                            ServiceLayer->>ServiceLayer: Map DTO to Entity
+                            ServiceLayer->>EntityFramework: Perform CRUD operation
+                            EntityFramework->>Database: Execute SQL query
+                            Database-->>EntityFramework: Return result
+                            EntityFramework-->>ServiceLayer: Return entity/result
+                            ServiceLayer->>ServiceLayer: Map Entity to Response DTO
+                            ServiceLayer-->>Controller: Return success result
+                            Controller->>Controller: Set HTTP status code (200/201/204)
+                            Controller-->>NSwagClient: Success response with DTO
+                            NSwagClient-->>StateManager: Return success data
+                            StateManager->>ReactComponent: Update UI state
+                            ReactComponent->>User: Show success (toast + UI update)
+                        end
+                    else Business logic exception
+                        rect rgb(255, 182, 193)
+                            Note over ServiceLayer,GlobalExceptionHandler: ❌ ERROR - Business Logic Failed
+                            ServiceLayer->>GlobalExceptionHandler: Throw business exception
+                            GlobalExceptionHandler->>GlobalExceptionHandler: Log exception & create error response
+                            GlobalExceptionHandler-->>Controller: Return error response (400/422)
+                            Controller-->>NSwagClient: Error response
+                            NSwagClient-->>StateManager: Throw error
+                            StateManager->>ReactComponent: Catch block executes
+                            ReactComponent->>User: Show error message
+                        end
+                    end
+                end
+            else Model validation fails
+                rect rgb(255, 160, 160)
+                    Note over Controller,NSwagClient: ❌ ERROR - Invalid Model Data
+                    Controller->>Controller: Return validation errors (400)
+                    Controller-->>NSwagClient: Bad Request with validation errors
+                    NSwagClient-->>StateManager: Throw error
+                    StateManager->>ReactComponent: Catch block executes
+                    ReactComponent->>User: Show validation error messages
+                end
+            end
+        end
+    else Invalid/Expired JWT
+        rect rgb(240, 128, 128)
+            Note over Controller,AuthService: ❌ ERROR - Authentication Failed
+            Controller->>AuthService: Validate JWT token
+            AuthService-->>Controller: Token invalid/expired
+            Controller-->>NSwagClient: Unauthorized response (401)
+            NSwagClient-->>StateManager: Throw auth error
+            StateManager->>ReactComponent: Catch block executes
+            ReactComponent->>User: Redirect to login
+        end
+    end
+
+    Note over User,Database: Key Learning Points:
+    Note over User,Database: 1. NSwag generates type-safe HTTP clients from OpenAPI spec
+    Note over User,Database: 2. JWT authentication happens before business logic
+    Note over User,Database: 3. Model binding validates request data automatically
+    Note over User,Database: 4. Service layer handles business logic and entity mapping
+    Note over User,Database: 5. Global exception handler provides consistent error responses
+    Note over User,Database: 6. Entity Framework abstracts database operations
+    Note over User,Database: 7. DTOs separate API contracts from database entities
+

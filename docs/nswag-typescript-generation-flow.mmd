@@ -1,0 +1,21 @@
+graph TD
+    A[C# Controllers & DTOs] --> B[XML Documentation & Controllers signatures]
+    B --> D[NSwag/Swashbuckle Configuration]
+    D --> E[OpenAPI Document Generation]
+    E --> F[OpenAPI 3.0 JSON Specification]
+    F --> G[openapi/v1.json endpoint]
+    F --> H[openapi-with-docs.json file]
+    F --> I[NSwag TypeScript Client Generator]
+    I --> J[TypeScript Client Code]
+    J --> K["generated-client.ts<br/>~1053 lines which client app uses to request/response API"]
+    
+
+    classDef serverSide stroke:#1976d2,stroke-width:2px
+    classDef clientSide stroke:#388e3c,stroke-width:2px
+    classDef generation stroke:#c2185b,stroke-width:2px
+    classDef config stroke:#f57c00,stroke-width:2px
+    
+    class A,B,C,D,E,F,G,H,L,M,N,O serverSide
+    class J,K,S,T,U,V,W,X,Y,Z,AA,BB clientSide
+    class I generation
+    class P,Q,R config

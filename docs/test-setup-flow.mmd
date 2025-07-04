@@ -1,0 +1,20 @@
+---
+config:
+  layout: fixed
+---
+flowchart TD
+    A["Procedure for each test"] --> B["Setup (BeforeTest)"]
+    B --> D["new WebApplicationBuilder()"]
+    D --> H["Default to Program.cs services and replace some services (like DbContext, timeprovider, etc)"]
+    H --> J["Go through middleware, with optional changes like seeder + start Webapplication (Kestrel C# API)"] & n1["Starts a new TestContainer postgres DB"]
+    J --> L["Individual test with arrange, act, assert"]
+    L --> n2["Test is over, TestContainer DB is disposed as well as WebApplication."]
+    D:::setup
+    D:::container
+    H:::setup
+    J:::setup
+    L:::execution
+    classDef setup stroke:#2196f3
+    classDef container stroke:#ff9800
+    classDef execution stroke:#4caf50
+    classDef cleanup stroke:#f44336

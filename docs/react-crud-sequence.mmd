@@ -1,0 +1,35 @@
+sequenceDiagram
+    participant User
+    participant ReactComponent
+    participant StateManager
+    participant HTTPClient
+    participant API
+
+    Note over User,HTTPClient: FRONTEND (Browser/React App)
+    Note over API: BACKEND (Server/API)
+
+    Note over User,API: CRUD Operation: Create/Update/Delete Task
+
+    User->>ReactComponent: Clicks button (e.g., "Save Task")
+    ReactComponent->>StateManager: Prepare data for request
+    StateManager->>HTTPClient: POST/PUT/DELETE with JSON payload
+    HTTPClient->>API: HTTP Request (Authorization: Bearer token)
+    
+    alt Success Response (200/201/204)
+        API-->>HTTPClient: Success response with data
+        HTTPClient-->>StateManager: Return success data
+        StateManager->>ReactComponent: Update UI state
+        ReactComponent->>User: Show success (toast + UI update)
+        
+    else HTTP Error (400/401/403/404/500)
+        API-->>HTTPClient: Error response
+        HTTPClient-->>StateManager: Throw error
+        StateManager->>ReactComponent: Catch block executes
+        ReactComponent->>User: Show error message
+    end
+
+    Note over User,API: Key Learning Points:
+    Note over User,API: 1. Data flows through layers (Component → State → HTTP → API)
+    Note over User,API: 2. Errors are caught and handled in the frontend
+    Note over User,API: 3. Success updates both state and UI
+    Note over User,API: 4. HTTP client is the boundary between frontend and backend

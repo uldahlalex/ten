@@ -1,0 +1,26 @@
+---
+config:
+  layout: fixed
+---
+flowchart TD
+    subgraph subGraph0["scaffold.sh execution"]
+        D["Load .env file for connection string"]
+        C["Run ./scaffold.sh script"]
+        F["Run dotnet ef dbcontext scaffold command"]
+        G["Generate C# entities and DbContext"]
+    end
+    subgraph subGraph1["Database Operations"]
+        H[("PostgreSQL Database")]
+        E["Execute schema.sql against PostgreSQL database<br>in order to make DB schema for scaffolding"]
+        I["Drop and recreate ticktick schema with tables, keys, etc"]
+    end
+    A["Developer modifies database schema"] --> B["Edit server/efscaffold/schema.sql"]
+    B --> E
+    E --> H
+    C --> D
+    D --> F
+    F --> G
+    H --> I
+    subGraph1 --> C
+    style H fill:#f3e5f5
+    style A fill:#e1f5fe

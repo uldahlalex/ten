@@ -30,6 +30,7 @@ sequenceDiagram
             alt Model validation passes
                 rect rgb(152, 251, 152)
                     Note over Controller,ServiceLayer: ✅ Valid Model Data
+                    Note right of Controller: Controller → ServiceLayer → GlobalExceptionHandler → EntityFramework → Database
                     Controller->>ServiceLayer: Call service method (e.g., CreateTaskAsync)
                     ServiceLayer->>ServiceLayer: Business logic validation
                     
@@ -45,6 +46,7 @@ sequenceDiagram
                             ServiceLayer-->>Controller: Return success result
                             Controller->>Controller: Set HTTP status code (200/201/204)
                             Controller-->>NSwagClient: Success response with DTO
+                            Note left of NSwagClient: NSwagClient → StateManager → ReactComponent → User
                             NSwagClient-->>StateManager: Return success data
                             StateManager->>ReactComponent: Update UI state
                             ReactComponent->>User: Show success (toast + UI update)
@@ -52,10 +54,12 @@ sequenceDiagram
                     else Business logic exception
                         rect rgb(255, 182, 193)
                             Note over ServiceLayer,GlobalExceptionHandler: ❌ ERROR - Business Logic Failed
+                            Note right of ServiceLayer: ServiceLayer → GlobalExceptionHandler → Controller → NSwagClient
                             ServiceLayer->>GlobalExceptionHandler: Throw business exception
                             GlobalExceptionHandler->>GlobalExceptionHandler: Log exception & create error response
                             GlobalExceptionHandler-->>Controller: Return error response (400/422)
                             Controller-->>NSwagClient: Error response
+                            Note left of NSwagClient: NSwagClient → StateManager → ReactComponent → User
                             NSwagClient-->>StateManager: Throw error
                             StateManager->>ReactComponent: Catch block executes
                             ReactComponent->>User: Show error message
@@ -65,6 +69,7 @@ sequenceDiagram
             else Model validation fails
                 rect rgb(255, 160, 160)
                     Note over Controller,NSwagClient: ❌ ERROR - Invalid Model Data
+                    Note right of Controller: Controller → NSwagClient → StateManager → ReactComponent → User
                     Controller->>Controller: Return validation errors (400)
                     Controller-->>NSwagClient: Bad Request with validation errors
                     NSwagClient-->>StateManager: Throw error
@@ -76,6 +81,7 @@ sequenceDiagram
     else Invalid/Expired JWT
         rect rgb(240, 128, 128)
             Note over Controller,AuthService: ❌ ERROR - Authentication Failed
+            Note right of Controller: Controller → AuthService → NSwagClient → StateManager → ReactComponent → User
             Controller->>AuthService: Validate JWT token
             AuthService-->>Controller: Token invalid/expired
             Controller-->>NSwagClient: Unauthorized response (401)

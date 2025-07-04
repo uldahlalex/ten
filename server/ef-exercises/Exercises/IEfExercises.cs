@@ -16,14 +16,14 @@ public interface IEfExercises
     /// </summary>
     /// <param name="departmentName">Name of the department</param>
     /// <returns>Total salary expense for the department</returns>
-    Task<decimal> GetTotalSalaryByDepartmentAsync(string departmentName);
+    Task<double> GetTotalSalaryByDepartmentAsync(string departmentName);
 
     /// <summary>
     /// Exercise 3: Find employees with salary above a certain amount
     /// </summary>
     /// <param name="minSalary">Minimum salary threshold</param>
     /// <returns>List of employees with salary above the threshold</returns>
-    Task<List<Employee>> GetEmployeesWithSalaryAboveAsync(decimal minSalary);
+    Task<List<Employee>> GetEmployeesWithSalaryAboveAsync(double minSalary);
 
     /// <summary>
     /// Exercise 4: Get employees who joined in a specific year

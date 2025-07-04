@@ -40,6 +40,7 @@ The project uses a simple company database with:
 4. **Verify Your Work**:
    - Run tests after each implementation
    - All tests should pass when correctly implemented
+   - Tests with `NotImplementedException` will fail until you implement them
 
 ### For Instructors (Solution Mode)
 
@@ -79,6 +80,7 @@ Students will learn:
 - **Progressive Difficulty**: Exercises build from simple to more complex
 - **Comprehensive Tests**: Edge cases and validation included
 - **Switch Between Modes**: Easy toggle between student and solution implementations
+- **Standard TUnit Testing**: Use familiar test runner commands and IDE integration
 
 ## Sample Data
 

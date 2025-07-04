@@ -20,14 +20,14 @@ public class EfExercisesStub : IEfExercises
         throw new NotImplementedException("Exercise 1 not implemented yet");
     }
 
-    public Task<decimal> GetTotalSalaryByDepartmentAsync(string departmentName)
+    public Task<double> GetTotalSalaryByDepartmentAsync(string departmentName)
     {
         // TODO: Implement this method
         // Hint: Join employees with departments, filter by department name, and sum salaries
         throw new NotImplementedException("Exercise 2 not implemented yet");
     }
 
-    public Task<List<Employee>> GetEmployeesWithSalaryAboveAsync(decimal minSalary)
+    public Task<List<Employee>> GetEmployeesWithSalaryAboveAsync(double minSalary)
     {
         // TODO: Implement this method
         // Hint: Use Where() to filter employees by salary and Include() to load Department

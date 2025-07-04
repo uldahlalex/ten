@@ -22,7 +22,7 @@ public class CompanyDbContext : DbContext
             entity.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
             entity.Property(e => e.LastName).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Salary).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.Salary).HasColumnType("real");
             entity.HasOne(e => e.Department)
                   .WithMany(d => d.Employees)
                   .HasForeignKey(e => e.DepartmentId);
@@ -34,7 +34,7 @@ public class CompanyDbContext : DbContext
             entity.HasKey(d => d.Id);
             entity.Property(d => d.Name).IsRequired().HasMaxLength(100);
             entity.Property(d => d.Location).IsRequired().HasMaxLength(100);
-            entity.Property(d => d.Budget).HasColumnType("decimal(18,2)");
+            entity.Property(d => d.Budget).HasColumnType("real");
         });
 
         // Configure Project entity
@@ -43,7 +43,7 @@ public class CompanyDbContext : DbContext
             entity.HasKey(p => p.Id);
             entity.Property(p => p.Name).IsRequired().HasMaxLength(100);
             entity.Property(p => p.Description).HasMaxLength(500);
-            entity.Property(p => p.Budget).HasColumnType("decimal(18,2)");
+            entity.Property(p => p.Budget).HasColumnType("real");
         });
 
         // Configure many-to-many relationship between Employee and Project

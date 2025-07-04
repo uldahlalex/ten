@@ -47,7 +47,10 @@ public class EfExercisesTests
 
         // Assert
         await Assert.That(result).HasCount().EqualTo(3);
-        await Assert.That(result.Select(e => e.FirstName)).ContainsAll("John", "Jane", "Frank");
+        var firstNames = result.Select(e => e.FirstName).ToList();
+        await Assert.That(firstNames.Contains("John")).IsTrue();
+        await Assert.That(firstNames.Contains("Jane")).IsTrue();
+        await Assert.That(firstNames.Contains("Frank")).IsTrue();
         await Assert.That(result.All(e => e.Department.Name == "Engineering")).IsTrue();
     }
 
@@ -70,7 +73,11 @@ public class EfExercisesTests
         // Assert - Jane (85000), Diana (80000), Frank (90000), John (75000)
         await Assert.That(result).HasCount().EqualTo(4);
         await Assert.That(result.All(e => e.Salary > 70000)).IsTrue();
-        await Assert.That(result.Select(e => e.FirstName)).ContainsAll("Jane", "Diana", "Frank", "John");
+        var firstNames = result.Select(e => e.FirstName).ToList();
+        await Assert.That(firstNames.Contains("Jane")).IsTrue();
+        await Assert.That(firstNames.Contains("Diana")).IsTrue();
+        await Assert.That(firstNames.Contains("Frank")).IsTrue();
+        await Assert.That(firstNames.Contains("John")).IsTrue();
     }
 
     [Test]
@@ -81,7 +88,9 @@ public class EfExercisesTests
 
         // Assert - John (2020-01-15), Alice (2020-08-25)
         await Assert.That(result).HasCount().EqualTo(2);
-        await Assert.That(result.Select(e => e.FirstName)).ContainsAll("John", "Alice");
+        var firstNames = result.Select(e => e.FirstName).ToList();
+        await Assert.That(firstNames.Contains("John")).IsTrue();
+        await Assert.That(firstNames.Contains("Alice")).IsTrue();
         await Assert.That(result.All(e => e.HireDate.Year == 2020)).IsTrue();
     }
 

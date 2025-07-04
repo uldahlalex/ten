@@ -21,14 +21,14 @@ public class EfExercisesSolution : IEfExercises
             .ToListAsync();
     }
 
-    public async Task<decimal> GetTotalSalaryByDepartmentAsync(string departmentName)
+    public async Task<double> GetTotalSalaryByDepartmentAsync(string departmentName)
     {
         return await _context.Employees
             .Where(e => e.Department.Name == departmentName)
             .SumAsync(e => e.Salary);
     }
 
-    public async Task<List<Employee>> GetEmployeesWithSalaryAboveAsync(decimal minSalary)
+    public async Task<List<Employee>> GetEmployeesWithSalaryAboveAsync(double minSalary)
     {
         return await _context.Employees
             .Include(e => e.Department)

@@ -7,6 +7,6 @@ public class Project
     public string Description { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public decimal Budget { get; set; }
+    public double Budget { get; set; }
     public ICollection<Employee> Employees { get; set; } = new List<Employee>();
 }

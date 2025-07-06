@@ -7,12 +7,13 @@ using Microsoft.OpenApi.Writers;
 using Microsoft.OpenApi;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using NSwag.CodeGeneration.CSharp;
 
 namespace api.Etc;
 
-public static class GenerateTypescriptClientFromOpenApi
+public static class GenerateApiClientsExtensions
 {
-    public static async Task GenerateTypeScriptClientFromOpenApi(this WebApplication app, string path)
+    public static async Task GenerateApiClientsFromOpenApi(this WebApplication app, string path)
     {
         // Step 1: Generate OpenAPI document with full documentation
         var document = await app.Services.GetRequiredService<IOpenApiDocumentGenerator>()
@@ -46,7 +47,7 @@ public static class GenerateTypescriptClientFromOpenApi
             }
         };
 
-        // Generate from the JSON-parsed document, not the original
+        // Step 5: Generate TypeScript client from the parsed OpenAPI document
         var generator = new TypeScriptClientGenerator(documentFromJson, settings);
         var code = generator.GenerateFile();
 
@@ -55,9 +56,47 @@ public static class GenerateTypescriptClientFromOpenApi
 
         await File.WriteAllTextAsync(outputPath, code);
         
+        // Step 6: Generate C# client for testing (configured to minimize DTO generation)
+        var csSettings = new CSharpClientGeneratorSettings()
+        {
+            ClassName = "ApiClient",
+            CSharpGeneratorSettings =
+            {
+                Namespace = "Generated",
+                GenerateDataAnnotations = false,
+                GenerateOptionalPropertiesAsNullable = true,
+                GenerateNullableReferenceTypes = true,
+                // Reference types from the API project instead of generating new ones
+                ClassStyle = NJsonSchema.CodeGeneration.CSharp.CSharpClassStyle.Poco,
+                ExcludedTypeNames = new string[0]
+            },
+            GenerateClientClasses = true,
+            GenerateClientInterfaces = true,
+            ClientBaseClass = null,
+            ConfigurationClass = null,
+            GenerateExceptionClasses = true,
+            ExceptionClass = "ApiException",
+            WrapDtoExceptions = true,
+            UseHttpClientCreationMethod = false,
+            HttpClientType = "System.Net.Http.HttpClient",
+            GenerateOptionalParameters = true,
+            SerializeTypeInformation = false,
+            UseBaseUrl = true,
+            GenerateDtoTypes = false // This should prevent DTO generation
+        };
+
+        var csGenerator = new CSharpClientGenerator(documentFromJson, csSettings);
+        var csCode = csGenerator.GenerateFile();
+
+        var csOutputPath = Path.Combine(Directory.GetCurrentDirectory(), "../tests/GeneratedApiClient.cs");
+        Directory.CreateDirectory(Path.GetDirectoryName(csOutputPath)!);
+
+        await File.WriteAllTextAsync(csOutputPath, csCode);
+        
         var logger = app.Services.GetRequiredService<ILogger<Program>>();
         logger.LogInformation("OpenAPI JSON with documentation saved at: " + openApiPath);
         logger.LogInformation("TypeScript client generated at: " + outputPath);
+        logger.LogInformation("C# client generated at: " + csOutputPath);
     }
 }
 

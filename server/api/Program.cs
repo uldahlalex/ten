@@ -87,7 +87,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         }
         
         app.MapControllers();
-        app.GenerateTypeScriptClientFromOpenApi("/../../client/src/models/generated-client.ts").Wait();
+        app.GenerateApiClientsFromOpenApi("/../../client/src/models/generated-client.ts").Wait();
         app.MapScalarApiReference();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         var environment = app.Environment.EnvironmentName;

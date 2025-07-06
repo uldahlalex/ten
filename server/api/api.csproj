@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.17" />
         <PackageReference Include="JWT" Version="11.*"/>
+        <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="14.4.0" />
         <PackageReference Include="NSwag.CodeGeneration.TypeScript" Version="14.4.0" />
         <PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
         <PackageReference Include="PgCtxSetup" Version="1.5.0"/>

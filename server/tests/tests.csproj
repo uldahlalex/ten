@@ -21,10 +21,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- Exclude generated API client from compilation due to generation issues -->
-        <Compile Remove="GeneratedApiClient.cs" />
-        <!-- Uncomment the line below when you want to include the generated client -->
-        <!-- <Compile Include="GeneratedApiClient.cs" /> -->
+        <!-- Include generated API client for testing -->
+        <Compile Update="GeneratedApiClient.cs">
+            <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        </Compile>
     </ItemGroup>
 
 </Project>

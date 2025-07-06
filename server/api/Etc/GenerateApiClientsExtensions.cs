@@ -8,6 +8,7 @@ using Microsoft.OpenApi;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.CodeGeneration.CSharp;
+using NSwag.CodeGeneration.OperationNameGenerators;
 
 namespace api.Etc;
 
@@ -56,33 +57,36 @@ public static class GenerateApiClientsExtensions
 
         await File.WriteAllTextAsync(outputPath, code);
         
-        // Step 6: Generate C# client for testing (configured to minimize DTO generation)
+        // Step 6: Generate C# client for testing (single unified client)
         var csSettings = new CSharpClientGeneratorSettings()
         {
             ClassName = "ApiClient",
+            ClientClassAccessModifier = "public",
+            GenerateClientClasses = true,
+            GenerateClientInterfaces = true,
+     
+            UseHttpClientCreationMethod = false,
+            HttpClientType = "System.Net.Http.HttpClient",
+            GenerateOptionalParameters = true,
+            UseBaseUrl = true,
+            GenerateDtoTypes = false,
+            WrapDtoExceptions = true,
+            ClientBaseClass = null,
+            ConfigurationClass = null,
+            SerializeTypeInformation = false,
+            // Key settings to prevent duplication
+            OperationNameGenerator = new SingleClientFromOperationIdOperationNameGenerator(),
             CSharpGeneratorSettings =
             {
                 Namespace = "Generated",
                 GenerateDataAnnotations = false,
                 GenerateOptionalPropertiesAsNullable = true,
                 GenerateNullableReferenceTypes = true,
-                // Reference types from the API project instead of generating new ones
                 ClassStyle = NJsonSchema.CodeGeneration.CSharp.CSharpClassStyle.Poco,
-                ExcludedTypeNames = new string[0]
-            },
-            GenerateClientClasses = true,
-            GenerateClientInterfaces = true,
-            ClientBaseClass = null,
-            ConfigurationClass = null,
-            GenerateExceptionClasses = true,
-            ExceptionClass = "ApiException",
-            WrapDtoExceptions = true,
-            UseHttpClientCreationMethod = false,
-            HttpClientType = "System.Net.Http.HttpClient",
-            GenerateOptionalParameters = true,
-            SerializeTypeInformation = false,
-            UseBaseUrl = true,
-            GenerateDtoTypes = false // This should prevent DTO generation
+                ExcludedTypeNames = new string[0],
+                // Don't generate types since we'll use the API project's DTOs
+                GenerateDefaultValues = false
+            }
         };
 
         var csGenerator = new CSharpClientGenerator(documentFromJson, csSettings);
@@ -92,6 +96,7 @@ public static class GenerateApiClientsExtensions
         var usingStatements = @"using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 using api.Models.Dtos;
+using api.Controllers;
 
 ";
         

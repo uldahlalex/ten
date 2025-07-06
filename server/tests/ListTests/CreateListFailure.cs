@@ -7,6 +7,7 @@ using api.Models.Dtos.Requests;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Generated;
 
 namespace tests.List;
 
@@ -16,6 +17,7 @@ public class CreateListFailure
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -32,6 +34,7 @@ public class CreateListFailure
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -40,11 +43,16 @@ public class CreateListFailure
     {
         var request = new CreateListRequestDto("");
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);
-
-        if (response.StatusCode != HttpStatusCode.BadRequest)
-            throw new Exception("Expected status 400 but got: " + response.StatusCode + " and message: " +
-                                await response.Content.ReadAsStringAsync());
+        // Act & Assert
+        try
+        {
+            await _apiClient.TicktickTask_CreateListAsync(request);
+            throw new Exception("Expected ApiException for bad request but request succeeded");
+        }
+        catch (ApiException ex) when (ex.StatusCode == 400)
+        {
+            // Expected - bad request should throw ApiException with 400 status code
+        }
     }
     
     [Test]
@@ -56,10 +64,16 @@ public class CreateListFailure
         var existingListName = "Work Tasks";
         var request = new CreateListRequestDto(existingListName);
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);
-
-        if (response.StatusCode != HttpStatusCode.BadRequest)
-            throw new Exception($"Expected BadRequest status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
+        // Act & Assert
+        try
+        {
+            await _apiClient.TicktickTask_CreateListAsync(request);
+            throw new Exception("Expected ApiException for duplicate name but request succeeded");
+        }
+        catch (ApiException ex) when (ex.StatusCode == 400)
+        {
+            // Expected - duplicate name should throw ApiException with 400 status code
+        }
     }
     
     [Test]
@@ -72,9 +86,9 @@ public class CreateListFailure
         var janeListName = "Jane's Tasks";
         var request = new CreateListRequestDto(janeListName);
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);
-
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
+        var result = await _apiClient.TicktickTask_CreateListAsync(request);
+        
+        if (result == null)
+            throw new Exception("Expected successful list creation but got null result");
     }
 }

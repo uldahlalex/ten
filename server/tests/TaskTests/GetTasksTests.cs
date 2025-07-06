@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using Generated;
 
 namespace tests.TaskTests;
 
@@ -19,6 +20,7 @@ public class GetTasksTests
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -35,6 +37,7 @@ public class GetTasksTests
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -55,16 +58,8 @@ public class GetTasksTests
 
         var query = new GetTasksFilterAndOrderParameters();
 
-        var response = _client
-            .PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query)
-            .GetAwaiter()
-            .GetResult();
-
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {response.Content.ReadAsStringAsync().GetAwaiter().GetResult()}");
-            
-        var actualTasks = response.Content
-            .ReadFromJsonAsync<List<TickticktaskDto>>()
+        var actualTasks = _apiClient
+            .TicktickTask_GetMyTasksAsync(query)
             .GetAwaiter()
             .GetResult();
 
@@ -96,12 +91,7 @@ public class GetTasksTests
 
         var query = new GetTasksFilterAndOrderParameters { IsCompleted = true };
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query);
-
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-
-        var actualTasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
+        var actualTasks = await _apiClient.TicktickTask_GetMyTasksAsync(query);
         
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");
@@ -146,12 +136,7 @@ public class GetTasksTests
             LatestDueDate = latestDate
         };
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query);
-        
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-            
-        var actualTasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
+        var actualTasks = await _apiClient.TicktickTask_GetMyTasksAsync(query);
         
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");
@@ -194,12 +179,7 @@ public class GetTasksTests
             MaxPriority = maxPriority
         };
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.GetMyTasks), query);
-        
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-            
-        var actualTasks = await response.Content.ReadFromJsonAsync<List<TickticktaskDto>>();
+        var actualTasks = await _apiClient.TicktickTask_GetMyTasksAsync(query);
         
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");

@@ -7,6 +7,7 @@ using api.Models.Dtos.Responses;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Generated;
 
 namespace tests.Tag;
 
@@ -16,6 +17,7 @@ public class CreateTagSuccess
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -32,6 +34,7 @@ public class CreateTagSuccess
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -44,15 +47,7 @@ public class CreateTagSuccess
         var newTagName = "My new tag";
         var tag = new CreateTagRequestDto(newTagName);
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateTag), tag);
-        
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-
-        var result = await response.Content.ReadFromJsonAsync<TagDto>();
-        
-        if (result == null)
-            throw new Exception("Response body was null when deserializing to TagDto");
+        var result = await _apiClient.TicktickTask_CreateTagAsync(tag);
             
         Validator.ValidateObject(result, new ValidationContext(result), true);
         

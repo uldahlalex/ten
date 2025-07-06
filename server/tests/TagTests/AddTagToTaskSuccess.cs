@@ -9,6 +9,7 @@ using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Generated;
 
 namespace tests.Tag;
 
@@ -18,6 +19,7 @@ public class AddTagToTaskSuccess
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -34,6 +36,7 @@ public class AddTagToTaskSuccess
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -57,15 +60,7 @@ public class AddTagToTaskSuccess
 
         var dto = new ChangeTaskTagRequestDto(tagId, taskId);
 
-        var response = await _client.PutAsJsonAsync(_baseUrl + nameof(TicktickTaskController.AddTaskTag), dto);
-        
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-
-        var result = await response.Content.ReadFromJsonAsync<TaskTagDto>();
-        
-        if (result == null)
-            throw new Exception("Response body was null when deserializing to TaskTagDto");
+        var result = await _apiClient.TicktickTask_AddTaskTagAsync(dto);
             
         Validator.ValidateObject(result, new ValidationContext(result), true);
         

@@ -7,6 +7,7 @@ using api.Models.Dtos.Responses;
 using api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Generated;
 
 namespace tests.Auth;
 
@@ -16,6 +17,7 @@ public class LoginTestSuccess
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -32,6 +34,7 @@ public class LoginTestSuccess
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = new HttpClient();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -44,15 +47,7 @@ public class LoginTestSuccess
         // Login using John's credentials from TestDataSeeder
         var dto = new AuthRequestDto("john@example.com", "password");
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Login), dto);
-        
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-            
-        var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
-        
-        if (jwt == null)
-            throw new Exception("Response body was null when deserializing to JwtResponse");
+        var jwt = await _apiClient.Auth_LoginAsync(dto);
             
         var jwtService = _scopedServiceProvider.GetRequiredService<IJwtService>();
         var userService = _scopedServiceProvider.GetRequiredService<IUserDataService>();

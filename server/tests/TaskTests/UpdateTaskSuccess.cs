@@ -9,6 +9,7 @@ using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Generated;
 
 namespace tests.TaskTests;
 
@@ -18,6 +19,7 @@ public class UpdateTaskSuccess
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -34,6 +36,7 @@ public class UpdateTaskSuccess
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -58,15 +61,7 @@ public class UpdateTaskSuccess
             listId: ids.PersonalListId // Moving from Work list to Personal list
         );
         
-        var response = await _client.PatchAsJsonAsync(_baseUrl + nameof(TicktickTaskController.UpdateTask), request);
-        
-        if (!response.IsSuccessStatusCode)
-            throw new Exception($"Expected success status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-            
-        var updatedTask = await response.Content.ReadFromJsonAsync<TickticktaskDto>();
-        
-        if (updatedTask == null)
-            throw new Exception("Response body was null when deserializing to TickticktaskDto");
+        var updatedTask = await _apiClient.TicktickTask_UpdateTaskAsync(request);
 
         // Verify task was updated in database
         var taskInDb = ctx.Tickticktasks.FirstOrDefault(t => t.TaskId == taskToUpdateId);

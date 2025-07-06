@@ -6,6 +6,7 @@ using api.Services;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Generated;
 
 namespace tests.Auth;
 
@@ -15,6 +16,7 @@ public class RegisterTestsSuccess
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -31,6 +33,7 @@ public class RegisterTestsSuccess
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = new HttpClient(); //should not use the method which adds jwt
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -44,15 +47,7 @@ public class RegisterTestsSuccess
         var password = "TestPassword123!";
         var reqDto = new AuthRequestDto(uniqueEmail, password);
         
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(AuthController.Register), reqDto);
-
-        if (!response.IsSuccessStatusCode)
-            throw new Exception($"Expected success status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-
-        var jwt = await response.Content.ReadFromJsonAsync<JwtResponse>();
-        
-        if (jwt == null)
-            throw new Exception("Response body was null when deserializing to JwtResponse");
+        var jwt = await _apiClient.Auth_RegisterAsync(reqDto);
             
         var jwtService = _scopedServiceProvider.GetRequiredService<IJwtService>();
         var userService = _scopedServiceProvider.GetRequiredService<IUserDataService>();

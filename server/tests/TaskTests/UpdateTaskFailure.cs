@@ -6,6 +6,7 @@ using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Generated;
 
 namespace tests.TaskTests;
 
@@ -15,6 +16,7 @@ public class UpdateTaskFailure
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -31,6 +33,7 @@ public class UpdateTaskFailure
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -61,9 +64,15 @@ public class UpdateTaskFailure
             completed: true,
             listId: ctx.Tasklists.OrderBy(o => o.CreatedAt).Reverse().First().ListId 
         );
-        var response = await _client.PatchAsJsonAsync(_baseUrl + nameof(TicktickTaskController.UpdateTask), request);
-        if (response.StatusCode != HttpStatusCode.BadRequest)
-            throw new Exception("Expected status code 400 for bad request. Got:  " + response.StatusCode +
-                                " and message: " + await response.Content.ReadAsStringAsync());
+        // Act & Assert
+        try
+        {
+            await _apiClient.TicktickTask_UpdateTaskAsync(request);
+            throw new Exception("Expected ApiException for bad request but request succeeded");
+        }
+        catch (ApiException ex) when (ex.StatusCode == 400)
+        {
+            // Expected - bad request should throw ApiException with 400 status code
+        }
     }
 }

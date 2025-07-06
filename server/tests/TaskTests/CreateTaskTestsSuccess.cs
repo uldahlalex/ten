@@ -9,6 +9,7 @@ using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Generated;
 
 namespace tests.TaskTests;
 
@@ -18,6 +19,7 @@ public class CreateTaskTestsSuccess
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -34,6 +36,7 @@ public class CreateTaskTestsSuccess
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -57,15 +60,7 @@ public class CreateTaskTestsSuccess
             1
         );
 
-        var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateTask), request);
-
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-            
-        var responseBodyAsDto = await response.Content.ReadFromJsonAsync<TickticktaskDto>();
-        
-        if (responseBodyAsDto == null)
-            throw new Exception("Response body was null when deserializing to TickticktaskDto");
+        var responseBodyAsDto = await _apiClient.TicktickTask_CreateTaskAsync(request);
             
         // Validate the response DTO
         Validator.ValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), true);

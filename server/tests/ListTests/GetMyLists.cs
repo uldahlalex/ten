@@ -8,6 +8,7 @@ using FluentAssertions;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Generated;
 
 namespace tests.List;
 
@@ -17,6 +18,7 @@ public class GetMyLists
     private string _baseUrl = null!;
     private HttpClient _client = null!;
     private IServiceProvider _scopedServiceProvider = null!;
+    private IApiClient _apiClient = null!;
 
     [Before(Test)]
     public Task Setup()
@@ -33,6 +35,7 @@ public class GetMyLists
         _baseUrl = _app.Urls.First() + "/";
         _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
         _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
+        _apiClient = new ApiClient(_baseUrl, _client);
         return Task.CompletedTask;
     }
 
@@ -50,12 +53,7 @@ public class GetMyLists
             ids.ShoppingListId  // "Shopping" list
         };
 
-        var response = await _client.GetAsync(_baseUrl + nameof(TicktickTaskController.GetMyLists));
-        
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new Exception($"Expected OK status but got {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
-
-        var actualLists = await response.Content.ReadFromJsonAsync<List<TasklistDto>>();
+        var actualLists = await _apiClient.TicktickTask_GetMyListsAsync();
         
         if (actualLists == null)
             throw new Exception("Response body was null when deserializing to List<TasklistDto>");

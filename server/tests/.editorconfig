@@ -1,0 +1,16 @@
+[GeneratedApiClient.cs]
+# Disable all analyzer warnings for generated API client
+dotnet_analyzer_diagnostic.category-style.severity = none
+dotnet_analyzer_diagnostic.category-design.severity = none
+dotnet_analyzer_diagnostic.category-maintainability.severity = none
+dotnet_analyzer_diagnostic.category-naming.severity = none
+dotnet_analyzer_diagnostic.category-performance.severity = none
+dotnet_analyzer_diagnostic.category-reliability.severity = none
+dotnet_analyzer_diagnostic.category-security.severity = none
+dotnet_analyzer_diagnostic.category-usage.severity = none
+
+# Disable specific compiler warnings
+dotnet_diagnostic.CS0102.severity = none
+dotnet_diagnostic.CS0111.severity = none
+dotnet_diagnostic.CS0579.severity = none
+dotnet_diagnostic.CS0756.severity = none

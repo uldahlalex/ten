@@ -38,8 +38,6 @@ public class CreateListFailure
     [Test]
     public async Task CreateList_ShouldReturnBadRequest_WhenInvalidRequest()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-
         var request = new CreateListRequestDto("");
 
         var response = await _client.PostAsJsonAsync(_baseUrl + nameof(TicktickTaskController.CreateList), request);

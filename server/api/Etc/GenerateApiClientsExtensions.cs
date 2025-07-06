@@ -88,10 +88,20 @@ public static class GenerateApiClientsExtensions
         var csGenerator = new CSharpClientGenerator(documentFromJson, csSettings);
         var csCode = csGenerator.GenerateFile();
 
+        // Add using statements for API project DTOs
+        var usingStatements = @"using api.Models.Dtos.Requests;
+using api.Models.Dtos.Responses;
+using api.Models.Dtos;
+
+";
+        
+        // Insert using statements after the #nullable enable line
+        var modifiedCode = csCode.Replace("#nullable enable", "#nullable enable\n" + usingStatements);
+
         var csOutputPath = Path.Combine(Directory.GetCurrentDirectory(), "../tests/GeneratedApiClient.cs");
         Directory.CreateDirectory(Path.GetDirectoryName(csOutputPath)!);
 
-        await File.WriteAllTextAsync(csOutputPath, csCode);
+        await File.WriteAllTextAsync(csOutputPath, modifiedCode);
         
         var logger = app.Services.GetRequiredService<ILogger<Program>>();
         logger.LogInformation("OpenAPI JSON with documentation saved at: " + openApiPath);

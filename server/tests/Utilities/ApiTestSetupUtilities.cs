@@ -24,13 +24,37 @@ public static class ApiTestSetupUtilities
 {
     public static WebApplicationBuilder MakeWebAppBuilderForTesting()
     {
-         var builder = WebApplication.CreateBuilder();
-        // builder.Environment.EnvironmentName = "Development";
+        var builder = WebApplication.CreateBuilder();
+        builder.Environment.EnvironmentName = "Development";
 
-        // builder.Configuration
-        //     .SetBasePath(Directory.GetCurrentDirectory())
-        //     .AddJsonFile("appsettings.json", true)
-        //     .AddJsonFile("appsettings.Development.json", true);
+        // Get the API project directory for configuration files
+        var currentDir = Directory.GetCurrentDirectory(); // /server/tests/
+        var serverDir = Directory.GetParent(currentDir)?.FullName; // /server/
+        var apiDir = Path.Combine(serverDir ?? "", "api");
+        
+        // Check if the API directory exists and adjust path if needed
+        if (!Directory.Exists(apiDir))
+        {
+            // If we're in a different directory structure, try to find the API project
+            var testDir = currentDir;
+            while (testDir != null && !Directory.Exists(Path.Combine(testDir, "api")))
+            {
+                testDir = Directory.GetParent(testDir)?.FullName;
+            }
+            
+            if (testDir != null)
+            {
+                apiDir = Path.Combine(testDir, "api");
+            }
+        }
+        
+        if (Directory.Exists(apiDir))
+        {
+            builder.Configuration
+                .SetBasePath(apiDir)
+                .AddJsonFile("appsettings.json", true)
+                .AddJsonFile("appsettings.Development.json", true);
+        }
 
         return builder;
     }

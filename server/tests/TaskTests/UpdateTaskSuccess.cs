@@ -1,51 +1,23 @@
 using System.ComponentModel.DataAnnotations;
-using System.Net.Http.Json;
-using api.Controllers;
 using api.Etc;
 using api.Mappers;
 using api.Models.Dtos.Requests;
-using api.Models.Dtos.Responses;
-using efscaffold.Entities;
 using Infrastructure.Postgres.Scaffolding;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using tests.Utilities;
 using Generated;
 
 namespace tests.TaskTests;
 
-public class UpdateTaskSuccess
+public class UpdateTaskSuccess : ApiTestBase
 {
-    private WebApplication _app = null!;
-    private string _baseUrl = null!;
-    private HttpClient _client = null!;
-    private IServiceProvider _scopedServiceProvider = null!;
-    private IApiClient _apiClient = null!;
-
-    [Before(Test)]
-    public Task Setup()
-    {
-        var builder = ApiTestSetupUtilities.MakeWebAppBuilderForTesting();
-        builder.AddProgramcsServices();
-        builder.ModifyServicesForTesting();
-        _app = builder.Build();
-
-        _app.BeforeProgramcsMiddleware();
-        _app.AddProgramcsMiddleware();
-        _app.AfterProgramcsMiddleware();
-
-        _baseUrl = _app.Urls.First() + "/";
-        _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
-        _apiClient = new ApiClient(_baseUrl, _client);
-        return Task.CompletedTask;
-    }
 
     [Test]
     public async Task UpdateTask_CanSuccessfullyUpdateTask()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
-        var timeProvider = _scopedServiceProvider.GetRequiredService<TimeProvider>();
+        var ctx = ScopedServiceProvider.GetRequiredService<MyDbContext>();
+        var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
+        var timeProvider = ScopedServiceProvider.GetRequiredService<TimeProvider>();
         
         // Use existing CriticalBugTask from test data to update
         var taskToUpdateId = ids.CriticalBugTaskId;
@@ -61,7 +33,7 @@ public class UpdateTaskSuccess
             listId: ids.PersonalListId // Moving from Work list to Personal list
         );
         
-        var updatedTask = await _apiClient.TicktickTask_UpdateTaskAsync(request);
+        var updatedTask = await ApiClient.TicktickTask_UpdateTaskAsync(request);
 
         // Verify task was updated in database
         var taskInDb = ctx.Tickticktasks.FirstOrDefault(t => t.TaskId == taskToUpdateId);

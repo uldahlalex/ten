@@ -1,56 +1,41 @@
-using System.Net.Http.Json;
-using api.Controllers;
 using api.Models.Dtos.Requests;
-using api.Models.Dtos.Responses;
 using api.Services;
 using Infrastructure.Postgres.Scaffolding;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using tests.Utilities;
 using Generated;
 
 namespace tests.Auth;
 
-public class RegisterTestsSuccess
+public class RegisterTestsSuccess : ApiTestBase
 {
-    private WebApplication _app = null!;
-    private string _baseUrl = null!;
-    private HttpClient _client = null!;
-    private IServiceProvider _scopedServiceProvider = null!;
-    private IApiClient _apiClient = null!;
-
-    [Before(Test)]
-    public Task Setup()
+    protected override Task OnSetupComplete()
     {
-        var builder = ApiTestSetupUtilities.MakeWebAppBuilderForTesting();
-        builder.AddProgramcsServices();
-        builder.ModifyServicesForTesting();
-        _app = builder.Build();
-
-        _app.BeforeProgramcsMiddleware();
-        _app.AddProgramcsMiddleware();
-        _app.AfterProgramcsMiddleware();
-
-        _baseUrl = _app.Urls.First() + "/";
-        _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = new HttpClient(); //should not use the method which adds jwt
-        _apiClient = new ApiClient(_baseUrl, _client);
+        // Register test doesn't need the default authenticated client
+        // Use an unauthenticated client instead
+        Client?.Dispose();
+        Client = new HttpClient();
+        
+        var baseUrl = App.Urls.First() + "/";
+        ApiClient = new ApiClient(baseUrl, Client);
+        
         return Task.CompletedTask;
     }
 
     [Test]
     public async Task WhenUserRegistersWithValidCredentials_TheyGetValidJwtBack()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
+        var ctx = ScopedServiceProvider.GetRequiredService<MyDbContext>();
         
         // Create unique credentials for this test
         var uniqueEmail = $"testuser_{Guid.NewGuid():N}@example.com";
         var password = "TestPassword123!";
         var reqDto = new AuthRequestDto(uniqueEmail, password);
         
-        var jwt = await _apiClient.Auth_RegisterAsync(reqDto);
+        var jwt = await ApiClient.Auth_RegisterAsync(reqDto);
             
-        var jwtService = _scopedServiceProvider.GetRequiredService<IJwtService>();
-        var userService = _scopedServiceProvider.GetRequiredService<IUserDataService>();
+        var jwtService = ScopedServiceProvider.GetRequiredService<IJwtService>();
+        var userService = ScopedServiceProvider.GetRequiredService<IUserDataService>();
         
         var claims = jwtService.VerifyJwt(jwt.Jwt); // throws if JWT is invalid
         

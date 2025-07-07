@@ -1,52 +1,23 @@
 using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Net.Http.Json;
-using api.Controllers;
 using api.Etc;
 using api.Models.Dtos.Requests;
-using api.Models.Dtos.Responses;
 using Infrastructure.Postgres.Scaffolding;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using tests.Utilities;
 using Generated;
 
 namespace tests.TaskTests;
 
-public class CreateTaskTestsSuccess
+public class CreateTaskTestsSuccess : ApiTestBase
 {
-    private WebApplication _app = null!;
-    private string _baseUrl = null!;
-    private HttpClient _client = null!;
-    private IServiceProvider _scopedServiceProvider = null!;
-    private IApiClient _apiClient = null!;
-
-    [Before(Test)]
-    public Task Setup()
-    {
-        var builder = ApiTestSetupUtilities.MakeWebAppBuilderForTesting();
-        builder.AddProgramcsServices();
-        builder.ModifyServicesForTesting();
-        _app = builder.Build();
-
-        _app.BeforeProgramcsMiddleware();
-        _app.AddProgramcsMiddleware();
-        _app.AfterProgramcsMiddleware();
-
-        _baseUrl = _app.Urls.First() + "/";
-        _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
-        _apiClient = new ApiClient(_baseUrl, _client);
-        return Task.CompletedTask;
-    }
 
 
     [Test]
     public async Task CreateTask_ShouldReturnOk_WhenValidRequest()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
-        var timeProvider = _scopedServiceProvider.GetRequiredService<TimeProvider>();
+        var ctx = ScopedServiceProvider.GetRequiredService<MyDbContext>();
+        var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
+        var timeProvider = ScopedServiceProvider.GetRequiredService<TimeProvider>();
         
         var dueDate = timeProvider.GetUtcNow().AddDays(1).UtcDateTime;
 
@@ -60,7 +31,7 @@ public class CreateTaskTestsSuccess
             1
         );
 
-        var responseBodyAsDto = await _apiClient.TicktickTask_CreateTaskAsync(request);
+        var responseBodyAsDto = await ApiClient.TicktickTask_CreateTaskAsync(request);
             
         // Validate the response DTO
         Validator.ValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), true);

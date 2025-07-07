@@ -1,51 +1,22 @@
 using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Net.Http.Json;
-using api.Controllers;
 using api.Etc;
 using api.Models.Dtos.Requests;
-using api.Models.Dtos.Responses;
 using Infrastructure.Postgres.Scaffolding;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using tests.Utilities;
 using Generated;
 
 namespace tests.Tag;
 
-public class AddTagToTaskSuccess
+public class AddTagToTaskSuccess : ApiTestBase
 {
-    private WebApplication _app = null!;
-    private string _baseUrl = null!;
-    private HttpClient _client = null!;
-    private IServiceProvider _scopedServiceProvider = null!;
-    private IApiClient _apiClient = null!;
-
-    [Before(Test)]
-    public Task Setup()
-    {
-        var builder = ApiTestSetupUtilities.MakeWebAppBuilderForTesting();
-        builder.AddProgramcsServices();
-        builder.ModifyServicesForTesting();
-        _app = builder.Build();
-
-        _app.BeforeProgramcsMiddleware();
-        _app.AddProgramcsMiddleware();
-        _app.AfterProgramcsMiddleware();
-
-        _baseUrl = _app.Urls.First() + "/";
-        _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
-        _apiClient = new ApiClient(_baseUrl, _client);
-        return Task.CompletedTask;
-    }
 
 
     [Test]
     public async Task AddTagToTask_CanSuccessfully_AddTagToTask()
     {
-        var ctx = _scopedServiceProvider.GetRequiredService<MyDbContext>();
-        var ids = _scopedServiceProvider.GetRequiredService<ITestDataIds>();
+        var ctx = ScopedServiceProvider.GetRequiredService<MyDbContext>();
+        var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
         
         // Based on TestDataSeeder, we know:
         // - FeatureTag is NOT assigned to GroceriesTask
@@ -60,7 +31,7 @@ public class AddTagToTaskSuccess
 
         var dto = new ChangeTaskTagRequestDto(tagId, taskId);
 
-        var result = await _apiClient.TicktickTask_AddTaskTagAsync(dto);
+        var result = await ApiClient.TicktickTask_AddTaskTagAsync(dto);
             
         Validator.ValidateObject(result, new ValidationContext(result), true);
         

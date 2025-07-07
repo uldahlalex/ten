@@ -43,12 +43,11 @@ public abstract class ApiTestBase
         App.AfterProgramcsMiddleware();
 
         var baseUrl = App.Urls.First() + "/";
+        Client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
         ApiClient = new ApiClient(baseUrl, Client);
 
         _scope = App.Services.CreateScope();
         ScopedServiceProvider = _scope.ServiceProvider;
-        
-        Client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
 
         await OnSetupComplete();
     }

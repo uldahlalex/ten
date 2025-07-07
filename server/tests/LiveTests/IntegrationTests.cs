@@ -1,39 +1,16 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using tests.Utilities;
 
 namespace tests.Live;
 
-public class IntegrationTests
+public class IntegrationTests : ApiTestBase
 {
-    private WebApplication _app = null!;
-    private string _baseUrl = null!;
-    private HttpClient _client = null!;
-    private IServiceProvider _scopedServiceProvider = null!;
-
-    [Before(Test)]
-    public Task Setup()
-    {
-        var builder = ApiTestSetupUtilities.MakeWebAppBuilderForTesting();
-        builder.AddProgramcsServices();
-        builder.ModifyServicesForTesting();
-        _app = builder.Build();
-
-        _app.BeforeProgramcsMiddleware();
-        _app.AddProgramcsMiddleware();
-        _app.AfterProgramcsMiddleware();
-
-        _baseUrl = _app.Urls.First() + "/";
-        _scopedServiceProvider = _app.Services.CreateScope().ServiceProvider;
-        _client = ApiTestSetupUtilities.CreateHttpClientWithDefaultTestJwt();
-        return Task.CompletedTask;
-    }
 
 
     [Test]
     [Explicit]
     public Task Waits()
     {
-        Console.WriteLine(_baseUrl);
+        Console.WriteLine(App.Urls.First());
         Console.ReadLine();
         return Task.CompletedTask;
     }

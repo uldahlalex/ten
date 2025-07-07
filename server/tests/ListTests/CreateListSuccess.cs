@@ -1,3 +1,4 @@
+using api.Etc;
 using api.Models.Dtos.Requests;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,5 +22,19 @@ public class CreateListSuccess : ApiTestBase
             throw new Exception("CreatedAt timestamp is not within 1 second of now");
         _ = ScopedServiceProvider.GetRequiredService<MyDbContext>().Tasklists
             .First(l => l.ListId == responseDto.ListId); //throws or finds
+    }
+    
+    [Test]
+    public async Task CreateList_ShouldAllowTakenName_IfItsSomeoneElsesList()
+    {
+        var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
+        
+         var janeListName = "Jane's Tasks";
+        var request = new CreateListRequestDto(janeListName);
+
+        var result = await ApiClient.TicktickTask_CreateListAsync(request);
+        
+        if (result == null)
+            throw new Exception("Expected successful list creation but got null result");
     }
 }

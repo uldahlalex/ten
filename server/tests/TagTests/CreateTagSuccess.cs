@@ -40,5 +40,8 @@ public class CreateTagSuccess : ApiTestBase
         // Verify CreatedAt is recent
         if (Math.Abs((timeProvider.GetUtcNow().UtcDateTime - result.CreatedAt).TotalSeconds) > 2)
             throw new Exception("CreatedAt timestamp should be within 2 seconds of now");
+        
+        Validator.ValidateObject(result, new ValidationContext(result));
+
     }
 }

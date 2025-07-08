@@ -15,7 +15,6 @@ public class CreateListFailure : ApiTestBase
     {
         var request = new CreateListRequestDto("");
 
-        // Act & Assert
         try
         {
             await ApiClient.TicktickTask_CreateListAsync(request);
@@ -32,10 +31,19 @@ public class CreateListFailure : ApiTestBase
     {
         var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
         var lookupId = ids.WorkListId;
-        var existingList = ScopedServiceProvider.GetRequiredService<MyDbContext>().Tasklists.First(l => l.ListId == lookupId);
+        var existingList = ScopedServiceProvider.GetRequiredService<MyDbContext>()
+            .Tasklists.First(l => l.ListId == lookupId && l.UserId == ids.JohnId);
         var request = new CreateListRequestDto(existingList.Name);
 
-        var result = await ApiClient.TicktickTask_CreateListAsync(request);
+        try
+        {
+            await ApiClient.TicktickTask_CreateListAsync(request);
+            throw new Exception("Expected 400 status code failure");
+        }
+        catch (ApiException)
+        {
+            //Success
+        }
   
     }
     
@@ -43,11 +51,10 @@ public class CreateListFailure : ApiTestBase
     public async Task CreateList_ShouldAllowTakenName_IfItsSomeoneElsesList()
     {
         var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
-        
-        // Based on TestDataSeeder, Jane has a list named "Jane's Tasks"
-        // John should be able to create a list with the same name since it's someone else's
-        var janeListName = "Jane's Tasks";
-        var request = new CreateListRequestDto(janeListName);
+        var janesFirstList = ScopedServiceProvider.GetRequiredService<MyDbContext>()
+            .Tasklists.First(u => u.UserId == ids.JaneId);
+      
+        var request = new CreateListRequestDto(janesFirstList.Name);
 
         var result = await ApiClient.TicktickTask_CreateListAsync(request);
         

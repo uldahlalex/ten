@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using api.Etc;
 using Microsoft.Extensions.DependencyInjection;
 using tests.Utilities;
@@ -44,5 +45,7 @@ public class GetMyTags : ApiTestBase
         var bugTag = actualTags.FirstOrDefault(t => t.TagId == ids.BugTagId);
         if (bugTag?.Name != "Bug")
             throw new Exception($"Expected Bug tag to have name 'Bug' but got '{bugTag?.Name}'");
+        Validator.ValidateObject(actualTags.First(), new ValidationContext(actualTags.First()));
+
     }
 }

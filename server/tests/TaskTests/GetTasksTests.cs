@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using api.Etc;
 using api.Models.Dtos.Requests;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +42,8 @@ public class GetTasksTests : ApiTestBase
         
         if (!expectedJohnTaskIds.SetEquals(actualTaskIds))
             throw new Exception($"Task IDs don't match. Expected: [{string.Join(", ", expectedJohnTaskIds)}], Actual: [{string.Join(", ", actualTaskIds)}]");
-            
+        Validator.ValidateObject(actualTasks.First(), new ValidationContext(actualTasks.First()));
+
         return Task.CompletedTask;
     }
 

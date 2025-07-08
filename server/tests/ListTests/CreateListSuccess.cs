@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using api.Models.Dtos.Requests;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,5 +22,7 @@ public class CreateListSuccess : ApiTestBase
             throw new Exception("CreatedAt timestamp is not within 1 second of now");
         _ = ScopedServiceProvider.GetRequiredService<MyDbContext>().Tasklists
             .First(l => l.ListId == responseDto.ListId); //throws or finds
+        Validator.ValidateObject(responseDto, new ValidationContext(responseDto));
+
     }
 }

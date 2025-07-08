@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using api.Etc;
 using Microsoft.Extensions.DependencyInjection;
 using tests.Utilities;
@@ -12,7 +13,6 @@ public class GetMyLists : ApiTestBase
     {
         var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
         
-        // Based on TestDataSeeder, John should have these specific lists
         var expectedJohnListIds = new HashSet<string>
         {
             ids.WorkListId,     // "Work Tasks" list
@@ -41,5 +41,8 @@ public class GetMyLists : ApiTestBase
         var personalList = actualLists.FirstOrDefault(l => l.ListId == ids.PersonalListId);
         if (personalList?.Name != "Personal Tasks")
             throw new Exception($"Expected Personal list to have name 'Personal Tasks' but got '{personalList?.Name}'");
+        Validator.ValidateObject(actualLists.First(), new ValidationContext(actualLists.First()));
+
+        
     }
 }

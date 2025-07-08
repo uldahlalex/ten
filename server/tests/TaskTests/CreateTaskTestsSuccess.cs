@@ -36,16 +36,16 @@ public class CreateTaskTestsSuccess : ApiTestBase
         // Validate the response DTO
         Validator.ValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), true);
         
-        if (responseBodyAsDto.Title != "Test Task")
+        if (responseBodyAsDto.Title != request.Title)
             throw new Exception($"Expected task title to be 'Test Task' but got '{responseBodyAsDto.Title}'");
             
-        if (responseBodyAsDto.Description != "Test Description")
+        if (responseBodyAsDto.Description != request.Description)
             throw new Exception($"Expected task description to be 'Test Description' but got '{responseBodyAsDto.Description}'");
             
-        if (responseBodyAsDto.ListId != ids.WorkListId)
+        if (responseBodyAsDto.ListId != request.ListId)
             throw new Exception($"Expected task to be in Work list {ids.WorkListId} but got {responseBodyAsDto.ListId}");
             
-        if (responseBodyAsDto.Priority != 1)
+        if (responseBodyAsDto.Priority != request.Priority)
             throw new Exception($"Expected task priority to be 1 but got {responseBodyAsDto.Priority}");
             
         // Verify task exists in database

@@ -9,18 +9,6 @@ namespace tests.Auth;
 
 public class RegisterTestsSuccess : ApiTestBase
 {
-    protected override Task OnSetupComplete()
-    {
-        // Register test doesn't need the default authenticated client
-        // Use an unauthenticated client instead
-        Client?.Dispose();
-        Client = new HttpClient();
-        
-        var baseUrl = App.Urls.First() + "/";
-        ApiClient = new ApiClient(baseUrl, Client);
-        
-        return Task.CompletedTask;
-    }
 
     [Test]
     public async Task WhenUserRegistersWithValidCredentials_TheyGetValidJwtBack()

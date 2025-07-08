@@ -1,8 +1,7 @@
 Aktuelt:
 - Crash course øvesler? (hvilke ting er gode til repetitions øvelser til crash course? nok noget med CRUD operationer fra UI til state change)
-- kan sqlite anvendes til tests for at gøre eksekvering hurtigere?
 
-Skal jeg lave en seeder middleware som dynamisk bliver erstattet?
+
 Tetst til middleware, logging og andre etc features så jeg ikke sletter kode efter færdigt produkt som er til hjælp
 
 

@@ -37,15 +37,8 @@ public class UpdateTaskFailure : ApiTestBase
             completed: true,
             listId: ctx.Tasklists.OrderBy(o => o.CreatedAt).Reverse().First().ListId 
         );
-        // Act & Assert
-        try
-        {
-            await ApiClient.TicktickTask_UpdateTaskAsync(request);
-            throw new Exception("Expected ApiException for bad request but request succeeded");
-        }
-        catch (ApiException ex) when (ex.StatusCode == 400)
-        {
-            // Expected - bad request should throw ApiException with 400 status code
-        }
+        var result = await ApiClient.TicktickTask_UpdateTaskAsync(request);
+        if (result.StatusCode != 400)
+            throw new Exception($"Expected status code 400 but got {result.StatusCode}");
     }
 }

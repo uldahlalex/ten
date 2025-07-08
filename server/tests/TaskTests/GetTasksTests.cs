@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using api.Etc;
 using api.Models.Dtos.Requests;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,11 +12,10 @@ public class GetTasksTests : ApiTestBase
 
 
     [Test]
-    public Task GetTasks_ShouldReturnAllMyTasks_WhenNoFiltersApplied()
+    public async Task GetTasks_ShouldReturnAllMyTasks_WhenNoFiltersApplied()
     {
         var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
         
-        // John should have these specific tasks based on TestDataSeeder
         var expectedJohnTaskIds = new HashSet<string>
         {
             ids.CriticalBugTaskId,    // Work list task
@@ -26,11 +26,8 @@ public class GetTasksTests : ApiTestBase
 
         var query = new GetTasksFilterAndOrderParameters();
 
-        var actualTasks = ApiClient
-            .TicktickTask_GetMyTasksAsync(query)
-            .GetAwaiter()
-            .GetResult();
-
+        var result = await ApiClient.TicktickTask_GetMyTasksAsync(query);
+        var actualTasks = result.Result;
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");
             
@@ -41,8 +38,9 @@ public class GetTasksTests : ApiTestBase
         
         if (!expectedJohnTaskIds.SetEquals(actualTaskIds))
             throw new Exception($"Task IDs don't match. Expected: [{string.Join(", ", expectedJohnTaskIds)}], Actual: [{string.Join(", ", actualTaskIds)}]");
-            
-        return Task.CompletedTask;
+     
+        Validator.ValidateObject(actualTasks.First(), new ValidationContext(actualTasks.First()));
+
     }
 
 
@@ -51,7 +49,6 @@ public class GetTasksTests : ApiTestBase
     {
         var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
         
-        // Based on TestDataSeeder, only UpdateDocsTask is completed for John
         var expectedCompletedTaskIds = new HashSet<string>
         {
             ids.UpdateDocsTaskId // This is the only completed task in test data
@@ -59,7 +56,7 @@ public class GetTasksTests : ApiTestBase
 
         var query = new GetTasksFilterAndOrderParameters { IsCompleted = true };
 
-        var actualTasks = await ApiClient.TicktickTask_GetMyTasksAsync(query);
+        var actualTasks = (await ApiClient.TicktickTask_GetMyTasksAsync(query)).Result;
         
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");
@@ -74,6 +71,8 @@ public class GetTasksTests : ApiTestBase
         
         if (!expectedCompletedTaskIds.SetEquals(actualTaskIds))
             throw new Exception($"Expected completed task IDs: [{string.Join(", ", expectedCompletedTaskIds)}], but got: [{string.Join(", ", actualTaskIds)}]");
+        Validator.ValidateObject(actualTasks.First(), new ValidationContext(actualTasks.First()));
+
     }
 
     [Test]
@@ -85,12 +84,7 @@ public class GetTasksTests : ApiTestBase
         var earliestDate = timeProvider.GetUtcNow().AddDays(-7).UtcDateTime;
         var latestDate = timeProvider.GetUtcNow().AddDays(6).UtcDateTime;
         
-        // Based on TestDataSeeder, John's tasks have these due dates:
-        // - CriticalBugTask: _baseTime.AddDays(1) -> should be in range
-        // - SearchFeatureTask: _baseTime.AddDays(7) -> should NOT be in range  
-        // - UpdateDocsTask: _baseTime.AddDays(3) -> should be in range
-        // - GroceriesTask: _baseTime.AddDays(2) -> should be in range
-        // All tasks should be within the -7 to +8 day range
+  
         var expectedTaskIdsInRange = new HashSet<string>
         {
             ids.CriticalBugTaskId,
@@ -104,7 +98,7 @@ public class GetTasksTests : ApiTestBase
             LatestDueDate = latestDate
         };
 
-        var actualTasks = await ApiClient.TicktickTask_GetMyTasksAsync(query);
+        var actualTasks = (await ApiClient.TicktickTask_GetMyTasksAsync(query)).Result;
         
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");
@@ -119,6 +113,8 @@ public class GetTasksTests : ApiTestBase
         
         if (!expectedTaskIdsInRange.SetEquals(actualTaskIds))
             throw new Exception($"Expected task IDs in range: [{string.Join(", ", expectedTaskIdsInRange)}], but got: [{string.Join(", ", actualTaskIds)}]");
+        Validator.ValidateObject(actualTasks.First(), new ValidationContext(actualTasks.First()));
+
     }
 
     [Test]
@@ -147,7 +143,7 @@ public class GetTasksTests : ApiTestBase
             MaxPriority = maxPriority
         };
 
-        var actualTasks = await ApiClient.TicktickTask_GetMyTasksAsync(query);
+        var actualTasks = (await ApiClient.TicktickTask_GetMyTasksAsync(query)).Result;
         
         if (actualTasks == null)
             throw new Exception("Response body was null when deserializing to List<TickticktaskDto>");
@@ -165,6 +161,8 @@ public class GetTasksTests : ApiTestBase
         
         if (!expectedTaskIdsInPriorityRange.SetEquals(actualTaskIds))
             throw new Exception($"Expected task IDs in priority range: [{string.Join(", ", expectedTaskIdsInPriorityRange)}], but got: [{string.Join(", ", actualTaskIds)}]");
+        Validator.ValidateObject(actualTasks.First(), new ValidationContext(actualTasks.First()));
+
     }
     
    

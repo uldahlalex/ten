@@ -19,7 +19,6 @@ public class UpdateTaskSuccess : ApiTestBase
         var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
         var timeProvider = ScopedServiceProvider.GetRequiredService<TimeProvider>();
         
-        // Use existing CriticalBugTask from test data to update
         var taskToUpdateId = ids.CriticalBugTaskId;
 
         var request = new UpdateTaskRequestDto
@@ -32,14 +31,12 @@ public class UpdateTaskSuccess : ApiTestBase
             completed: true,
             listId: ids.PersonalListId // Moving from Work list to Personal list
         );
-        
-        var updatedTask = await ApiClient.TicktickTask_UpdateTaskAsync(request);
+
+        var updatedTask = (await ApiClient.TicktickTask_UpdateTaskAsync(request)).Result;
 
         // Verify task was updated in database
-        var taskInDb = ctx.Tickticktasks.FirstOrDefault(t => t.TaskId == taskToUpdateId);
-        if (taskInDb == null)
-            throw new Exception($"Task with ID {taskToUpdateId} should exist in database");
-            
+        var taskInDb = ctx.Tickticktasks.First(t => t.TaskId == taskToUpdateId);
+
         var taskDto = taskInDb.ToDto();
         Validator.ValidateObject(taskDto, new ValidationContext(taskDto), true);
         

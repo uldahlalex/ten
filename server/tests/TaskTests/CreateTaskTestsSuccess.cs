@@ -31,31 +31,29 @@ public class CreateTaskTestsSuccess : ApiTestBase
             1
         );
 
-        var responseBodyAsDto = await ApiClient.TicktickTask_CreateTaskAsync(request);
+        var response = await ApiClient.TicktickTask_CreateTaskAsync(request);
+        var responseBodyAsDto = response.Result;
             
         // Validate the response DTO
         Validator.ValidateObject(responseBodyAsDto, new ValidationContext(responseBodyAsDto), true);
         
-        if (responseBodyAsDto.Title != "Test Task")
+        if (responseBodyAsDto.Title != request.Title)
             throw new Exception($"Expected task title to be 'Test Task' but got '{responseBodyAsDto.Title}'");
             
-        if (responseBodyAsDto.Description != "Test Description")
+        if (responseBodyAsDto.Description != request.Description)
             throw new Exception($"Expected task description to be 'Test Description' but got '{responseBodyAsDto.Description}'");
             
         if (responseBodyAsDto.ListId != ids.WorkListId)
             throw new Exception($"Expected task to be in Work list {ids.WorkListId} but got {responseBodyAsDto.ListId}");
             
-        if (responseBodyAsDto.Priority != 1)
+        if (responseBodyAsDto.Priority != request.Priority)
             throw new Exception($"Expected task priority to be 1 but got {responseBodyAsDto.Priority}");
             
         // Verify task exists in database
-        var dbTask = ctx.Tickticktasks.FirstOrDefault(t => t.TaskId == responseBodyAsDto.TaskId);
-        if (dbTask == null)
-            throw new Exception($"Task with ID {responseBodyAsDto.TaskId} should exist in database after creation");
-            
+        var dbTask = ctx.Tickticktasks.First(t => t.TaskId == responseBodyAsDto.TaskId);
+
         Validator.ValidateObject(dbTask, new ValidationContext(dbTask), true);
         
-        // Verify CreatedAt is recent
         if (Math.Abs((timeProvider.GetUtcNow().UtcDateTime - responseBodyAsDto.CreatedAt).TotalSeconds) > 2)
             throw new Exception("CreatedAt timestamp should be within 2 seconds of now");
     }

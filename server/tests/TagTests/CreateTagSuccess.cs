@@ -19,7 +19,7 @@ public class CreateTagSuccess : ApiTestBase
         var newTagName = "My new tag";
         var tag = new CreateTagRequestDto(newTagName);
 
-        var result = await ApiClient.TicktickTask_CreateTagAsync(tag);
+        var result = (await ApiClient.TicktickTask_CreateTagAsync(tag)).Result;
             
         Validator.ValidateObject(result, new ValidationContext(result), true);
         

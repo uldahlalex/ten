@@ -16,16 +16,10 @@ public class CreateListFailure : ApiTestBase
     {
         var request = new CreateListRequestDto("");
 
-        // Act & Assert
-        try
-        {
-            await ApiClient.TicktickTask_CreateListAsync(request);
-            throw new Exception("Expected ApiException for bad request but request succeeded");
-        }
-        catch (ApiException ex) 
-        {
-            // Expected - bad request should throw ApiException with 400 status code
-        }
+        var result = await ApiClient.TicktickTask_CreateListAsync(request);
+        if (result.StatusCode != 400)
+            throw new Exception($"Expected status code 400 but got {result.StatusCode}");
+    
     }
     
     [Test]
@@ -33,20 +27,14 @@ public class CreateListFailure : ApiTestBase
     {
         var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
         var lookupId = ids.WorkListId;
-        var existingList = ScopedServiceProvider.GetRequiredService<MyDbContext>().Tasklists.First(l => l.ListId == lookupId);
+        var existingList = ScopedServiceProvider.GetRequiredService<MyDbContext>()
+            .Tasklists.First(l => l.ListId == lookupId && l.UserId == ids.JohnId);
         var request = new CreateListRequestDto(existingList.Name);
 
 
-        try
-        {
-            await ApiClient.TicktickTask_CreateListAsync(request);
-            throw new Exception("It should not be possible to create a list with an already taken name for the user");
-        }
-        catch (ApiException e)
-        {
-            // Expected - bad request should throw ApiException with 400 status code
-
-        }
+        var result = await ApiClient.TicktickTask_CreateListAsync(request);
+        if (result.StatusCode != 400)
+            throw new Exception($"Expected status code 400 for duplicate name but got {result.StatusCode}");
        
 
     }

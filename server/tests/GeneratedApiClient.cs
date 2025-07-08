@@ -38,51 +38,51 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<JwtResponse>> Auth_RegisterAsync(AuthRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<JwtResponse> Auth_RegisterAsync(AuthRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<JwtResponse>> Auth_LoginAsync(AuthRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<JwtResponse> Auth_LoginAsync(AuthRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<System.Collections.Generic.ICollection<TickticktaskDto>>> TicktickTask_GetMyTasksAsync(GetTasksFilterAndOrderParameters parameters, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TickticktaskDto>> TicktickTask_GetMyTasksAsync(GetTasksFilterAndOrderParameters parameters, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TickticktaskDto>> TicktickTask_CreateTaskAsync(CreateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_CreateTaskAsync(CreateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TickticktaskDto>> TicktickTask_UpdateTaskAsync(UpdateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_UpdateTaskAsync(UpdateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TickticktaskDto>> TicktickTask_DeleteTaskAsync(string? authorization = null, string? taskId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_DeleteTaskAsync(string? authorization = null, string? taskId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<System.Collections.Generic.ICollection<TagDto>>> TicktickTask_GetMyTagsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TagDto>> TicktickTask_GetMyTagsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<System.Collections.Generic.ICollection<TasklistDto>>> TicktickTask_GetMyListsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TasklistDto>> TicktickTask_GetMyListsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TasklistDto>> TicktickTask_CreateListAsync(CreateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TasklistDto> TicktickTask_CreateListAsync(CreateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TagDto>> TicktickTask_CreateTagAsync(CreateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TagDto> TicktickTask_CreateTagAsync(CreateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TasklistDto>> TicktickTask_UpdateListAsync(UpdateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TasklistDto> TicktickTask_UpdateListAsync(UpdateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TagDto>> TicktickTask_UpdateTagAsync(UpdateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TagDto> TicktickTask_UpdateTagAsync(UpdateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -94,7 +94,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TaskTagDto>> TicktickTask_AddTaskTagAsync(ChangeTaskTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TaskTagDto> TicktickTask_AddTaskTagAsync(ChangeTaskTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -102,11 +102,11 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TotpRegisterResponseDto>> Totp_TotpRegisterAsync(TotpRegisterRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TotpRegisterResponseDto> Totp_TotpRegisterAsync(TotpRegisterRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<JwtResponse>> Totp_TotpLoginAsync(TotpLoginRequestDto request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<JwtResponse> Totp_TotpLoginAsync(TotpLoginRequestDto request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -114,7 +114,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<TotpRegisterResponseDto>> Totp_TotpRotateAsync(TotpRotateRequestDto request, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TotpRegisterResponseDto> Totp_TotpRotateAsync(TotpRotateRequestDto request, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -172,7 +172,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<JwtResponse>> Auth_RegisterAsync(AuthRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<JwtResponse> Auth_RegisterAsync(AuthRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -225,7 +225,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<JwtResponse>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -249,7 +249,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<JwtResponse>> Auth_LoginAsync(AuthRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<JwtResponse> Auth_LoginAsync(AuthRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -302,7 +302,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<JwtResponse>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -326,7 +326,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<System.Collections.Generic.ICollection<TickticktaskDto>>> TicktickTask_GetMyTasksAsync(GetTasksFilterAndOrderParameters parameters, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TickticktaskDto>> TicktickTask_GetMyTasksAsync(GetTasksFilterAndOrderParameters parameters, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (parameters == null)
                 throw new System.ArgumentNullException("parameters");
@@ -382,7 +382,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<System.Collections.Generic.ICollection<TickticktaskDto>>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -406,7 +406,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TickticktaskDto>> TicktickTask_CreateTaskAsync(CreateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_CreateTaskAsync(CreateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -462,7 +462,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TickticktaskDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -486,7 +486,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TickticktaskDto>> TicktickTask_UpdateTaskAsync(UpdateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_UpdateTaskAsync(UpdateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -542,7 +542,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TickticktaskDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -566,7 +566,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TickticktaskDto>> TicktickTask_DeleteTaskAsync(string? authorization = null, string? taskId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_DeleteTaskAsync(string? authorization = null, string? taskId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -621,7 +621,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TickticktaskDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -645,7 +645,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<System.Collections.Generic.ICollection<TagDto>>> TicktickTask_GetMyTagsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TagDto>> TicktickTask_GetMyTagsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -694,7 +694,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<System.Collections.Generic.ICollection<TagDto>>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -718,7 +718,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<System.Collections.Generic.ICollection<TasklistDto>>> TicktickTask_GetMyListsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TasklistDto>> TicktickTask_GetMyListsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -767,7 +767,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<System.Collections.Generic.ICollection<TasklistDto>>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -791,7 +791,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TasklistDto>> TicktickTask_CreateListAsync(CreateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TasklistDto> TicktickTask_CreateListAsync(CreateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -847,7 +847,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TasklistDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -871,7 +871,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TagDto>> TicktickTask_CreateTagAsync(CreateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TagDto> TicktickTask_CreateTagAsync(CreateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -927,7 +927,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TagDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -951,7 +951,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TasklistDto>> TicktickTask_UpdateListAsync(UpdateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TasklistDto> TicktickTask_UpdateListAsync(UpdateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -1007,7 +1007,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TasklistDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -1031,7 +1031,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TagDto>> TicktickTask_UpdateTagAsync(UpdateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TagDto> TicktickTask_UpdateTagAsync(UpdateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -1087,7 +1087,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TagDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -1265,7 +1265,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TaskTagDto>> TicktickTask_AddTaskTagAsync(ChangeTaskTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TaskTagDto> TicktickTask_AddTaskTagAsync(ChangeTaskTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -1321,7 +1321,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TaskTagDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -1423,7 +1423,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TotpRegisterResponseDto>> Totp_TotpRegisterAsync(TotpRegisterRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TotpRegisterResponseDto> Totp_TotpRegisterAsync(TotpRegisterRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -1476,7 +1476,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TotpRegisterResponseDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -1500,7 +1500,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<JwtResponse>> Totp_TotpLoginAsync(TotpLoginRequestDto request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<JwtResponse> Totp_TotpLoginAsync(TotpLoginRequestDto request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -1553,7 +1553,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<JwtResponse>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -1652,7 +1652,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<TotpRegisterResponseDto>> Totp_TotpRotateAsync(TotpRotateRequestDto request, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TotpRegisterResponseDto> Totp_TotpRotateAsync(TotpRotateRequestDto request, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -1708,7 +1708,7 @@ namespace Generated
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new SwaggerResponse<TotpRegisterResponseDto>(status_, headers_, objectResponse_.Object);
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -1955,32 +1955,6 @@ namespace Generated
                 _response.Dispose();
             if (_client != null)
                 _client.Dispose();
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SwaggerResponse
-    {
-        public int StatusCode { get; private set; }
-
-        public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
-
-        public SwaggerResponse(int statusCode, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
-        {
-            StatusCode = statusCode;
-            Headers = headers;
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SwaggerResponse<TResult> : SwaggerResponse
-    {
-        public TResult Result { get; private set; }
-
-        public SwaggerResponse(int statusCode, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result)
-            : base(statusCode, headers)
-        {
-            Result = result;
         }
     }
 

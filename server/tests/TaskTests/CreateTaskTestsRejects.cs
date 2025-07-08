@@ -33,8 +33,14 @@ public class CreateTaskTestsRejects : ApiTestBase
 
 
         // Act & Assert
-        var result = await ApiClient.TicktickTask_CreateTaskAsync(request);
-        if (result.StatusCode != 400)
-            throw new Exception($"Expected status code 400 but got {result.StatusCode}");
+        try
+        {
+            await ApiClient.TicktickTask_CreateTaskAsync(request);
+            throw new Exception("Expected ApiException for bad request but request succeeded");
+        }
+        catch (ApiException ex) when (ex.StatusCode == 400)
+        {
+            // Expected - bad request should throw ApiException with 400 status code
+        }
     }
 }

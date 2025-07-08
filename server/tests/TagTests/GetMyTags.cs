@@ -14,15 +14,16 @@ public class GetMyTags : ApiTestBase
     {
         var ids = ScopedServiceProvider.GetRequiredService<ITestDataIds>();
         
+        // Based on TestDataSeeder, John should have these specific tags
         var expectedJohnTagIds = new HashSet<string>
         {
-            ids.UrgentTagId,     
-            ids.BugTagId,       
-            ids.FeatureTagId,    
-            ids.ImportantTagId   
+            ids.UrgentTagId,     // "Urgent" tag
+            ids.BugTagId,        // "Bug" tag  
+            ids.FeatureTagId,    // "Feature" tag
+            ids.ImportantTagId   // "Important" tag
         };
 
-        var actualTags = (await ApiClient.TicktickTask_GetMyTagsAsync()).Result;
+        var actualTags = await ApiClient.TicktickTask_GetMyTagsAsync();
         
         if (actualTags == null)
             throw new Exception("Response body was null when deserializing to List<TagDto>");

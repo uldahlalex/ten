@@ -31,7 +31,7 @@ public class AddTagToTaskSuccess : ApiTestBase
 
         var dto = new ChangeTaskTagRequestDto(tagId, taskId);
 
-        var result = (await ApiClient.TicktickTask_AddTaskTagAsync(dto)).Result;
+        var result = await ApiClient.TicktickTask_AddTaskTagAsync(dto);
             
         Validator.ValidateObject(result, new ValidationContext(result), true);
         
@@ -41,6 +41,7 @@ public class AddTagToTaskSuccess : ApiTestBase
         if (result.TaskId != taskId)
             throw new Exception($"Expected TaskId to be {taskId} but got {result.TaskId}");
         
+        // Verify the relationship now exists in database
         var createdTaskTag = ctx.TaskTags.FirstOrDefault(t => t.TagId == tagId && t.TaskId == taskId);
         if (createdTaskTag == null)
             throw new Exception($"TaskTag relationship between {tagId} and {taskId} should exist in database after creation");

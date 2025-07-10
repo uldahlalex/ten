@@ -1,21 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api.Controllers;
+namespace api.Models.Dtos.Requests;
 
 /// <summary>
 ///     When register is performed the client app reveals the QR code
 /// </summary>
-public class TotpRegisterRequestDto
-{
-    public TotpRegisterRequestDto(string email)
-    {
-        Email = email;
-    }
-
+public record TotpRegisterRequestDto(
+    
     /// <summary>
     ///     TOTP required unique identifier for lookup: Email can be used for this
     /// </summary>
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; }
-}
+    [Required, EmailAddress] string Email
+);

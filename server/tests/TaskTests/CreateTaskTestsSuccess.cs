@@ -28,7 +28,8 @@ public class CreateTaskTestsSuccess : ApiTestBase
             "Test Task",
             "Test Description",
             dueDate,
-            1
+            1,
+            new List<string>()
         );
 
         var responseBodyAsDto = await ApiClient.TicktickTask_CreateTaskAsync(request);

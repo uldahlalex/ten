@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using api.Etc;
+using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 using api.Services;
 using efscaffold.Entities;

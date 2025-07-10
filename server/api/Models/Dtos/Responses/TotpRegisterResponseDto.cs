@@ -1,14 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api.Controllers;
+namespace api.Models.Dtos.Responses;
 
-public class TotpRegisterResponseDto
-{
-    [Required] public string Message { get; set; }
-
-    [Required] public string QrCodeBase64 { get; set; }
-
-    [Required] public string SecretKey { get; set; }
-
-    [Required] public string UserId { get; set; }
-}
+public record TotpRegisterResponseDto(
+    [Required] string Message,
+    [Required] string QrCodeBase64,
+    [Required] string SecretKey,
+    [Required] string UserId
+);

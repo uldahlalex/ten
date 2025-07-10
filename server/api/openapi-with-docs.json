@@ -827,8 +827,7 @@
         ],
         "properties": {
           "jwt": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -868,20 +867,16 @@
         ],
         "properties": {
           "taskId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "listId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "title": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "description": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "dueDate": {
             "type": "string",
@@ -890,17 +885,14 @@
           },
           "priority": {
             "type": "integer",
-            "format": "int32",
-            "maximum": 5.0,
-            "minimum": 1.0
+            "format": "int32"
           },
           "completed": {
             "type": "boolean"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "minLength": 1
+            "format": "date-time"
           },
           "completedAt": {
             "type": "string",
@@ -925,23 +917,20 @@
         ],
         "properties": {
           "taskId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "tagId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "minLength": 1
+            "format": "date-time"
           }
         }
       },
       "GetTasksFilterAndOrderParameters": {
         "type": "object",
-        "description": "If no value is passed to each property it defaults to not filter by the property. No value is required.\nDeliberately using ? C# operator for properties such that if no default values are assigned, service method assigns\nthem manually\nNo constructor due to the above.\n            ",
+        "description": "If no value is passed to each property it defaults to not filter by the property. No value is required.\nDeliberately using ? C# operator for properties such that if no default values are assigned, service method assigns\nthem manually\n            ",
         "additionalProperties": false,
         "properties": {
           "isCompleted": {
@@ -1004,36 +993,30 @@
           "listId",
           "title",
           "description",
-          "priority"
+          "priority",
+          "tagsIds"
         ],
         "properties": {
           "listId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "title": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "description": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "dueDate": {
             "type": "string",
-            "description": "Due date is optional since tasks may have none\n            ",
             "format": "date-time",
             "nullable": true
           },
           "priority": {
             "type": "integer",
-            "format": "int32",
-            "maximum": 5.0,
-            "minimum": 1.0
+            "format": "int32"
           },
           "tagsIds": {
             "type": "array",
-            "description": "List of tag IDs to add to the task when it is created\n            ",
             "items": {
               "type": "string"
             }
@@ -1054,35 +1037,28 @@
         ],
         "properties": {
           "id": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "listId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "completed": {
             "type": "boolean"
           },
           "title": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "description": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "dueDate": {
             "type": "string",
-            "description": "Due date can be \"removed\" by assigning it null\n            ",
             "format": "date-time",
             "nullable": true
           },
           "priority": {
             "type": "integer",
-            "format": "int32",
-            "maximum": 5.0,
-            "minimum": 1.0
+            "format": "int32"
           }
         }
       },
@@ -1097,21 +1073,17 @@
         ],
         "properties": {
           "tagId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "name": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "userId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "minLength": 1
+            "format": "date-time"
           }
         }
       },
@@ -1126,21 +1098,17 @@
         ],
         "properties": {
           "listId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "userId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "name": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "minLength": 1
+            "format": "date-time"
           }
         }
       },
@@ -1153,8 +1121,7 @@
         ],
         "properties": {
           "listName": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -1167,8 +1134,7 @@
         ],
         "properties": {
           "tagName": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -1182,12 +1148,10 @@
         ],
         "properties": {
           "listId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "newName": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -1201,12 +1165,10 @@
         ],
         "properties": {
           "tagId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "newName": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -1220,12 +1182,10 @@
         ],
         "properties": {
           "tagId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "taskId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -1240,20 +1200,16 @@
         ],
         "properties": {
           "message": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "qrCodeBase64": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "secretKey": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "userId": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -1266,10 +1222,7 @@
         ],
         "properties": {
           "email": {
-            "type": "string",
-            "description": "TOTP required unique identifier for lookup: Email can be used for this\n            ",
-            "format": "email",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -1283,16 +1236,10 @@
         ],
         "properties": {
           "totpCode": {
-            "type": "string",
-            "description": "This code is found in the authenticator on the device\n            ",
-            "maxLength": 6,
-            "minLength": 6
+            "type": "string"
           },
           "email": {
-            "type": "string",
-            "description": "Email is relevant because backend needs a unique identifier to make a lookup\n            ",
-            "format": "email",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -1305,14 +1252,10 @@
         ],
         "properties": {
           "id": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "totpCode": {
-            "type": "string",
-            "maxLength": 6,
-            "minLength": 6,
-            "pattern": "^\\d{6}$"
+            "type": "string"
           }
         }
       },
@@ -1325,10 +1268,7 @@
         ],
         "properties": {
           "currentTotpCode": {
-            "type": "string",
-            "maxLength": 6,
-            "minLength": 6,
-            "pattern": "^\\d{6}$"
+            "type": "string"
           }
         }
       },
@@ -1341,10 +1281,7 @@
         ],
         "properties": {
           "totpCode": {
-            "type": "string",
-            "maxLength": 6,
-            "minLength": 6,
-            "pattern": "^\\d{6}$"
+            "type": "string"
           }
         }
       },

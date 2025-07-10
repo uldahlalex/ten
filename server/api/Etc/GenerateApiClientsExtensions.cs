@@ -115,32 +115,3 @@ using api.Controllers;
     }
 }
 
-public static class SwaggerConfigurationExtensions
-{
-    public static IServiceCollection AddSwaggerWithXmlDocs(this IServiceCollection services)
-    {
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(options =>
-        {
-            // Include XML documentation
-            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
-            
-            if (File.Exists(xmlPath))
-            {
-                options.IncludeXmlComments(xmlPath);
-            }
-
-            options.EnableAnnotations();
-            options.UseInlineDefinitionsForEnums();
-            
-            //todo add problemdetails manually
-
-        });
-
-        return services;
-    }
-    
- 
-    
-}

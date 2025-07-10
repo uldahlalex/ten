@@ -1,19 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api.Controllers;
+namespace api.Models.Dtos.Requests;
 
 /// <summary>
 ///     Used to change the persisted secret to a new random one (not supplied by client)
 /// </summary>
-public class TotpRotateRequestDto
-{
-    public TotpRotateRequestDto(string currentTotpCode)
-    {
-        CurrentTotpCode = currentTotpCode;
-    }
-
-    [Required]
-    [StringLength(6, MinimumLength = 6)]
-    [RegularExpression(@"^\d{6}$", ErrorMessage = "Code must be exactly 6 digits")]
-    public string CurrentTotpCode { get; set; }
-}
+public record TotpRotateRequestDto(
+    [Required, StringLength(6, MinimumLength = 6), RegularExpression(@"^\d{6}$", ErrorMessage = "Code must be exactly 6 digits")] string CurrentTotpCode
+);

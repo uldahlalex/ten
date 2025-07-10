@@ -30,12 +30,12 @@ public class UpdateTaskFailure : ApiTestBase
         var request = new UpdateTaskRequestDto
         (
             taskToUpdate.TaskId,
-            title: title,
-            description: description,
-            dueDate: ScopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().AddDays(1).UtcDateTime,
-            priority: priority,
-            completed: true,
-            listId: ctx.Tasklists.OrderBy(o => o.CreatedAt).Reverse().First().ListId 
+            ctx.Tasklists.OrderBy(o => o.CreatedAt).Reverse().First().ListId,
+            true,
+            title,
+            description,
+            ScopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().AddDays(1).UtcDateTime,
+            priority
         );
         // Act & Assert
         try

@@ -7,70 +7,60 @@ public static class EntityToDtosExtensions
 {
     public static TasklistDto ToDto(this Tasklist entity)
     {
-        var dto = new TasklistDto
-        {
-            ListId = entity.ListId,
-            UserId = entity.UserId,
-            Name = entity.Name,
-            CreatedAt = entity.CreatedAt
-        };
-        return dto;
+        return new TasklistDto(
+            entity.ListId,
+            entity.UserId,
+            entity.Name,
+            entity.CreatedAt
+        );
     }
 
     public static UserDto ToDto(this User user)
     {
-        var dto = new UserDto
-        {
-            UserId = user.UserId,
-            Email = user.Email,
-            Salt = user.Salt,
-            PasswordHash = user.PasswordHash,
-            Role = user.Role,
-            CreatedAt = user.CreatedAt,
-            Tags = user.Tags.Select(t => t.ToDto()).ToList(),
-            Tasklists = user.Tasklists.Select(t => t.ToDto()).ToList()
-        };
-        return dto;
+        return new UserDto(
+            user.UserId,
+            user.Email,
+            user.Salt,
+            user.PasswordHash,
+            user.Role,
+            user.CreatedAt,
+            user.Tags.Select(t => t.ToDto()).ToList(),
+            user.Tasklists.Select(t => t.ToDto()).ToList()
+        );
     }
 
     public static TickticktaskDto ToDto(this Tickticktask entity)
     {
-        var dto = new TickticktaskDto
-        {
-            TaskId = entity.TaskId,
-            ListId = entity.ListId,
-            Title = entity.Title,
-            Description = entity.Description,
-            DueDate = entity.DueDate,
-            Priority = entity.Priority,
-            Completed = entity.Completed,
-            CreatedAt = entity.CreatedAt,
-            CompletedAt = entity.CompletedAt,
-            TaskTags = entity.TaskTags.Select(t => t.ToDto()).ToList()
-        };
-        return dto;
+        return new TickticktaskDto(
+            entity.TaskId,
+            entity.ListId,
+            entity.Title,
+            entity.Description,
+            entity.DueDate,
+            entity.Priority,
+            entity.Completed,
+            entity.CreatedAt,
+            entity.CompletedAt,
+            entity.TaskTags.Select(t => t.ToDto()).ToList()
+        );
     }
 
     public static TaskTagDto ToDto(this TaskTag taskTag)
     {
-        var dto = new TaskTagDto
-        {
-            TaskId = taskTag.TaskId,
-            TagId = taskTag.TagId,
-            CreatedAt = taskTag.CreatedAt
-        };
-        return dto;
+        return new TaskTagDto(
+            taskTag.TaskId,
+            taskTag.TagId,
+            taskTag.CreatedAt
+        );
     }
 
     public static TagDto ToDto(this Tag tag)
     {
-        var dto = new TagDto
-        {
-            TagId = tag.TagId,
-            Name = tag.Name,
-            UserId = tag.UserId,
-            CreatedAt = tag.CreatedAt
-        };
-        return dto;
+        return new TagDto(
+            tag.TagId,
+            tag.Name,
+            tag.UserId,
+            tag.CreatedAt
+        );
     }
 }

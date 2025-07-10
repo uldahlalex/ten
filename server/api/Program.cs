@@ -30,8 +30,10 @@ public class Program
         {
             conf.Title = "Alex' Amazing REST API for training (loosely based on the 'TickTick' Task manager app)";
             conf.AddTypeToSwagger<ProblemDetails>();
+            conf.SchemaSettings.AlwaysAllowAdditionalObjectProperties = false;
+            conf.SchemaSettings.GenerateAbstractProperties = true;
+            conf.SchemaSettings.SchemaProcessors.Add(new RequiredSchemaProcessor());
         });
-        builder.Services.AddSwaggerWithXmlDocs();
         var appOptions = builder.Services.AddAppOptions(builder.Configuration);
  
         builder.Services.AddDbContext<MyDbContext>(options =>

@@ -27,10 +27,9 @@ public class AuthenticationService(
         
         var user = await userDataService.CreateUserAsync(dto.Email, salt, passwordHash, Role.User);
         
-        var responseDto = new JwtResponse
-        {
-            Jwt = jwtService.GenerateJwt(user.UserId, optionsMonitor.CurrentValue.JwtSecret)
-        };
+        var responseDto = new JwtResponse(
+            jwtService.GenerateJwt(user.UserId, optionsMonitor.CurrentValue.JwtSecret)
+        );
         return responseDto;
     }
     
@@ -41,10 +40,9 @@ public class AuthenticationService(
             throw new ValidationException("User not found");
         if (user.PasswordHash != cryptographyService.Hash(dto.Password + user.Salt))
             throw new ValidationException("Invalid password");
-        var responseDto = new JwtResponse
-        {
-            Jwt = jwtService.GenerateJwt(user.UserId, optionsMonitor.CurrentValue.JwtSecret)
-        };
+        var responseDto = new JwtResponse(
+            jwtService.GenerateJwt(user.UserId, optionsMonitor.CurrentValue.JwtSecret)
+        );
         return responseDto;
     }
     
@@ -61,13 +59,12 @@ public class AuthenticationService(
             $"otpauth://totp/{Uri.EscapeDataString(nameof(StaticConstants.TickTickClone))}:{Uri.EscapeDataString(user.UserId)}?secret={totpSecret}&issuer=" +
             nameof(StaticConstants.TickTickClone);
 
-        return (new TotpRegisterResponseDto
-        {
-            UserId = user.UserId,
-            Message = "Scan the QR code with your authenticator app",
-            QrCodeBase64 = totpService.GenerateQrCodeBase64(otpauthUrl),
-            SecretKey = totpSecret
-        });
+        return new TotpRegisterResponseDto(
+            "Scan the QR code with your authenticator app",
+            totpService.GenerateQrCodeBase64(otpauthUrl),
+            totpSecret,
+            user.UserId
+        );
     }
 
 
@@ -95,13 +92,12 @@ public class AuthenticationService(
             $"otpauth://totp/{Uri.EscapeDataString(StaticConstants.TickTickClone)}:{Uri.EscapeDataString(user.UserId)}?secret={newTotpSecret}&issuer=" +
             nameof(StaticConstants.TickTickClone);
 
-        return (new TotpRegisterResponseDto
-        {
-            UserId = user.UserId,
-            Message = "Scan the new QR code with your authenticator app",
-            QrCodeBase64 = totpService.GenerateQrCodeBase64(otpauthUrl),
-            SecretKey = newTotpSecret
-        });
+        return new TotpRegisterResponseDto(
+            "Scan the new QR code with your authenticator app",
+            totpService.GenerateQrCodeBase64(otpauthUrl),
+            newTotpSecret,
+            user.UserId
+        );
     }
 
     public async Task TotpUnregister(TotpUnregisterRequestDto request, string authorization)
@@ -122,9 +118,6 @@ public class AuthenticationService(
         totpService.ValidateTotpCodeOrThrow(user.TotpSecret, request.TotpCode);
 
         var token = jwtService.GenerateJwt(user.UserId, optionsMonitor.CurrentValue.JwtSecret);
-        return new JwtResponse
-        {
-            Jwt = token
-        };
+        return new JwtResponse(token);
     }
 }

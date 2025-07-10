@@ -26,10 +26,11 @@ public class CreateTaskTestsRejects : ApiTestBase
 
         var request = new CreateTaskRequestDto(
             (ctx.Tasklists.FirstOrDefault() ?? throw new Exception("Could not find any task list")).ListId,
-            title,
+            Title: title,
             description,
             ScopedServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().AddDays(1).UtcDateTime,
-            priority);
+            priority,
+            new List<string>());
 
 
         // Act & Assert

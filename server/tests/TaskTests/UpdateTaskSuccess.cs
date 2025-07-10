@@ -25,12 +25,12 @@ public class UpdateTaskSuccess : ApiTestBase
         var request = new UpdateTaskRequestDto
         (
             taskToUpdateId,
-            title: "Updated Title",
-            description: "Updated Description",
-            dueDate: timeProvider.GetUtcNow().AddDays(10).UtcDateTime.ToUniversalTime(),
-            priority: 3,
-            completed: true,
-            listId: ids.PersonalListId // Moving from Work list to Personal list
+            ids.PersonalListId, // Moving from Work list to Personal list
+            true,
+            "Updated Title",
+            "Updated Description",
+            timeProvider.GetUtcNow().AddDays(10).UtcDateTime.ToUniversalTime(),
+            3
         );
         
         var updatedTask = await ApiClient.TicktickTask_UpdateTaskAsync(request);

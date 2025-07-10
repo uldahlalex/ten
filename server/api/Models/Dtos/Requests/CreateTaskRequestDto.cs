@@ -8,7 +8,7 @@ namespace api.Models.Dtos.Requests;
 public record CreateTaskRequestDto(
     string ListId,           // Required (non-nullable)
     [MinLength(1)]string Title,            // Required (non-nullable)
-    string Description,      // Required (non-nullable)
+    [MinLength(1)]string Description,      // Required (non-nullable)
     /// <summary>
     ///     Due date is optional since tasks may have none
     /// </summary>

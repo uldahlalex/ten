@@ -842,18 +842,17 @@
         "properties": {
           "email": {
             "type": "string",
-            "description": "Just to have any unique identifier for the user when signing in and registering\n            ",
-            "minLength": 1
+            "description": "Just to have any unique identifier for the user when signing in and registering"
           },
           "password": {
             "type": "string",
-            "minLength": 1
+            "description": "User's password for authentication"
           }
         }
       },
       "TickticktaskDto": {
         "type": "object",
-        "description": "Data annotations on properties are used for validation in tests\n            ",
+        "description": "Represents a task with all its properties and associated tags\n            ",
         "additionalProperties": false,
         "required": [
           "taskId",
@@ -867,40 +866,50 @@
         ],
         "properties": {
           "taskId": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique identifier for the task"
           },
           "listId": {
-            "type": "string"
+            "type": "string",
+            "description": "ID of the list this task belongs to"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "description": "The task title"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "The task description"
           },
           "dueDate": {
             "type": "string",
+            "description": "Optional due date for the task",
             "format": "date-time",
             "nullable": true
           },
           "priority": {
             "type": "integer",
+            "description": "Priority level from 1 to 5",
             "format": "int32"
           },
           "completed": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the task is completed"
           },
           "createdAt": {
             "type": "string",
+            "description": "When the task was created",
             "format": "date-time"
           },
           "completedAt": {
             "type": "string",
+            "description": "When the task was completed (null if not completed)",
             "format": "date-time",
             "nullable": true
           },
           "taskTags": {
             "type": "array",
+            "description": "Collection of tags associated with this task",
             "items": {
               "$ref": "#/components/schemas/TaskTagDto"
             }
@@ -909,6 +918,7 @@
       },
       "TaskTagDto": {
         "type": "object",
+        "description": "Represents the association between a task and a tag\n            ",
         "additionalProperties": false,
         "required": [
           "taskId",
@@ -917,13 +927,16 @@
         ],
         "properties": {
           "taskId": {
-            "type": "string"
+            "type": "string",
+            "description": "The ID of the task"
           },
           "tagId": {
-            "type": "string"
+            "type": "string",
+            "description": "The ID of the tag"
           },
           "createdAt": {
             "type": "string",
+            "description": "When this association was created",
             "format": "date-time"
           }
         }
@@ -935,34 +948,41 @@
         "properties": {
           "isCompleted": {
             "type": "boolean",
+            "description": "Filter by completion status (optional)",
             "nullable": true
           },
           "earliestDueDate": {
             "type": "string",
+            "description": "Filter by earliest due date (optional)",
             "format": "date-time",
             "nullable": true
           },
           "latestDueDate": {
             "type": "string",
+            "description": "Filter by latest due date (optional)",
             "format": "date-time",
             "nullable": true
           },
           "minPriority": {
             "type": "integer",
+            "description": "Filter by minimum priority level (optional)",
             "format": "int32",
             "nullable": true
           },
           "maxPriority": {
             "type": "integer",
+            "description": "Filter by maximum priority level (optional)",
             "format": "int32",
             "nullable": true
           },
           "searchTerm": {
             "type": "string",
+            "description": "Search term to filter tasks (optional)",
             "nullable": true
           },
           "tagIds": {
             "type": "array",
+            "description": "List of tag IDs to filter by (optional)",
             "nullable": true,
             "items": {
               "type": "string"
@@ -970,6 +990,7 @@
           },
           "listIds": {
             "type": "array",
+            "description": "List of list IDs to filter by (optional)",
             "nullable": true,
             "items": {
               "type": "string"
@@ -977,10 +998,12 @@
           },
           "orderBy": {
             "type": "string",
+            "description": "Field to order results by (optional)",
             "nullable": true
           },
           "isDescending": {
             "type": "boolean",
+            "description": "Whether to order in descending order (optional)",
             "nullable": true
           }
         }
@@ -998,25 +1021,31 @@
         ],
         "properties": {
           "listId": {
-            "type": "string"
+            "type": "string",
+            "description": "The ID of the list to create the task in"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "description": "The title of the task (minimum 1 character)"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "The description of the task (minimum 1 character)"
           },
           "dueDate": {
             "type": "string",
+            "description": "Due date is optional since tasks may have none",
             "format": "date-time",
             "nullable": true
           },
           "priority": {
             "type": "integer",
+            "description": "Priority level from 1 to 5",
             "format": "int32"
           },
           "tagsIds": {
             "type": "array",
+            "description": "List of tag IDs to add to the task when it is created",
             "items": {
               "type": "string"
             }
@@ -1037,33 +1066,41 @@
         ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the task to update"
           },
           "listId": {
-            "type": "string"
+            "type": "string",
+            "description": "The ID of the list this task belongs to"
           },
           "completed": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the task is completed"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "description": "The updated title of the task"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "The updated description of the task"
           },
           "dueDate": {
             "type": "string",
+            "description": "Due date can be \"removed\" by assigning it null",
             "format": "date-time",
             "nullable": true
           },
           "priority": {
             "type": "integer",
+            "description": "Priority level from 1 to 5",
             "format": "int32"
           }
         }
       },
       "TagDto": {
         "type": "object",
+        "description": "Represents a tag that can be associated with tasks\n            ",
         "additionalProperties": false,
         "required": [
           "tagId",
@@ -1073,22 +1110,27 @@
         ],
         "properties": {
           "tagId": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique identifier for the tag"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "The name of the tag"
           },
           "userId": {
-            "type": "string"
+            "type": "string",
+            "description": "ID of the user who owns this tag"
           },
           "createdAt": {
             "type": "string",
+            "description": "When the tag was created",
             "format": "date-time"
           }
         }
       },
       "TasklistDto": {
         "type": "object",
+        "description": "Represents a task list that can contain tasks\n            ",
         "additionalProperties": false,
         "required": [
           "listId",
@@ -1098,16 +1140,20 @@
         ],
         "properties": {
           "listId": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique identifier for the list"
           },
           "userId": {
-            "type": "string"
+            "type": "string",
+            "description": "ID of the user who owns this list"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "The name of the list"
           },
           "createdAt": {
             "type": "string",
+            "description": "When the list was created",
             "format": "date-time"
           }
         }
@@ -1121,7 +1167,8 @@
         ],
         "properties": {
           "listName": {
-            "type": "string"
+            "type": "string",
+            "description": "The name of the new list to create"
           }
         }
       },
@@ -1134,7 +1181,8 @@
         ],
         "properties": {
           "tagName": {
-            "type": "string"
+            "type": "string",
+            "description": "The name of the new tag to create"
           }
         }
       },
@@ -1148,10 +1196,12 @@
         ],
         "properties": {
           "listId": {
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the list to update"
           },
           "newName": {
-            "type": "string"
+            "type": "string",
+            "description": "The new name for the list"
           }
         }
       },
@@ -1165,10 +1215,12 @@
         ],
         "properties": {
           "tagId": {
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the tag to update"
           },
           "newName": {
-            "type": "string"
+            "type": "string",
+            "description": "The new name for the tag"
           }
         }
       },
@@ -1182,15 +1234,18 @@
         ],
         "properties": {
           "tagId": {
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the tag to toggle"
           },
           "taskId": {
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the task to toggle the tag on"
           }
         }
       },
       "TotpRegisterResponseDto": {
         "type": "object",
+        "description": "Response containing TOTP registration details including QR code\n            ",
         "additionalProperties": false,
         "required": [
           "message",
@@ -1200,16 +1255,20 @@
         ],
         "properties": {
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "A message describing the registration status"
           },
           "qrCodeBase64": {
-            "type": "string"
+            "type": "string",
+            "description": "Base64 encoded QR code image for TOTP setup"
           },
           "secretKey": {
-            "type": "string"
+            "type": "string",
+            "description": "The secret key for TOTP (for manual entry)"
           },
           "userId": {
-            "type": "string"
+            "type": "string",
+            "description": "The ID of the user who registered TOTP"
           }
         }
       },
@@ -1222,7 +1281,8 @@
         ],
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "description": "TOTP required unique identifier for lookup: Email can be used for this"
           }
         }
       },
@@ -1236,15 +1296,18 @@
         ],
         "properties": {
           "totpCode": {
-            "type": "string"
+            "type": "string",
+            "description": "This code is found in the authenticator on the device"
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "description": "Email is relevant because backend needs a unique identifier to make a lookup"
           }
         }
       },
       "TotpVerifyRequestDto": {
         "type": "object",
+        "description": "Used to verify a TOTP code for a specific user\n            ",
         "additionalProperties": false,
         "required": [
           "id",
@@ -1252,10 +1315,12 @@
         ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the user to verify"
           },
           "totpCode": {
-            "type": "string"
+            "type": "string",
+            "description": "The TOTP code to verify"
           }
         }
       },
@@ -1268,7 +1333,8 @@
         ],
         "properties": {
           "currentTotpCode": {
-            "type": "string"
+            "type": "string",
+            "description": "The current TOTP code to verify before rotation"
           }
         }
       },
@@ -1281,7 +1347,8 @@
         ],
         "properties": {
           "totpCode": {
-            "type": "string"
+            "type": "string",
+            "description": "The TOTP code to verify before unregistering"
           }
         }
       },

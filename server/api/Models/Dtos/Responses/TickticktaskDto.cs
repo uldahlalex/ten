@@ -1,19 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace api.Models.Dtos.Responses;
+﻿namespace api.Models.Dtos.Responses;
 
 /// <summary>
-///     Data annotations on properties are used for validation in tests
+///     Represents a task with all its properties and associated tags
 /// </summary>
+/// <param name="TaskId">Unique identifier for the task</param>
+/// <param name="ListId">ID of the list this task belongs to</param>
+/// <param name="Title">The task title</param>
+/// <param name="Description">The task description</param>
+/// <param name="DueDate">Optional due date for the task</param>
+/// <param name="Priority">Priority level from 1 to 5</param>
+/// <param name="Completed">Whether the task is completed</param>
+/// <param name="CreatedAt">When the task was created</param>
+/// <param name="CompletedAt">When the task was completed (null if not completed)</param>
+/// <param name="TaskTags">Collection of tags associated with this task</param>
 public record TickticktaskDto(
-    [Required] string TaskId,
-    [Required] string ListId,
-    [MinLength(1), Required] string Title,
-    [MinLength(1), Required] string Description,
+    string TaskId,
+    string ListId,
+    string Title,
+    string Description,
     DateTime? DueDate,
-    [Range(1, 5), Required] int Priority,
-    [Required] bool Completed,
-    [Required] DateTime CreatedAt,
+    int Priority,
+    bool Completed,
+    DateTime CreatedAt,
     DateTime? CompletedAt,
-    [Required] ICollection<TaskTagDto> TaskTags
+    ICollection<TaskTagDto> TaskTags
 );

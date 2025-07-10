@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace api.Models.Dtos.Requests;
 
 /// <summary>
@@ -5,5 +7,5 @@ namespace api.Models.Dtos.Requests;
 /// </summary>
 /// <param name="ListName">The name of the new list to create</param>
 public record CreateListRequestDto(
-    string ListName
+    [MinLength(1)]string ListName
 );

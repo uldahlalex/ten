@@ -66,14 +66,14 @@ public class TicktickTaskController(
 
     [HttpGet]
     [Route(nameof(GetMyTags))]
-    public async Task<ActionResult<List<TagDto>>> GetMyTags(
-        [FromHeader] string authorization)
+    public async Task<ActionResult<List<TagDto>>> GetMyTags()
     {
+        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
         var claims = jwtService.VerifyJwt(authorization);
         if (!await userDataService.UserExistsAsync(claims.Id))
             throw new Exception("User does not exist");
         var result = await taskService.GetMyTags(claims);
-        return Ok(result);
+        return result;
     }
 
     [HttpGet]

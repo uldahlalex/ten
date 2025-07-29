@@ -255,14 +255,13 @@ export class TicktickTaskClient {
         return Promise.resolve<TickticktaskDto>(null as any);
     }
 
-    getMyTags(authorization: string | undefined): Promise<TagDto[]> {
+    getMyTags(): Promise<TagDto[]> {
         let url_ = this.baseUrl + "/GetMyTags";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Accept": "application/json"
             }
         };

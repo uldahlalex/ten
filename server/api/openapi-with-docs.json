@@ -243,16 +243,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_GetMyTags",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "responses": {
           "200": {
             "description": "",

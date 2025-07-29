@@ -16,7 +16,7 @@ export default function useInitializeData() {
         taskClient.getMyLists(jwt.jwt).then(result => {
             setLists(result);
         })
-        taskClient.getMyTags(jwt.jwt).then(result => {
+        taskClient.getMyTags().then(result => {
             setTags(result);
         });
         taskClient.getMyTasks(jwt.jwt, params).then(result => {

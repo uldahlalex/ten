@@ -12,7 +12,7 @@ export default function TaskListFilters() {
     useEffect(() => {
         if(jwt==null || jwt.jwt.length==0)
             return;
-        taskClient.getMyTasks(jwt?.jwt, queryParams).then(result => {
+        taskClient.getMyTasks( queryParams).then(result => {
             setTasks(result);
         })
     }, [queryParams])

@@ -16,7 +16,7 @@ public class TotpController(IAuthenticationService authenticationService) : Cont
     [HttpPost(nameof(TotpRegister))]
     public async Task<ActionResult<TotpRegisterResponseDto>> TotpRegister([FromBody] TotpRegisterRequestDto dto)
     {
-        return  Ok(await authenticationService.RegisterTotp(dto));
+        return await authenticationService.RegisterTotp(dto);
     }
 
     
@@ -25,7 +25,7 @@ public class TotpController(IAuthenticationService authenticationService) : Cont
     public async Task<ActionResult<JwtResponse>> TotpLogin([FromBody] TotpLoginRequestDto request)
     {
         var result = await authenticationService.TotpLogin(request);
-        return Ok(result);
+        return result;
     }
 
     [HttpPost(nameof(TotpVerify))]
@@ -37,17 +37,17 @@ public class TotpController(IAuthenticationService authenticationService) : Cont
 
     [HttpPost(nameof(TotpRotate))]
     public async Task<ActionResult<TotpRegisterResponseDto>> TotpRotate(
-        [FromBody] TotpRotateRequestDto request,
-        [FromHeader] string authorization)
+        [FromBody] TotpRotateRequestDto request)
     {
+       var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
        var result = await authenticationService.TotpRotate(request, authorization);
-       return Ok(result);
+       return result;
     }
 
     [HttpDelete(nameof(ToptUnregister))]
-    public async Task<ActionResult> ToptUnregister([FromBody] TotpUnregisterRequestDto request,
-        [FromHeader] string authorization)
+    public async Task<ActionResult> ToptUnregister([FromBody] TotpUnregisterRequestDto request)
     {
+        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
         await authenticationService.TotpUnregister(request, authorization);
 
         return Ok();

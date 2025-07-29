@@ -13,13 +13,13 @@ export default function useInitializeData() {
     useEffect(() => {
         if (jwt == null || jwt.jwt.length < 1)
             return;
-        taskClient.getMyLists(jwt.jwt).then(result => {
+        taskClient.getMyLists().then(result => {
             setLists(result);
         })
         taskClient.getMyTags().then(result => {
             setTags(result);
         });
-        taskClient.getMyTasks(jwt.jwt, params).then(result => {
+        taskClient.getMyTasks(params).then(result => {
             setTasks(result)
         })
     }, [jwt])

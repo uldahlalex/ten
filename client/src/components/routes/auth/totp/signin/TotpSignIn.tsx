@@ -54,7 +54,7 @@ export default function TotpSignIn() {
 
     const handleUnregister = async () => {
         try {
-            await totpClient.toptUnregister(jwt!.jwt, {
+            await totpClient.toptUnregister({
                 totpCode: totpCode,
             });
 

@@ -24,7 +24,6 @@ export default function Sidebar() {
             else
                 newParams = {...prevParams, listIds: prevParams.listIds?.filter((id) => id !== list.listId)};
             taskClient.getMyTasks(
-                jwt!.jwt,
                 (newParams)
             ).then(result => {
                 setTasks(result);
@@ -44,7 +43,7 @@ export default function Sidebar() {
 
         setParams((existingParams) => {
             const newObject = {...existingParams, tagIds: duplicateTagIds};
-            taskClient.getMyTasks(jwt!.jwt, (newObject)).then(result => {
+            taskClient.getMyTasks( (newObject)).then(result => {
                 setTasks(result);
             });
             return newObject;
@@ -111,7 +110,7 @@ export default function Sidebar() {
 
             { createListModal &&
                 <CreateListModal onSubmit={(dto) => {
-                taskClient.createList(jwt?.jwt, dto).then(r => {
+                taskClient.createList(dto).then(r => {
                       setLists((prevLists) => [...prevLists, r]);
                       toast.success('New list created: '+r.name)
                     setOpenCreateListModal(false)

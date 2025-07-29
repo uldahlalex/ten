@@ -11,12 +11,13 @@ namespace api.Controllers;
 [ApiController]
 public class AuthController(IAuthenticationService authenticationService) : ControllerBase
 {
+    [HttpPost]
     [Route(nameof(Register))]
     public async Task<ActionResult<JwtResponse>> Register([FromBody] AuthRequestDto dto)
     {
         var responseDto = await authenticationService.Register(dto);
 
-        return Ok(responseDto);
+        return responseDto;
     }
 
 
@@ -26,7 +27,7 @@ public class AuthController(IAuthenticationService authenticationService) : Cont
     public async Task<ActionResult<JwtResponse>> Login([FromBody] AuthRequestDto dto)
     {
         var responseDto = await authenticationService.Login(dto);
-        return Ok(responseDto);
+        return responseDto;
     }
 
   

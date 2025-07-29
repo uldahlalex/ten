@@ -76,16 +76,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_GetMyTasks",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "parameters",
           "content": {
@@ -96,7 +86,7 @@
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -121,16 +111,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_CreateTask",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
         "requestBody": {
           "x-name": "dto",
           "content": {
@@ -163,16 +143,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_UpdateTask",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
         "requestBody": {
           "x-name": "dto",
           "content": {
@@ -207,20 +177,12 @@
         "operationId": "TicktickTask_DeleteTask",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          },
-          {
             "name": "taskId",
             "in": "query",
             "schema": {
               "type": "string"
             },
-            "x-position": 2
+            "x-position": 1
           }
         ],
         "responses": {
@@ -266,16 +228,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_GetMyLists",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "responses": {
           "200": {
             "description": "",
@@ -299,16 +251,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_CreateList",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "dto",
           "content": {
@@ -319,7 +261,7 @@
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -341,16 +283,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_CreateTag",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "dto",
           "content": {
@@ -361,7 +293,7 @@
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -383,16 +315,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_UpdateList",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "dto",
           "content": {
@@ -403,7 +325,7 @@
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -425,16 +347,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_UpdateTag",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "dto",
           "content": {
@@ -445,7 +357,7 @@
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -469,20 +381,12 @@
         "operationId": "TicktickTask_DeleteListWithTasks",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          },
-          {
             "name": "listId",
             "in": "query",
             "schema": {
               "type": "string"
             },
-            "x-position": 2
+            "x-position": 1
           }
         ],
         "responses": {
@@ -508,20 +412,12 @@
         "operationId": "TicktickTask_DeleteTag",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          },
-          {
             "name": "tagId",
             "in": "query",
             "schema": {
               "type": "string"
             },
-            "x-position": 2
+            "x-position": 1
           }
         ],
         "responses": {
@@ -545,16 +441,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_AddTaskTag",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "dto",
           "content": {
@@ -565,7 +451,7 @@
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -587,16 +473,6 @@
           "TicktickTask"
         ],
         "operationId": "TicktickTask_RemoveTaskTag",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
         "requestBody": {
           "x-name": "dto",
           "content": {
@@ -607,7 +483,7 @@
             }
           },
           "required": true,
-          "x-position": 2
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -727,16 +603,6 @@
           "Totp"
         ],
         "operationId": "Totp_TotpRotate",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
         "requestBody": {
           "x-name": "request",
           "content": {
@@ -769,16 +635,6 @@
           "Totp"
         ],
         "operationId": "Totp_ToptUnregister",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
         "requestBody": {
           "x-name": "request",
           "content": {

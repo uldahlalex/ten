@@ -24,25 +24,25 @@ const TaskTagsDropdown = (props: TaskTagsDropdownProps) => {
     const handleTagToggle = (tagId: string) => {
         if (selectedTags.includes(tagId)) {
 
-            taskClient.removeTaskTag(jwt?.jwt, {
+            taskClient.removeTaskTag( {
                 tagId: tagId,
                 taskId: props.task.taskId
             }).then(async () => {
                 // Update local state will be handled by the refresh
                 toast.success("Tag removed successfully");
                 setSelectedTags(selectedTags.filter(id => id !== tagId));
-                setTasks(await taskClient.getMyTasks(jwt?.jwt, queryParams));
+                setTasks(await taskClient.getMyTasks( queryParams));
             });
         } else {
             const param: ChangeTaskTagRequestDto = {
                 tagId: tagId,
                 taskId: props.task.taskId
             }
-            taskClient.addTaskTag(jwt?.jwt, param).then(async () => {
+            taskClient.addTaskTag(param).then(async () => {
                 // Update local state will be handled by the refresh
                 toast.success("Tag added successfully");
                 setSelectedTags([...selectedTags, tagId]);
-                setTasks(await taskClient.getMyTasks(jwt?.jwt, queryParams));
+                setTasks(await taskClient.getMyTasks(queryParams));
             });
         }
     };

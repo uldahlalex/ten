@@ -103,7 +103,7 @@ export class TicktickTaskClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getMyTasks(authorization: string | undefined, parameters: GetTasksFilterAndOrderParameters): Promise<TickticktaskDto[]> {
+    getMyTasks(parameters: GetTasksFilterAndOrderParameters): Promise<TickticktaskDto[]> {
         let url_ = this.baseUrl + "/GetMyTasks";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -113,7 +113,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "POST",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -141,7 +140,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TickticktaskDto[]>(null as any);
     }
 
-    createTask(authorization: string | undefined, dto: CreateTaskRequestDto): Promise<TickticktaskDto> {
+    createTask(dto: CreateTaskRequestDto): Promise<TickticktaskDto> {
         let url_ = this.baseUrl + "/CreateTask";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -151,7 +150,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "POST",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -179,7 +177,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TickticktaskDto>(null as any);
     }
 
-    updateTask(authorization: string | undefined, dto: UpdateTaskRequestDto): Promise<TickticktaskDto> {
+    updateTask(dto: UpdateTaskRequestDto): Promise<TickticktaskDto> {
         let url_ = this.baseUrl + "/UpdateTask";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -189,7 +187,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "PATCH",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -217,7 +214,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TickticktaskDto>(null as any);
     }
 
-    deleteTask(authorization: string | undefined, taskId: string | undefined): Promise<TickticktaskDto> {
+    deleteTask(taskId: string | undefined): Promise<TickticktaskDto> {
         let url_ = this.baseUrl + "/DeleteTask?";
         if (taskId === null)
             throw new Error("The parameter 'taskId' cannot be null.");
@@ -228,7 +225,6 @@ export class TicktickTaskClient {
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Accept": "application/json"
             }
         };
@@ -288,14 +284,13 @@ export class TicktickTaskClient {
         return Promise.resolve<TagDto[]>(null as any);
     }
 
-    getMyLists(authorization: string | undefined): Promise<TasklistDto[]> {
+    getMyLists(): Promise<TasklistDto[]> {
         let url_ = this.baseUrl + "/GetMyLists";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Accept": "application/json"
             }
         };
@@ -322,7 +317,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TasklistDto[]>(null as any);
     }
 
-    createList(authorization: string | undefined, dto: CreateListRequestDto): Promise<TasklistDto> {
+    createList(dto: CreateListRequestDto): Promise<TasklistDto> {
         let url_ = this.baseUrl + "/CreateList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -332,7 +327,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "POST",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -360,7 +354,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TasklistDto>(null as any);
     }
 
-    createTag(authorization: string | undefined, dto: CreateTagRequestDto): Promise<TagDto> {
+    createTag(dto: CreateTagRequestDto): Promise<TagDto> {
         let url_ = this.baseUrl + "/CreateTag";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -370,7 +364,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "POST",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -398,7 +391,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TagDto>(null as any);
     }
 
-    updateList(authorization: string | undefined, dto: UpdateListRequestDto): Promise<TasklistDto> {
+    updateList(dto: UpdateListRequestDto): Promise<TasklistDto> {
         let url_ = this.baseUrl + "/UpdateList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -408,7 +401,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "PUT",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -436,7 +428,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TasklistDto>(null as any);
     }
 
-    updateTag(authorization: string | undefined, dto: UpdateTagRequestDto): Promise<TagDto> {
+    updateTag(dto: UpdateTagRequestDto): Promise<TagDto> {
         let url_ = this.baseUrl + "/UpdateTag";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -446,7 +438,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "PUT",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -474,7 +465,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TagDto>(null as any);
     }
 
-    deleteListWithTasks(authorization: string | undefined, listId: string | undefined): Promise<FileResponse> {
+    deleteListWithTasks(listId: string | undefined): Promise<FileResponse> {
         let url_ = this.baseUrl + "/DeleteListWithTasks?";
         if (listId === null)
             throw new Error("The parameter 'listId' cannot be null.");
@@ -485,7 +476,6 @@ export class TicktickTaskClient {
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Accept": "application/octet-stream"
             }
         };
@@ -517,7 +507,7 @@ export class TicktickTaskClient {
         return Promise.resolve<FileResponse>(null as any);
     }
 
-    deleteTag(authorization: string | undefined, tagId: string | undefined): Promise<FileResponse> {
+    deleteTag(tagId: string | undefined): Promise<FileResponse> {
         let url_ = this.baseUrl + "/DeleteTag?";
         if (tagId === null)
             throw new Error("The parameter 'tagId' cannot be null.");
@@ -528,7 +518,6 @@ export class TicktickTaskClient {
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Accept": "application/octet-stream"
             }
         };
@@ -560,7 +549,7 @@ export class TicktickTaskClient {
         return Promise.resolve<FileResponse>(null as any);
     }
 
-    addTaskTag(authorization: string | undefined, dto: ChangeTaskTagRequestDto): Promise<TaskTagDto> {
+    addTaskTag(dto: ChangeTaskTagRequestDto): Promise<TaskTagDto> {
         let url_ = this.baseUrl + "/AddTaskTag";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -570,7 +559,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "PUT",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -598,7 +586,7 @@ export class TicktickTaskClient {
         return Promise.resolve<TaskTagDto>(null as any);
     }
 
-    removeTaskTag(authorization: string | undefined, dto: ChangeTaskTagRequestDto): Promise<FileResponse> {
+    removeTaskTag(dto: ChangeTaskTagRequestDto): Promise<FileResponse> {
         let url_ = this.baseUrl + "/RemoveTaskTag";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -608,7 +596,6 @@ export class TicktickTaskClient {
             body: content_,
             method: "PUT",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/octet-stream"
             }
@@ -768,7 +755,7 @@ export class TotpClient {
         return Promise.resolve<FileResponse>(null as any);
     }
 
-    totpRotate(authorization: string | undefined, request: TotpRotateRequestDto): Promise<TotpRegisterResponseDto> {
+    totpRotate(request: TotpRotateRequestDto): Promise<TotpRegisterResponseDto> {
         let url_ = this.baseUrl + "/TotpRotate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -778,7 +765,6 @@ export class TotpClient {
             body: content_,
             method: "POST",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
@@ -806,7 +792,7 @@ export class TotpClient {
         return Promise.resolve<TotpRegisterResponseDto>(null as any);
     }
 
-    toptUnregister(authorization: string | undefined, request: TotpUnregisterRequestDto): Promise<FileResponse> {
+    toptUnregister(request: TotpUnregisterRequestDto): Promise<FileResponse> {
         let url_ = this.baseUrl + "/ToptUnregister";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -816,7 +802,6 @@ export class TotpClient {
             body: content_,
             method: "DELETE",
             headers: {
-                "authorization": authorization !== undefined && authorization !== null ? "" + authorization : "",
                 "Content-Type": "application/json",
                 "Accept": "application/octet-stream"
             }

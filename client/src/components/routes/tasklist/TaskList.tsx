@@ -23,7 +23,7 @@ export default function TaskList() {
     function handleClickCheckbox(e: React.ChangeEvent<HTMLInputElement>, task: TickticktaskDto) {
         const updateDto = (ToUpdateDto(task));
         updateDto.completed = e.target.checked;
-        taskClient.updateTask(jwt!.jwt,updateDto).then(result => {
+        taskClient.updateTask(updateDto).then(result => {
             setTasks(tasks.map(t => {
                 if (t.taskId === task.taskId) {
                     return result;
@@ -86,7 +86,7 @@ export default function TaskList() {
                         <h3 className="font-bold text-lg">Create New Task</h3>
                         <div className="py-4">
                             <CreateNewTask onCancel={() => setCreateModalControl(false)} onSubmit={(task) => {
-                                taskClient.createTask(jwt!.jwt, task).then(result => {
+                                taskClient.createTask(task).then(result => {
                                     setTasks([...tasks, result]);
                                     toast.success("Task created successfully");
                                     setCreateModalControl(false);
@@ -120,7 +120,7 @@ export default function TaskList() {
                                 isOpen: false,
                                 task: undefined
                             })} task={editModalControl.task!} onSubmit={(updateDto) => {
-                                taskClient.updateTask(jwt!.jwt, updateDto).then(result => {
+                                taskClient.updateTask(updateDto).then(result => {
                                     setTasks(tasks.map(t => {
                                         if (t.taskId === result.taskId) {
                                             return result;

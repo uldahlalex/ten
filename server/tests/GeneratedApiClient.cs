@@ -46,19 +46,19 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TickticktaskDto>> TicktickTask_GetMyTasksAsync(GetTasksFilterAndOrderParameters parameters, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TickticktaskDto>> TicktickTask_GetMyTasksAsync(GetTasksFilterAndOrderParameters parameters, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_CreateTaskAsync(CreateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_CreateTaskAsync(CreateTaskRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_UpdateTaskAsync(UpdateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_UpdateTaskAsync(UpdateTaskRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_DeleteTaskAsync(string? authorization = null, string? taskId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_DeleteTaskAsync(string? taskId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -66,39 +66,39 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TasklistDto>> TicktickTask_GetMyListsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TasklistDto>> TicktickTask_GetMyListsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TasklistDto> TicktickTask_CreateListAsync(CreateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TasklistDto> TicktickTask_CreateListAsync(CreateListRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TagDto> TicktickTask_CreateTagAsync(CreateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TagDto> TicktickTask_CreateTagAsync(CreateTagRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TasklistDto> TicktickTask_UpdateListAsync(UpdateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TasklistDto> TicktickTask_UpdateListAsync(UpdateListRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TagDto> TicktickTask_UpdateTagAsync(UpdateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TagDto> TicktickTask_UpdateTagAsync(UpdateTagRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> TicktickTask_DeleteListWithTasksAsync(string? authorization = null, string? listId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> TicktickTask_DeleteListWithTasksAsync(string? listId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> TicktickTask_DeleteTagAsync(string? authorization = null, string? tagId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> TicktickTask_DeleteTagAsync(string? tagId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TaskTagDto> TicktickTask_AddTaskTagAsync(ChangeTaskTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TaskTagDto> TicktickTask_AddTaskTagAsync(ChangeTaskTagRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> TicktickTask_RemoveTaskTagAsync(ChangeTaskTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> TicktickTask_RemoveTaskTagAsync(ChangeTaskTagRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -114,11 +114,11 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TotpRegisterResponseDto> Totp_TotpRotateAsync(TotpRotateRequestDto request, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TotpRegisterResponseDto> Totp_TotpRotateAsync(TotpRotateRequestDto request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> Totp_ToptUnregisterAsync(TotpUnregisterRequestDto request, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> Totp_ToptUnregisterAsync(TotpUnregisterRequestDto request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
     }
 
@@ -326,7 +326,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TickticktaskDto>> TicktickTask_GetMyTasksAsync(GetTasksFilterAndOrderParameters parameters, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TickticktaskDto>> TicktickTask_GetMyTasksAsync(GetTasksFilterAndOrderParameters parameters, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (parameters == null)
                 throw new System.ArgumentNullException("parameters");
@@ -337,9 +337,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(parameters, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -406,7 +403,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_CreateTaskAsync(CreateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_CreateTaskAsync(CreateTaskRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -417,9 +414,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(dto, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -486,7 +480,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_UpdateTaskAsync(UpdateTaskRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_UpdateTaskAsync(UpdateTaskRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -497,9 +491,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(dto, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -566,7 +557,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_DeleteTaskAsync(string? authorization = null, string? taskId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TickticktaskDto> TicktickTask_DeleteTaskAsync(string? taskId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -574,9 +565,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
@@ -715,7 +703,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TasklistDto>> TicktickTask_GetMyListsAsync(string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<TasklistDto>> TicktickTask_GetMyListsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -723,9 +711,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
@@ -788,7 +773,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TasklistDto> TicktickTask_CreateListAsync(CreateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TasklistDto> TicktickTask_CreateListAsync(CreateListRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -799,9 +784,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(dto, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -868,7 +850,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TagDto> TicktickTask_CreateTagAsync(CreateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TagDto> TicktickTask_CreateTagAsync(CreateTagRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -879,9 +861,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(dto, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -948,7 +927,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TasklistDto> TicktickTask_UpdateListAsync(UpdateListRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TasklistDto> TicktickTask_UpdateListAsync(UpdateListRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -959,9 +938,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(dto, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1028,7 +1004,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TagDto> TicktickTask_UpdateTagAsync(UpdateTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TagDto> TicktickTask_UpdateTagAsync(UpdateTagRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -1039,9 +1015,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(dto, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1108,7 +1081,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> TicktickTask_DeleteListWithTasksAsync(string? authorization = null, string? listId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> TicktickTask_DeleteListWithTasksAsync(string? listId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1116,9 +1089,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/octet-stream"));
 
@@ -1185,7 +1155,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> TicktickTask_DeleteTagAsync(string? authorization = null, string? tagId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> TicktickTask_DeleteTagAsync(string? tagId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1193,9 +1163,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/octet-stream"));
 
@@ -1262,7 +1229,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TaskTagDto> TicktickTask_AddTaskTagAsync(ChangeTaskTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TaskTagDto> TicktickTask_AddTaskTagAsync(ChangeTaskTagRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -1273,9 +1240,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(dto, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1342,7 +1306,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> TicktickTask_RemoveTaskTagAsync(ChangeTaskTagRequestDto dto, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> TicktickTask_RemoveTaskTagAsync(ChangeTaskTagRequestDto dto, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -1353,9 +1317,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(dto, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1649,7 +1610,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TotpRegisterResponseDto> Totp_TotpRotateAsync(TotpRotateRequestDto request, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TotpRegisterResponseDto> Totp_TotpRotateAsync(TotpRotateRequestDto request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -1660,9 +1621,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(request, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1729,7 +1687,7 @@ namespace Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> Totp_ToptUnregisterAsync(TotpUnregisterRequestDto request, string? authorization = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> Totp_ToptUnregisterAsync(TotpUnregisterRequestDto request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -1740,9 +1698,6 @@ namespace Generated
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (authorization != null)
-                        request_.Headers.TryAddWithoutValidation("authorization", ConvertToString(authorization, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(request, JsonSerializerSettings);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");

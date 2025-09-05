@@ -10,7 +10,7 @@ namespace api.Services;
 
 public class TaskDataService(MyDbContext ctx, TimeProvider timeProvider) : ITaskDataService
 {
-    public Task<List<TickticktaskDto>> GetMyTasks(MyFiltering parameters, string userId)
+    public Task<List<TickticktaskDto>> GetMyTasks(MyFilterss parameters, string userId)
     {
         IQueryable<Tickticktask> query = ctx.Tickticktasks.Include(t => t.TaskTags);
 

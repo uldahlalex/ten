@@ -21,10 +21,6 @@
         <ProjectReference Include="../efscaffold/efscaffold.csproj"/>
     </ItemGroup>
 
-<!--    <Target Name="GenerateTypeScriptClient" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">-->
-<!--        <Message Text="Generating TypeScript client..." Importance="high" />-->
-<!--        <Exec Command="nswag run nswag.json" ContinueOnError="false" />-->
-<!--    </Target>-->
 
 
 

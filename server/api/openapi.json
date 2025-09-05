@@ -81,7 +81,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MyAwesomeFiltering"
+                "$ref": "#/components/schemas/AmazingFilters"
               }
             }
           },
@@ -769,7 +769,7 @@
           }
         }
       },
-      "MyAwesomeFiltering": {
+      "AmazingFilters": {
         "type": "object",
         "additionalProperties": false,
         "properties": {

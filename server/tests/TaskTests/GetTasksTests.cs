@@ -25,7 +25,7 @@ public class GetTasksTests : ApiTestBase
             ids.GroceriesTaskId      // Personal list task
         };
 
-        var query = new MyFiltering();
+        var query = new MyFilterss();
 
         var actualTasks = ApiClient
             .TicktickTask_GetMyTasksAsync(query)
@@ -59,7 +59,7 @@ public class GetTasksTests : ApiTestBase
             ids.UpdateDocsTaskId // This is the only completed task in test data
         };
 
-        var query = new MyFiltering { IsCompleted = true };
+        var query = new MyFilterss { IsCompleted = true };
 
         var actualTasks = await ApiClient.TicktickTask_GetMyTasksAsync(query);
         
@@ -100,7 +100,7 @@ public class GetTasksTests : ApiTestBase
             ids.GroceriesTaskId
         };
 
-        var query = new MyFiltering
+        var query = new MyFilterss
         {
             EarliestDueDate = earliestDate,
             LatestDueDate = latestDate
@@ -143,7 +143,7 @@ public class GetTasksTests : ApiTestBase
             ids.GroceriesTaskId      // priority 2
         };
 
-        var query = new MyFiltering
+        var query = new MyFilterss
         {
             MinPriority = minPriority,
             MaxPriority = maxPriority

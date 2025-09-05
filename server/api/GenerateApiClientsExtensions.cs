@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
 using NJsonSchema.CodeGeneration.TypeScript;
 using NSwag.CodeGeneration.TypeScript;
 using NSwag.Generation;
+using System.Reflection;
 
 namespace api.Etc;
 
@@ -206,9 +208,70 @@ public static class TypeScriptClientWatcher
 
         try
         {
-            // Generate OpenAPI document
-            var document = await _app.Services.GetRequiredService<IOpenApiDocumentGenerator>()
-                .GenerateAsync("v1");
+            Console.WriteLine("[GENERATION] Starting OpenAPI document generation...");
+            
+            // Force garbage collection to ensure old assemblies are released
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            
+            // Add a longer delay to ensure hot reload compilation is complete
+            await Task.Delay(2000);
+            
+            // Try to clear any cached type information
+            if (typeof(Program).Assembly.GetType("System.Reflection.Assembly") != null)
+            {
+                Console.WriteLine("[GENERATION] Attempting to clear assembly caches...");
+            }
+            
+            // Create a new service scope to ensure fresh services during hot reload
+            using var scope = _app.Services.CreateScope();
+            
+            // Try to force refresh the controller discovery
+            var controllerTypes = typeof(Program).Assembly.GetTypes()
+                .Where(t => t.IsSubclassOf(typeof(ControllerBase)) && !t.IsAbstract)
+                .ToList();
+            
+            Console.WriteLine($"[GENERATION] Found {controllerTypes.Count} controller types at runtime:");
+            foreach (var type in controllerTypes)
+            {
+                var methods = type.GetMethods()
+                    .Where(m => m.IsPublic && m.DeclaringType == type && 
+                               (m.GetCustomAttributes(typeof(HttpGetAttribute), false).Length > 0 || 
+                                m.GetCustomAttributes(typeof(HttpPostAttribute), false).Length > 0))
+                    .Count();
+                Console.WriteLine($"[GENERATION] - {type.Name}: {methods} HTTP methods");
+            }
+            
+            // Generate OpenAPI document with fresh scope
+            var openApiGenerator = scope.ServiceProvider.GetRequiredService<IOpenApiDocumentGenerator>();
+            Console.WriteLine($"[GENERATION] Using generator: {openApiGenerator.GetType().Name}");
+            
+            var document = await openApiGenerator.GenerateAsync("v1");
+            Console.WriteLine($"[GENERATION] Generated document with {document.Paths.Count} paths");
+            
+            // Save OpenAPI JSON file
+            var openApiJson = document.ToJson();
+            var openApiPath = Path.Combine(Directory.GetCurrentDirectory(), "openapi.json");
+            await File.WriteAllTextAsync(openApiPath, openApiJson);
+            Console.WriteLine($"[GENERATION] Saved OpenAPI spec to: {openApiPath}");
+            
+            // Debug: Log some paths and their operations to verify we're getting the latest
+            foreach (var path in document.Paths.Take(3))
+            {
+                Console.WriteLine($"[GENERATION] - Path: {path.Key}");
+                foreach (var operation in path.Value)
+                {
+                    Console.WriteLine($"[GENERATION]   - {operation.Key}: {operation.Value.OperationId}");
+                }
+            }
+            
+            // Also check if we can see the schema definitions
+            var dtoSchemas = document.Definitions.Where(d => d.Key.Contains("Dto") || d.Key.Contains("Filter")).Take(3);
+            Console.WriteLine($"[GENERATION] Found {document.Definitions.Count} schema definitions");
+            foreach (var schema in dtoSchemas)
+            {
+                Console.WriteLine($"[GENERATION] - Schema: {schema.Key} with {schema.Value.Properties.Count} properties");
+            }
 
                     var settings = new TypeScriptClientGeneratorSettings
         {

@@ -11,42 +11,13 @@
         <PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
         <PackageReference Include="Otp.NET" Version="1.4.0" />
         <PackageReference Include="QRCoder" Version="1.6.0" />
+        <PackageReference Include="Refitter.SourceGenerator" Version="1.6.2" />
+
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../efscaffold/efscaffold.csproj"/>
     </ItemGroup>
 
-<!--    <PropertyGroup>-->
-<!--        &lt;!&ndash;        Used for XML comments above types for OpenAPI definition &ndash;&gt;-->
-<!--        <GenerateDocumentationFile>true</GenerateDocumentationFile>-->
-<!--        <NoWarn>$(NoWarn);1591</NoWarn>-->
-<!--    </PropertyGroup>-->
-<!--    -->
-
-
-    <ItemGroup>
-        <PackageReference Include="NSwag.MSBuild" Version="14.0.7" />
-    </ItemGroup>
-
-    <!-- Generate TypeScript client on build -->
-    <Target Name="NSwagGenerate" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
-        <Exec Command="$(NSwagExe_Net80) openapi2tsclient /input:./swagger.json /output:../frontend/src/api/api-client.ts"
-              ContinueOnError="true" />
-    </Target>
-
-    <!-- Alternative: Use nswag.json config file -->
-    <Target Name="NSwagGenerateFromConfig" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
-        <Exec Command="$(NSwagExe_Net80) run nswag.json"
-              ContinueOnError="true" />
-    </Target>
-    <Target Name="WatchNSwagGenerate" BeforeTargets="Build" Condition="'$(DOTNET_WATCH)' == '1'">
-        <Exec Command="$(NSwagExe_Net80) run nswag.json"
-              ContinueOnError="true" />
-    </Target>
-
-    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-        <Exec Command="nswag run nswag.json" ContinueOnError="true" />
-    </Target>
 
 </Project>

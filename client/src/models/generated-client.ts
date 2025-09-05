@@ -8,7 +8,7 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-export class AuthClient {
+export class ApiClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -90,17 +90,6 @@ export class AuthClient {
             });
         }
         return Promise.resolve<JwtResponse>(null as any);
-    }
-}
-
-export class TicktickTaskClient {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : window as any;
-        this.baseUrl = baseUrl ?? "";
     }
 
     getMyTasks(parameters: GetTasksFilterAndOrderParameters): Promise<TickticktaskDto[]> {
@@ -627,17 +616,6 @@ export class TicktickTaskClient {
         }
         return Promise.resolve<FileResponse>(null as any);
     }
-}
-
-export class TotpClient {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : window as any;
-        this.baseUrl = baseUrl ?? "";
-    }
 
     totpRegister(dto: TotpRegisterRequestDto): Promise<TotpRegisterResponseDto> {
         let url_ = this.baseUrl + "/TotpRegister";
@@ -839,209 +817,125 @@ export interface JwtResponse {
     jwt: string;
 }
 
-/** Used both for sign in and registration. Password repeat verified client side */
 export interface AuthRequestDto {
-    /** Just to have any unique identifier for the user when signing in and registering */
     email: string;
-    /** User's password for authentication */
     password: string;
 }
 
-/** Represents a task with all its properties and associated tags */
 export interface TickticktaskDto {
-    /** Unique identifier for the task */
     taskId: string;
-    /** ID of the list this task belongs to */
     listId: string;
-    /** The task title */
     title: string;
-    /** The task description */
     description: string;
-    /** Optional due date for the task */
     dueDate?: string | undefined;
-    /** Priority level from 1 to 5 */
     priority: number;
-    /** Whether the task is completed */
     completed: boolean;
-    /** When the task was created */
     createdAt: string;
-    /** When the task was completed (null if not completed) */
     completedAt?: string | undefined;
-    /** Collection of tags associated with this task */
     taskTags: TaskTagDto[];
 }
 
-/** Represents the association between a task and a tag */
 export interface TaskTagDto {
-    /** The ID of the task */
     taskId: string;
-    /** The ID of the tag */
     tagId: string;
-    /** When this association was created */
     createdAt: string;
 }
 
-/** If no value is passed to each property it defaults to not filter by the property. No value is required. Deliberately using ? C# operator for properties such that if no default values are assigned, service method assigns them manually */
 export interface GetTasksFilterAndOrderParameters {
-    /** Filter by completion status (optional) */
     isCompleted?: boolean | undefined;
-    /** Filter by earliest due date (optional) */
     earliestDueDate?: string | undefined;
-    /** Filter by latest due date (optional) */
     latestDueDate?: string | undefined;
-    /** Filter by minimum priority level (optional) */
     minPriority?: number | undefined;
-    /** Filter by maximum priority level (optional) */
     maxPriority?: number | undefined;
-    /** Search term to filter tasks (optional) */
     searchTerm?: string | undefined;
-    /** List of tag IDs to filter by (optional) */
     tagIds?: string[] | undefined;
-    /** List of list IDs to filter by (optional) */
     listIds?: string[] | undefined;
-    /** Field to order results by (optional) */
     orderBy?: string | undefined;
-    /** Whether to order in descending order (optional) */
     isDescending?: boolean | undefined;
 }
 
-/** Task is always created for the user sending the request */
 export interface CreateTaskRequestDto {
-    /** The ID of the list to create the task in */
     listId: string;
-    /** The title of the task (minimum 1 character) */
     title: string;
-    /** The description of the task (minimum 1 character) */
     description: string;
-    /** Due date is optional since tasks may have none */
     dueDate?: string | undefined;
-    /** Priority level from 1 to 5 */
     priority: number;
-    /** List of tag IDs to add to the task when it is created */
     tagsIds: string[];
 }
 
-/** Replaces all of the properties with the values. Nulls are not allowed, since the client app should send the existing object and not just declare certain properties to replace */
 export interface UpdateTaskRequestDto {
-    /** The unique identifier of the task to update */
     id: string;
-    /** The ID of the list this task belongs to */
     listId: string;
-    /** Whether the task is completed */
     completed: boolean;
-    /** The updated title of the task */
     title: string;
-    /** The updated description of the task */
     description: string;
-    /** Due date can be "removed" by assigning it null */
     dueDate?: string | undefined;
-    /** Priority level from 1 to 5 */
     priority: number;
 }
 
-/** Represents a tag that can be associated with tasks */
 export interface TagDto {
-    /** Unique identifier for the tag */
     tagId: string;
-    /** The name of the tag */
     name: string;
-    /** ID of the user who owns this tag */
     userId: string;
-    /** When the tag was created */
     createdAt: string;
 }
 
-/** Represents a task list that can contain tasks */
 export interface TasklistDto {
-    /** Unique identifier for the list */
     listId: string;
-    /** ID of the user who owns this list */
     userId: string;
-    /** The name of the list */
     name: string;
-    /** When the list was created */
     createdAt: string;
 }
 
-/** List is always created for the user sending the request */
 export interface CreateListRequestDto {
-    /** The name of the new list to create */
     listName: string;
 }
 
-/** Tag is always created for the user sending the request */
 export interface CreateTagRequestDto {
-    /** The name of the new tag to create */
     tagName: string;
 }
 
-/** Basically just a change name of list since there are so few properties to lists */
 export interface UpdateListRequestDto {
-    /** The unique identifier of the list to update */
     listId: string;
-    /** The new name for the list */
     newName: string;
 }
 
-/** Basically just a change name of tag since there are so few properties to tags */
 export interface UpdateTagRequestDto {
-    /** The unique identifier of the tag to update */
     tagId: string;
-    /** The new name for the tag */
     newName: string;
 }
 
-/** Used for assigning and de-assigning tags to tasks. Works as "toggle", so if the tag already exists it is removed and vice versa. */
 export interface ChangeTaskTagRequestDto {
-    /** The unique identifier of the tag to toggle */
     tagId: string;
-    /** The unique identifier of the task to toggle the tag on */
     taskId: string;
 }
 
-/** Response containing TOTP registration details including QR code */
 export interface TotpRegisterResponseDto {
-    /** A message describing the registration status */
     message: string;
-    /** Base64 encoded QR code image for TOTP setup */
     qrCodeBase64: string;
-    /** The secret key for TOTP (for manual entry) */
     secretKey: string;
-    /** The ID of the user who registered TOTP */
     userId: string;
 }
 
-/** When register is performed the client app reveals the QR code */
 export interface TotpRegisterRequestDto {
-    /** TOTP required unique identifier for lookup: Email can be used for this */
     email: string;
 }
 
-/** Login is when the 6 digit code is sent to the server */
 export interface TotpLoginRequestDto {
-    /** This code is found in the authenticator on the device */
     totpCode: string;
-    /** Email is relevant because backend needs a unique identifier to make a lookup */
     email: string;
 }
 
-/** Used to verify a TOTP code for a specific user */
 export interface TotpVerifyRequestDto {
-    /** The unique identifier of the user to verify */
     id: string;
-    /** The TOTP code to verify */
     totpCode: string;
 }
 
-/** Used to change the persisted secret to a new random one (not supplied by client) */
 export interface TotpRotateRequestDto {
-    /** The current TOTP code to verify before rotation */
     currentTotpCode: string;
 }
 
-/** Unregister is basically "delete" */
 export interface TotpUnregisterRequestDto {
-    /** The TOTP code to verify before unregistering */
     totpCode: string;
 }
 
@@ -1062,7 +956,7 @@ export interface FileResponse {
     headers?: { [name: string]: any };
 }
 
-export class ApiException extends Error {
+export class SwaggerException extends Error {
     override message: string;
     status: number;
     response: string;
@@ -1079,10 +973,10 @@ export class ApiException extends Error {
         this.result = result;
     }
 
-    protected isApiException = true;
+    protected isSwaggerException = true;
 
-    static isApiException(obj: any): obj is ApiException {
-        return obj.isApiException === true;
+    static isSwaggerException(obj: any): obj is SwaggerException {
+        return obj.isSwaggerException === true;
     }
 }
 
@@ -1090,5 +984,5 @@ function throwException(message: string, status: number, response: string, heade
     if (result !== null && result !== undefined)
         throw result;
     else
-        throw new ApiException(message, status, response, headers, null);
+        throw new SwaggerException(message, status, response, headers, null);
 }

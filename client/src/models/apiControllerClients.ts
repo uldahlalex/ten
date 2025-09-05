@@ -1,4 +1,4 @@
-import {AuthClient, JwtResponse, ProblemDetails, TicktickTaskClient, TotpClient} from "@/models";
+import {ApiClient, AuthClient, JwtResponse, ProblemDetails, TicktickTaskClient, TotpClient} from "@/models";
 import toast from "react-hot-toast";
 
 
@@ -49,3 +49,5 @@ export const taskClient = new TicktickTaskClient(
     prod ? baseUrlProduction : baseUrlDevelopment,
     createHttpClientWithErrorHandling()
 );
+
+export const cl = new ApiClient();

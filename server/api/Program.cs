@@ -5,6 +5,7 @@ using api.Services;
 using Infrastructure.Postgres.Scaffolding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NSwag.Generation;
 
 namespace api;
 
@@ -33,12 +34,13 @@ public class Program
             conf.SchemaSettings.GenerateAbstractProperties = true;
             conf.SchemaSettings.SchemaProcessors.Add(new RequiredSchemaProcessor());
         });
-        using (var serviceProvider = services.BuildServiceProvider())
+        services.AddSingleton<AppOptions>(provider =>
         {
+            var configuration = provider.GetRequiredService<IConfiguration>();
             var appOptions = new AppOptions();
-            serviceProvider.GetRequiredService<IConfiguration>().GetSection(nameof(AppOptions)).Bind(appOptions);
-            services.AddSingleton<AppOptions>();
-        }
+            configuration.GetSection(nameof(AppOptions)).Bind(appOptions);
+            return appOptions;
+        });
 
         services.AddDbContext<MyDbContext>((provider, options) =>
         {
@@ -56,11 +58,11 @@ public class Program
     public static void ConfigureApp(WebApplication app)
     {
         var appOptions = app.Services.GetRequiredService<AppOptions>();
-        Validator.ValidateObject(appOptions, new ValidationContext(appOptions), true);
+        //Validator.ValidateObject(appOptions, new ValidationContext(appOptions), true);
 
-        var portService = app.Services.GetRequiredService<IWebHostPortAllocationService>();
-        app.Urls.Clear();
-        app.Urls.Add(portService.GetBaseUrl());
+        // var portService = app.Services.GetRequiredService<IWebHostPortAllocationService>();
+        // app.Urls.Clear();
+        // app.Urls.Add(portService.GetBaseUrl());
         app.UseExceptionHandler();
         app.UseOpenApi();
         app.UseSwaggerUi();
@@ -68,6 +70,15 @@ public class Program
         app.MapControllers();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
+        //Pesist the Openapi.json to the local file system for reference
+        app.Lifetime.ApplicationStarted.Register(async () =>
+        {
+            var document = await app.Services.GetRequiredService<IOpenApiDocumentGenerator>()
+                .GenerateAsync("v1");
+            var openApiJson = document.ToJson();
+            var openApiPath = Path.Combine(Directory.GetCurrentDirectory(), "openapi.json");
+            await File.WriteAllTextAsync(openApiPath, openApiJson);
+        });
 
         using (var scope = app.Services.CreateScope())
         {

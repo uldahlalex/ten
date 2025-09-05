@@ -15,7 +15,7 @@ public class TicktickTaskController(
     [HttpPost]
     [Route(nameof(GetMyTasks))]
     public async Task<ActionResult<List<TickticktaskDto>>> GetMyTasks(
-        [FromBody] MyFilterss parameters)
+        [FromBody] TestingFilters parameters)
     {
         var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
         var jwtClaims = jwtService.VerifyJwt(authorization);

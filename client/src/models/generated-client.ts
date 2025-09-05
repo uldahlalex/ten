@@ -102,7 +102,7 @@ export class TicktickTaskClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getMyTasks(parameters: AmazingFilters): Promise<TickticktaskDto[]> {
+    getMyTasks(parameters: AwesomeStuff): Promise<TickticktaskDto[]> {
         let url_ = this.baseUrl + "/GetMyTasks";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -862,7 +862,7 @@ export interface TaskTagDto {
     createdAt: string;
 }
 
-export interface AmazingFilters {
+export interface AwesomeStuff {
     isCompleted?: boolean | undefined;
     earliestDueDate?: string | undefined;
     latestDueDate?: string | undefined;

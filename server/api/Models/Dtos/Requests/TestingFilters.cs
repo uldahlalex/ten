@@ -15,7 +15,7 @@ namespace api.Models.Dtos.Requests;
 /// <param name="ListIds">List of list IDs to filter by (optional)</param>
 /// <param name="OrderBy">Field to order results by (optional)</param>
 /// <param name="IsDescending">Whether to order in descending order (optional)</param>
-public record MyFilterss(
+public record TestingFilters(
     bool? IsCompleted = null,
     DateTime? EarliestDueDate = null,
     DateTime? LatestDueDate = null,

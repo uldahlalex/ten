@@ -3,21 +3,14 @@ using api;
 using api.Etc;
 using api.Models;
 using Infrastructure.Postgres.Scaffolding;
-using JWT;
-using JWT.Algorithms;
-using JWT.Builder;
-using JWT.Serializers;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
-using PgCtx;
 using tests;
 
 public static class ApiTestSetupUtilities
@@ -61,7 +54,7 @@ public static class ApiTestSetupUtilities
 
     public static WebApplicationBuilder AddProgramcsServices(this WebApplicationBuilder builder)
     {
-        Program.ConfigureServices(builder);
+        Program.ConfigureServices(builder.Services);
         return builder;
     }
 
@@ -83,7 +76,7 @@ public static class ApiTestSetupUtilities
 
         // Create a unique test database for each test to avoid concurrency issues
         var testId = Guid.NewGuid().ToString("N")[..8];
-        var pgctx = new PgCtxSetup<MyDbContext>();
+        //var pgctx = new PgCtxSetup<MyDbContext>();
         
         // Remove existing DbContext registration
         var dbContextDescriptor = builder.Services.FirstOrDefault(s => s.ServiceType == typeof(DbContextOptions<MyDbContext>));
@@ -100,10 +93,10 @@ public static class ApiTestSetupUtilities
         builder.Services.RemoveAll<IOptionsSnapshot<AppOptions>>();
         
         // Create new AppOptions with test database connection string
-        var testConnectionString = pgctx._postgres.GetConnectionString() + $";SearchPath=test_{testId}";
+       // var testConnectionString = pgctx._postgres.GetConnectionString() + $";SearchPath=test_{testId}";
         var testAppOptions = new AppOptions
         {
-            DbConnectionString = testConnectionString,
+           // DbConnectionString = testConnectionString,
             JwtSecret = currentAppOptions.JwtSecret,
             RunsOn = currentAppOptions.RunsOn
         };
@@ -120,7 +113,7 @@ public static class ApiTestSetupUtilities
         // Register new DbContext with test connection string
         builder.Services.AddDbContext<MyDbContext>(options =>
         {
-            options.UseNpgsql(testConnectionString);
+            //options.UseNpgsql(testConnectionString);
             options.EnableSensitiveDataLogging();
             options.EnableDetailedErrors();
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

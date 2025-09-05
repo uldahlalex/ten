@@ -7,13 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.17" />
         <PackageReference Include="JWT" Version="11.*"/>
-        <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="14.4.0" />
-        <PackageReference Include="NSwag.CodeGeneration.TypeScript" Version="14.4.0" />
         <PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
-        <PackageReference Include="PgCtxSetup" Version="1.5.0"/>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.5.3" />
         <PackageReference Include="Otp.NET" Version="1.4.0" />
         <PackageReference Include="QRCoder" Version="1.6.0" />
     </ItemGroup>
@@ -22,10 +17,36 @@
         <ProjectReference Include="../efscaffold/efscaffold.csproj"/>
     </ItemGroup>
 
-    <PropertyGroup>
-        <!--        Used for XML comments above types for OpenAPI definition -->
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NoWarn>$(NoWarn);1591</NoWarn>
-    </PropertyGroup>
+<!--    <PropertyGroup>-->
+<!--        &lt;!&ndash;        Used for XML comments above types for OpenAPI definition &ndash;&gt;-->
+<!--        <GenerateDocumentationFile>true</GenerateDocumentationFile>-->
+<!--        <NoWarn>$(NoWarn);1591</NoWarn>-->
+<!--    </PropertyGroup>-->
+<!--    -->
+
+
+    <ItemGroup>
+        <PackageReference Include="NSwag.MSBuild" Version="14.0.7" />
+    </ItemGroup>
+
+    <!-- Generate TypeScript client on build -->
+    <Target Name="NSwagGenerate" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+        <Exec Command="$(NSwagExe_Net80) openapi2tsclient /input:./swagger.json /output:../frontend/src/api/api-client.ts"
+              ContinueOnError="true" />
+    </Target>
+
+    <!-- Alternative: Use nswag.json config file -->
+    <Target Name="NSwagGenerateFromConfig" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+        <Exec Command="$(NSwagExe_Net80) run nswag.json"
+              ContinueOnError="true" />
+    </Target>
+    <Target Name="WatchNSwagGenerate" BeforeTargets="Build" Condition="'$(DOTNET_WATCH)' == '1'">
+        <Exec Command="$(NSwagExe_Net80) run nswag.json"
+              ContinueOnError="true" />
+    </Target>
+
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+        <Exec Command="nswag run nswag.json" ContinueOnError="true" />
+    </Target>
 
 </Project>

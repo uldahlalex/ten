@@ -92,14 +92,38 @@ public class Program
             }
         }
     }
+    
+    private static async Task GenerateOpenApiOnly(WebApplication app)
+    {
+        try
+        {
+            var document = await app.Services.GetRequiredService<IOpenApiDocumentGenerator>()
+                .GenerateAsync("v1");
+            var openApiJson = document.ToJson();
+            var openApiPath = Path.Combine(Directory.GetCurrentDirectory(), "openapi.json");
+            await File.WriteAllTextAsync(openApiPath, openApiJson);
+            Console.WriteLine($"OpenAPI spec generated successfully at: {openApiPath}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to generate OpenAPI spec: {ex.Message}");
+            Environment.Exit(1);
+        }
+    }
 
 
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder.Services);
+        
 
         var app = builder.Build();
+        if (args.Length > 0 && args[0] == "--generate-openapi-only")
+        {
+            await GenerateOpenApiOnly(app);
+            return;
+        }
         ConfigureApp(app);
 
         await app.RunAsync();

@@ -5,7 +5,7 @@ namespace api.Services;
 
 public interface ITaskDataService
 {
-    public Task<List<TickticktaskDto>> GetMyTasks(MyAmazingFilteringStuff parameters, string userId);
+    public Task<List<TickticktaskDto>> GetMyTasks(MyFiltering parameters, string userId);
     public Task<TickticktaskDto> CreateTask(CreateTaskRequestDto dto, string userId);
     Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, string userId);
     Task DeleteTask(string taskId, string userId);

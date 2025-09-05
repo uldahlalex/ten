@@ -9,22 +9,22 @@
     <ItemGroup>
         <PackageReference Include="JWT" Version="11.*"/>
         <PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
+        <PackageReference Include="NSwag.CodeGeneration.TypeScript" Version="14.5.0" />
+        <PackageReference Include="NSwag.Generation.AspNetCore" Version="14.5.0" />
         <PackageReference Include="Otp.NET" Version="1.4.0" />
         <PackageReference Include="QRCoder" Version="1.6.0" />
         <PackageReference Include="Refitter.SourceGenerator" Version="1.6.2" />
         <PackageReference Include="NSwag.MSBuild" Version="14.4.0" />
-
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../efscaffold/efscaffold.csproj"/>
     </ItemGroup>
 
-
-    <Target Name="GenerateTypeScriptClient" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
-        <Message Text="Generating TypeScript client..." Importance="high" />
-        <Exec Command="nswag run nswag.json" ContinueOnError="false" />
-    </Target>
+<!--    <Target Name="GenerateTypeScriptClient" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">-->
+<!--        <Message Text="Generating TypeScript client..." Importance="high" />-->
+<!--        <Exec Command="nswag run nswag.json" ContinueOnError="false" />-->
+<!--    </Target>-->
 
 
 

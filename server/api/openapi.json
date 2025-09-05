@@ -1,5 +1,5 @@
 {
-  "x-generator": "NSwag v14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))",
+  "x-generator": "NSwag v14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))",
   "openapi": "3.0.0",
   "info": {
     "title": "Alex' Amazing REST API for training (loosely based on the 'TickTick' Task manager app)",
@@ -81,7 +81,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetTasksFilterAndOrderParameters"
+                "$ref": "#/components/schemas/MyAwesomeFiltering"
               }
             }
           },
@@ -769,7 +769,7 @@
           }
         }
       },
-      "GetTasksFilterAndOrderParameters": {
+      "MyAwesomeFiltering": {
         "type": "object",
         "additionalProperties": false,
         "properties": {

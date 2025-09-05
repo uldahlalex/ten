@@ -60,9 +60,8 @@ public class Program
         var appOptions = app.Services.GetRequiredService<AppOptions>();
         //Validator.ValidateObject(appOptions, new ValidationContext(appOptions), true);
 
-        // var portService = app.Services.GetRequiredService<IWebHostPortAllocationService>();
-        // app.Urls.Clear();
-        // app.Urls.Add(portService.GetBaseUrl());
+ 
+
         app.UseExceptionHandler();
         app.UseOpenApi();
         app.UseSwaggerUi();
@@ -71,15 +70,9 @@ public class Program
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
         //Pesist the Openapi.json to the local file system for reference
-        app.Lifetime.ApplicationStarted.Register(async () =>
-        {
-            var document = await app.Services.GetRequiredService<IOpenApiDocumentGenerator>()
-                .GenerateAsync("v1");
-            var openApiJson = document.ToJson();
-            var openApiPath = Path.Combine(Directory.GetCurrentDirectory(), "openapi.json");
-            await File.WriteAllTextAsync(openApiPath, openApiJson);
-        });
 
+        TypeScriptClientWatcher.Initialize(app);
+        TypeScriptClientWatcher.GenerateTypeScriptClient().GetAwaiter().GetResult();
         using (var scope = app.Services.CreateScope())
         {
             var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
@@ -93,23 +86,7 @@ public class Program
         }
     }
     
-    private static async Task GenerateOpenApiOnly(WebApplication app)
-    {
-        try
-        {
-            var document = await app.Services.GetRequiredService<IOpenApiDocumentGenerator>()
-                .GenerateAsync("v1");
-            var openApiJson = document.ToJson();
-            var openApiPath = Path.Combine(Directory.GetCurrentDirectory(), "openapi.json");
-            await File.WriteAllTextAsync(openApiPath, openApiJson);
-            Console.WriteLine($"OpenAPI spec generated successfully at: {openApiPath}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to generate OpenAPI spec: {ex.Message}");
-            Environment.Exit(1);
-        }
-    }
+   
 
 
     public static async Task Main(string[] args)
@@ -119,11 +96,7 @@ public class Program
         
 
         var app = builder.Build();
-        if (args.Length > 0 && args[0] == "--generate-openapi-only")
-        {
-            await GenerateOpenApiOnly(app);
-            return;
-        }
+    
         ConfigureApp(app);
 
         await app.RunAsync();

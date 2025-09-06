@@ -6,7 +6,7 @@ namespace api.Services;
 
 public interface ITaskService
 {
-    public Task<List<TickticktaskDto>> GetMyTasks(TestingFilters parameters, JwtClaims jwtClaims);
+    public Task<List<TickticktaskDto>> GetMyTasks(TaskFilteringAndSorting parameters, JwtClaims jwtClaims);
     public Task<TickticktaskDto> CreateTask(CreateTaskRequestDto dto, JwtClaims claims);
     Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, JwtClaims claims);
     Task DeleteTask(string taskId, JwtClaims claims);

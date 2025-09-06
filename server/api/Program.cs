@@ -26,14 +26,14 @@ public class Program
         // Level 2: Business services (depend on Level 0 + Level 1)
         services.AddScoped<ITaskService, TaskService>();
         services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
-        services.AddOpenApiDocument(conf =>
-        {
-            conf.Title = "Alex' Amazing REST API for training (loosely based on the 'TickTick' Task manager app)";
-            conf.AddTypeToSwagger<ProblemDetails>();
-            conf.SchemaSettings.AlwaysAllowAdditionalObjectProperties = false;
-            conf.SchemaSettings.GenerateAbstractProperties = true;
-            conf.SchemaSettings.SchemaProcessors.Add(new RequiredSchemaProcessor());
-        });
+        // services.AddOpenApiDocument(conf =>
+        // {
+        //     conf.Title = "Alex' Amazing REST API for training (loosely based on the 'TickTick' Task manager app)";
+        //     conf.AddTypeToSwagger<ProblemDetails>();
+        //     conf.SchemaSettings.AlwaysAllowAdditionalObjectProperties = false;
+        //     conf.SchemaSettings.GenerateAbstractProperties = true;
+        //     conf.SchemaSettings.SchemaProcessors.Add(new RequiredSchemaProcessor());
+        // });
         services.AddSingleton<AppOptions>(provider =>
         {
             var configuration = provider.GetRequiredService<IConfiguration>();
@@ -52,13 +52,14 @@ public class Program
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         // services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
-        services.AddSingleton<IWebHostPortAllocationService, ProductionPortAllocationService>();
+        services.AddOpenApiDocument();
+
     }
 
     public static void ConfigureApp(WebApplication app)
     {
         var appOptions = app.Services.GetRequiredService<AppOptions>();
-        //Validator.ValidateObject(appOptions, new ValidationContext(appOptions), true);
+        Validator.ValidateObject(appOptions, new ValidationContext(appOptions), true);
 
  
 
@@ -69,10 +70,7 @@ public class Program
         app.MapControllers();
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
-        //Pesist the Openapi.json to the local file system for reference
 
-        TypeScriptClientWatcher.Initialize(app);
-        TypeScriptClientWatcher.GenerateTypeScriptClient().GetAwaiter().GetResult();
         using (var scope = app.Services.CreateScope())
         {
             var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();

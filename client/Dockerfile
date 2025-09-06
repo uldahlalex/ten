@@ -1,7 +1,3 @@
-#I also include a dockerfile here for building and running production with nginx. 
-#The fullstack app can still be deployed to Fly.io without this one, 
-#since the client app is contained within the fullstack Docker build in the root directory.
-
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json ./

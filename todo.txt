@@ -1,4 +1,0 @@
-Aktuelt:
-- Multi dockerfile deployment?
-- Revidere scaffold command?
-

@@ -6,7 +6,7 @@ namespace api.Services;
 
 public class TaskService(IUserDataService userDataService, ITaskDataService taskDataService) : ITaskService
 {
-    public async Task<List<TickticktaskDto>> GetMyTasks(TestingFilters parameters, JwtClaims jwtClaims)
+    public async Task<List<TickticktaskDto>> GetMyTasks(TaskFilteringAndSorting parameters, JwtClaims jwtClaims)
     {
         // Validate user exists
         if (!await userDataService.UserExistsAsync(jwtClaims.Id))

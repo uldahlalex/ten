@@ -37,8 +37,8 @@ public class Program
 
         services.AddDbContext<MyDbContext>((provider, options) =>
         {
-            //options.UseNpgsql(provider.GetRequiredService<AppOptions>().DbConnectionString);
-            options.UseSqlite("Data Source=tasks.db");
+            options.UseNpgsql(provider.GetRequiredService<AppOptions>().DbConnectionString);
+            // options.UseSqlite("Data Source=tasks.db");
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
         services.AddSingleton<ITestDataIds, TestDataIds>();
@@ -86,6 +86,7 @@ public class Program
             }
         });
 
+        // Use your custom auth middleware  
         app.UseMiddleware<CustomAuthMiddlewareSync<IJwtService>>();
 
         app.MapControllers();

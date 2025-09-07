@@ -21,12 +21,9 @@ public class TicktickTaskController(
     public async Task<ActionResult<List<TickticktaskDto>>> GetMyTasks(
         [FromBody] TaskFilteringAndSorting parameters)
     {
-        var user = HttpContext.Items["User"] as JwtClaims;
-        Console.WriteLine(JsonSerializer.Serialize(user, new JsonSerializerOptions()
-        {
-            ReferenceHandler = ReferenceHandler.IgnoreCycles
-        }));
-        var result = await taskService.GetMyTasks(parameters, new JwtClaims());
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+
+        var result = await taskService.GetMyTasks(parameters, requesterId);
         return result;
     }
 

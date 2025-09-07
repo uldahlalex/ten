@@ -1,80 +1,68 @@
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'ticktick') THEN
-        CREATE SCHEMA ticktick;
-    END IF;
-END $EF$;
-
-
-CREATE TABLE ticktick.users (
-    user_id text NOT NULL,
-    email text NOT NULL,
-    salt text,
-    password_hash text,
-    role text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    totp_secret text,
-    CONSTRAINT users_pkey PRIMARY KEY (user_id)
+CREATE TABLE "users" (
+    "user_id" TEXT NOT NULL CONSTRAINT "users_pkey" PRIMARY KEY,
+    "email" TEXT NOT NULL,
+    "salt" TEXT NULL,
+    "password_hash" TEXT NULL,
+    "role" TEXT NOT NULL,
+    "created_at" TEXT NOT NULL,
+    "totp_secret" TEXT NULL
 );
 
 
-CREATE TABLE ticktick.tags (
-    tag_id text NOT NULL,
-    name text NOT NULL,
-    user_id text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    CONSTRAINT tags_pkey PRIMARY KEY (tag_id),
-    CONSTRAINT tags_user_id_fkey FOREIGN KEY (user_id) REFERENCES ticktick.users (user_id)
+CREATE TABLE "tags" (
+    "tag_id" TEXT NOT NULL CONSTRAINT "tags_pkey" PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "created_at" TEXT NOT NULL,
+    CONSTRAINT "tags_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("user_id")
 );
 
 
-CREATE TABLE ticktick.tasklist (
-    list_id text NOT NULL,
-    user_id text NOT NULL,
-    name text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    CONSTRAINT tasklist_pkey PRIMARY KEY (list_id),
-    CONSTRAINT tasklist_user_id_fkey FOREIGN KEY (user_id) REFERENCES ticktick.users (user_id)
+CREATE TABLE "tasklist" (
+    "list_id" TEXT NOT NULL CONSTRAINT "tasklist_pkey" PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "created_at" TEXT NOT NULL,
+    CONSTRAINT "tasklist_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("user_id")
 );
 
 
-CREATE TABLE ticktick.tickticktask (
-    task_id text NOT NULL,
-    list_id text NOT NULL,
-    title text NOT NULL,
-    description text NOT NULL,
-    due_date timestamp with time zone,
-    priority integer NOT NULL,
-    completed boolean NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    completed_at timestamp with time zone,
-    CONSTRAINT tickticktask_pkey PRIMARY KEY (task_id),
-    CONSTRAINT tickticktask_list_id_fkey FOREIGN KEY (list_id) REFERENCES ticktick.tasklist (list_id)
+CREATE TABLE "tickticktask" (
+    "task_id" TEXT NOT NULL CONSTRAINT "tickticktask_pkey" PRIMARY KEY,
+    "list_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "due_date" TEXT NULL,
+    "priority" INTEGER NOT NULL,
+    "completed" INTEGER NOT NULL,
+    "created_at" TEXT NOT NULL,
+    "completed_at" TEXT NULL,
+    CONSTRAINT "tickticktask_list_id_fkey" FOREIGN KEY ("list_id") REFERENCES "tasklist" ("list_id")
 );
 
 
-CREATE TABLE ticktick.task_tags (
-    task_id text NOT NULL,
-    tag_id text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    CONSTRAINT task_tags_pkey PRIMARY KEY (task_id, tag_id),
-    CONSTRAINT task_tags_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES ticktick.tags (tag_id),
-    CONSTRAINT task_tags_task_id_fkey FOREIGN KEY (task_id) REFERENCES ticktick.tickticktask (task_id)
+CREATE TABLE "task_tags" (
+    "task_id" TEXT NOT NULL,
+    "tag_id" TEXT NOT NULL,
+    "created_at" TEXT NOT NULL,
+    CONSTRAINT "task_tags_pkey" PRIMARY KEY ("task_id", "tag_id"),
+    CONSTRAINT "task_tags_tag_id_fkey" FOREIGN KEY ("tag_id") REFERENCES "tags" ("tag_id"),
+    CONSTRAINT "task_tags_task_id_fkey" FOREIGN KEY ("task_id") REFERENCES "tickticktask" ("task_id")
 );
 
 
-CREATE INDEX idx_tags_user_id ON ticktick.tags (user_id);
+CREATE INDEX "idx_tags_user_id" ON "tags" ("user_id");
 
 
-CREATE INDEX "IX_task_tags_tag_id" ON ticktick.task_tags (tag_id);
+CREATE INDEX "IX_task_tags_tag_id" ON "task_tags" ("tag_id");
 
 
-CREATE INDEX idx_lists_user_id ON ticktick.tasklist (user_id);
+CREATE INDEX "idx_lists_user_id" ON "tasklist" ("user_id");
 
 
-CREATE INDEX idx_tasks_due_date ON ticktick.tickticktask (due_date);
+CREATE INDEX "idx_tasks_due_date" ON "tickticktask" ("due_date");
 
 
-CREATE INDEX idx_tasks_list_id ON ticktick.tickticktask (list_id);
+CREATE INDEX "idx_tasks_list_id" ON "tickticktask" ("list_id");
 
 

@@ -3,9 +3,12 @@ using api.Etc;
 using api.Models;
 using api.Services;
 using Infrastructure.Postgres.Scaffolding;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NSwag.Generation;
+using AuthenticationService = api.Services.AuthenticationService;
+using IAuthenticationService = api.Services.IAuthenticationService;
 
 namespace api;
 
@@ -14,26 +17,15 @@ public class Program
     public static void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<TimeProvider>(TimeProvider.System);
-        // Level 0: Foundation services (no dependencies)
         services.AddScoped<ICryptographyService, CryptographyService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<ITotpService, TotpService>();
 
-        // Level 1: Data services (depend on DbContext + Level 0)
         services.AddScoped<IUserDataService, UserDataService>();
         services.AddScoped<ITaskDataService, TaskDataService>();
 
-        // Level 2: Business services (depend on Level 0 + Level 1)
         services.AddScoped<ITaskService, TaskService>();
-        services.AddControllers().AddApplicationPart(typeof(Program).Assembly);
-        // services.AddOpenApiDocument(conf =>
-        // {
-        //     conf.Title = "Alex' Amazing REST API for training (loosely based on the 'TickTick' Task manager app)";
-        //     conf.AddTypeToSwagger<ProblemDetails>();
-        //     conf.SchemaSettings.AlwaysAllowAdditionalObjectProperties = false;
-        //     conf.SchemaSettings.GenerateAbstractProperties = true;
-        //     conf.SchemaSettings.SchemaProcessors.Add(new RequiredSchemaProcessor());
-        // });
+        services.AddControllers();
         services.AddSingleton<AppOptions>(provider =>
         {
             var configuration = provider.GetRequiredService<IConfiguration>();
@@ -44,15 +36,31 @@ public class Program
 
         services.AddDbContext<MyDbContext>((provider, options) =>
         {
-            options.UseNpgsql(provider.GetRequiredService<AppOptions>().DbConnectionString);
+            //options.UseNpgsql(provider.GetRequiredService<AppOptions>().DbConnectionString);
+            options.UseSqlite("Data Source=tasks.db");
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
         services.AddSingleton<ITestDataIds, TestDataIds>();
         services.AddTransient<ISeeder, TestDataSeeder>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        // services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
-        services.AddOpenApiDocument();
+        services.AddOpenApiDocument(config =>
+        {
+            config.Title = "Task Management API";
+            config.Version = "v1";
+            
+            // Add JWT Bearer authentication
+            config.AddSecurity("JWT", Enumerable.Empty<string>(), new NSwag.OpenApiSecurityScheme
+            {
+                Type = NSwag.OpenApiSecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Description = "Enter JWT token"
+            });
+            
+            // Apply JWT security to all operations by default
+            config.OperationProcessors.Add(new NSwag.Generation.Processors.Security.AspNetCoreOperationSecurityScopeProcessor("JWT"));
+        });
 
     }
 
@@ -61,15 +69,20 @@ public class Program
         var appOptions = app.Services.GetRequiredService<AppOptions>();
         Validator.ValidateObject(appOptions, new ValidationContext(appOptions), true);
 
- 
-
-        app.UseExceptionHandler();
-        app.UseOpenApi();
-        app.UseSwaggerUi();
-
-        app.MapControllers();
+        // CORS should come before other middleware
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+        
+        // OpenAPI and Swagger UI middleware should come early
+        app.UseOpenApi();
+        app.UseSwaggerUi(conf =>
+        {
+            conf.WithCredentials = true;
+        });
 
+        app.UseMiddleware<CustomAuthMiddlewareSync<IJwtService>>();
+
+        // Map controllers at the end
+        app.MapControllers();
 
         using (var scope = app.Services.CreateScope())
         {

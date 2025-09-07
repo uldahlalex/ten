@@ -5,7 +5,7 @@ namespace api.Etc;
 
 public class AllowAnyone : IJwtService
 {
-    public string GenerateJwt(string id, string jwtSecret)
+    public string GenerateJwt(string id)
     {
         return "AllowAnyone";
     }

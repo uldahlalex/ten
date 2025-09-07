@@ -12,7 +12,7 @@ namespace api.Services;
 
 public class AuthenticationService(
     IUserDataService userDataService, 
-    IOptionsMonitor<AppOptions> optionsMonitor,
+    AppOptions appOptions,
     ICryptographyService cryptographyService, 
     IJwtService jwtService, 
     ITotpService totpService) : IAuthenticationService
@@ -28,7 +28,7 @@ public class AuthenticationService(
         var user = await userDataService.CreateUserAsync(dto.Email, salt, passwordHash, Role.User);
         
         var responseDto = new JwtResponse(
-            jwtService.GenerateJwt(user.UserId, optionsMonitor.CurrentValue.JwtSecret)
+            jwtService.GenerateJwt(user.UserId)
         );
         return responseDto;
     }
@@ -41,7 +41,7 @@ public class AuthenticationService(
         if (user.PasswordHash != cryptographyService.Hash(dto.Password + user.Salt))
             throw new ValidationException("Invalid password");
         var responseDto = new JwtResponse(
-            jwtService.GenerateJwt(user.UserId, optionsMonitor.CurrentValue.JwtSecret)
+            jwtService.GenerateJwt(user.UserId)
         );
         return responseDto;
     }
@@ -117,7 +117,7 @@ public class AuthenticationService(
 
         totpService.ValidateTotpCodeOrThrow(user.TotpSecret, request.TotpCode);
 
-        var token = jwtService.GenerateJwt(user.UserId, optionsMonitor.CurrentValue.JwtSecret);
+        var token = jwtService.GenerateJwt(user.UserId);
         return new JwtResponse(token);
     }
 }

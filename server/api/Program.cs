@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using api.Etc;
 using api.Models;
 using api.Services;
@@ -68,7 +69,7 @@ public class Program
     {
         var appOptions = app.Services.GetRequiredService<AppOptions>();
         Validator.ValidateObject(appOptions, new ValidationContext(appOptions), true);
-
+        Console.WriteLine(JsonSerializer.Serialize(appOptions));
         // CORS should come before other middleware
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         

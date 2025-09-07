@@ -70,19 +70,24 @@ public class Program
         var appOptions = app.Services.GetRequiredService<AppOptions>();
         Validator.ValidateObject(appOptions, new ValidationContext(appOptions), true);
         Console.WriteLine(JsonSerializer.Serialize(appOptions));
-        // CORS should come before other middleware
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         
-        // OpenAPI and Swagger UI middleware should come early
+        // Serve static files (for swagger-custom.js)
+        app.UseStaticFiles();
+        
         app.UseOpenApi();
-        app.UseSwaggerUi(conf =>
+        app.UseSwaggerUi(opts =>
         {
-            conf.WithCredentials = true;
+            // Set default JWT token for development
+            if (app.Environment.IsDevelopment())
+            {
+                opts.WithCredentials = true;
+                opts.DocumentTitle = "Task Management API";
+            }
         });
 
         app.UseMiddleware<CustomAuthMiddlewareSync<IJwtService>>();
 
-        // Map controllers at the end
         app.MapControllers();
 
         using (var scope = app.Services.CreateScope())

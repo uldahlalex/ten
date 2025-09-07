@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Authentication;
 using System.Text.Json;
 using api.Models;
 using JWT;
@@ -11,7 +12,7 @@ namespace api.Services;
 
 public class JwtService(AppOptions appOptions) : IJwtService
 {
-    public string GenerateJwt(string id)
+    public async Task<string> GenerateJwt(string id)
     {
         return new JwtBuilder()
             .WithAlgorithm(new HMACSHA256Algorithm())
@@ -22,10 +23,10 @@ public class JwtService(AppOptions appOptions) : IJwtService
             .Encode();
     }
 
-    public JwtClaims VerifyJwt(string jwt)
+    public async Task<JwtClaims> VerifyJwtOrThrow(string jwt)
     {
         if (string.IsNullOrEmpty(jwt))
-            throw new Exception("No JWT attached!");
+            throw new AuthenticationException("No JWT attached!");
         var claims = new JwtBuilder()
             .WithAlgorithm(new HMACSHA256Algorithm())
             .WithSecret(appOptions.JwtSecret)

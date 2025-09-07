@@ -1,12 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using api.Controllers;
 using api.Etc;
 using api.Models;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
-using efscaffold.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace api.Services;
 
@@ -28,7 +24,7 @@ public class AuthenticationService(
         var user = await userDataService.CreateUserAsync(dto.Email, salt, passwordHash, Role.User);
         
         var responseDto = new JwtResponse(
-            jwtService.GenerateJwt(user.UserId)
+            await jwtService.GenerateJwt(user.UserId)
         );
         return responseDto;
     }
@@ -41,7 +37,7 @@ public class AuthenticationService(
         if (user.PasswordHash != cryptographyService.Hash(dto.Password + user.Salt))
             throw new ValidationException("Invalid password");
         var responseDto = new JwtResponse(
-            jwtService.GenerateJwt(user.UserId)
+            await jwtService.GenerateJwt(user.UserId)
         );
         return responseDto;
     }
@@ -77,7 +73,7 @@ public class AuthenticationService(
 
     public async Task<TotpRegisterResponseDto> TotpRotate(TotpRotateRequestDto request, string authorization)
     {
-        var jwt = jwtService.VerifyJwt(authorization);
+        var jwt = await jwtService.VerifyJwtOrThrow(authorization);
 
         var user = await userDataService.GetUserByIdAsync(jwt.Id) ??
             throw new Exception("User not found");
@@ -102,7 +98,7 @@ public class AuthenticationService(
 
     public async Task TotpUnregister(TotpUnregisterRequestDto request, string authorization)
     {
-        var jwt = jwtService.VerifyJwt(authorization);
+        var jwt = await jwtService.VerifyJwtOrThrow(authorization);
         var user = await userDataService.GetUserByIdAsync(jwt.Id) ??
                    throw new Exception("User not found");
         totpService.ValidateTotpCodeOrThrow(user.TotpSecret, request.TotpCode);
@@ -117,7 +113,7 @@ public class AuthenticationService(
 
         totpService.ValidateTotpCodeOrThrow(user.TotpSecret, request.TotpCode);
 
-        var token = jwtService.GenerateJwt(user.UserId);
+        var token = await jwtService.GenerateJwt(user.UserId);
         return new JwtResponse(token);
     }
 }

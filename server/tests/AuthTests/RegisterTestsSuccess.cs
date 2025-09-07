@@ -25,7 +25,7 @@ public class RegisterTestsSuccess : ApiTestBase
         var jwtService = ScopedServiceProvider.GetRequiredService<IJwtService>();
         var userService = ScopedServiceProvider.GetRequiredService<IUserDataService>();
         
-        var claims = jwtService.VerifyJwt(jwt.Jwt); // throws if JWT is invalid
+        var claims = jwtService.VerifyJwtOrThrow(jwt.Jwt); // throws if JWT is invalid
         
         if (string.IsNullOrEmpty(claims.Id))
             throw new Exception("JWT claims should contain a valid user ID");

@@ -5,13 +5,16 @@ namespace api.Etc;
 
 public class AllowAnyone : IJwtService
 {
-    public string GenerateJwt(string id)
+
+    public Task<JwtClaims> VerifyJwtOrThrow(string jwt)
     {
-        return "AllowAnyone";
+        throw new NotImplementedException();
     }
 
-    public JwtClaims VerifyJwt(string jwt)
+
+
+    Task<string> IJwtService.GenerateJwt(string id)
     {
-        return new JwtClaims { Id = "AllowAnyone" };
+        throw new NotImplementedException();
     }
 }

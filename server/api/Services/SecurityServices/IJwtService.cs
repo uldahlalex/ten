@@ -4,6 +4,6 @@ namespace api.Services;
 
 public interface IJwtService
 {
-    string GenerateJwt(string id);
-    JwtClaims VerifyJwt(string jwt);
+    Task<string> GenerateJwt(string id);
+    Task<JwtClaims> VerifyJwtOrThrow(string jwt);
 }

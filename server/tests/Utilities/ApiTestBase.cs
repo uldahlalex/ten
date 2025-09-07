@@ -1,9 +1,6 @@
+using Generated;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Infrastructure.Postgres.Scaffolding;
-using Generated;
-using TUnit.Core;
-using api.Etc;
 
 namespace tests.Utilities;
 

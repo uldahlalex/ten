@@ -11,8 +11,6 @@ namespace api.Controllers;
 
 [ApiController]
 public class TicktickTaskController(
-    IJwtService jwtService,
-    IUserDataService userDataService,
     ITaskService taskService,
     ILogger<TicktickTaskController> logger) : Controller
 {
@@ -33,12 +31,8 @@ public class TicktickTaskController(
     public async Task<ActionResult<TickticktaskDto>> CreateTask(
         [FromBody] CreateTaskRequestDto dto)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.CreateTask(dto, claims);
-
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.CreateTask(dto, requesterId);
         return result;
     }
 
@@ -47,11 +41,8 @@ public class TicktickTaskController(
     public async Task<ActionResult<TickticktaskDto>> UpdateTask(
         [FromBody] UpdateTaskRequestDto dto)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims =  await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.UpdateTask(dto, claims);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.UpdateTask(dto, requesterId);
         return result;
     }
 
@@ -60,11 +51,8 @@ public class TicktickTaskController(
     public async Task<ActionResult<TickticktaskDto>> DeleteTask(
         [FromQuery] string taskId)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        await taskService.DeleteTask(taskId, claims);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        await taskService.DeleteTask(taskId, requesterId);
         return Ok();
     }
 
@@ -72,11 +60,8 @@ public class TicktickTaskController(
     [Route(nameof(GetMyTags))]
     public async Task<ActionResult<List<TagDto>>> GetMyTags()
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.GetMyTags(claims);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.GetMyTags(requesterId);
         return result;
     }
 
@@ -84,11 +69,8 @@ public class TicktickTaskController(
     [Route(nameof(GetMyLists))]
     public async Task<ActionResult<List<TasklistDto>>> GetMyLists()
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.GetMyLists(claims);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.GetMyLists(requesterId);
         return result;
     }
 
@@ -97,11 +79,8 @@ public class TicktickTaskController(
     public async Task<ActionResult<TasklistDto>> CreateList(
         [FromBody] CreateListRequestDto dto)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.CreateList(claims, dto);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.CreateList(requesterId, dto);
         return result;
     }
 
@@ -110,11 +89,8 @@ public class TicktickTaskController(
     public async Task<ActionResult<TagDto>> CreateTag(
         [FromBody] CreateTagRequestDto dto)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.CreateTag(claims, dto);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.CreateTag(requesterId, dto);
         return result;
     }
 
@@ -123,11 +99,8 @@ public class TicktickTaskController(
     public async Task<ActionResult<TasklistDto>> UpdateList(
         [FromBody] UpdateListRequestDto dto)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.UpdateList(claims, dto);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.UpdateList(requesterId, dto);
         return result;
     }
 
@@ -136,11 +109,8 @@ public class TicktickTaskController(
     public async Task<ActionResult<TagDto>> UpdateTag(
         [FromBody] UpdateTagRequestDto dto)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.UpdateTag(claims, dto);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.UpdateTag(requesterId, dto);
         return result;
     }
 
@@ -149,11 +119,8 @@ public class TicktickTaskController(
     public async Task<ActionResult> DeleteListWithTasks(
         [FromQuery] string listId)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        await taskService.DeleteListWithAllTasks(listId, claims);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        await taskService.DeleteListWithAllTasks(listId, requesterId);
         return Ok();
     }
 
@@ -162,11 +129,8 @@ public class TicktickTaskController(
     public async Task<ActionResult> DeleteTag(
         [FromQuery] string tagId)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        await taskService.DeleteTag(tagId, claims);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        await taskService.DeleteTag(tagId, requesterId);
         return Ok();
     }
 
@@ -175,11 +139,8 @@ public class TicktickTaskController(
     public async Task<ActionResult<TaskTagDto>> AddTaskTag(
         [FromBody] ChangeTaskTagRequestDto dto)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        var result = await taskService.AddTagToTask(claims, dto);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        var result = await taskService.AddTagToTask(requesterId, dto);
         return result;
     }
 
@@ -188,11 +149,8 @@ public class TicktickTaskController(
     public async Task<ActionResult> RemoveTaskTag(
         [FromBody] ChangeTaskTagRequestDto dto)
     {
-        var authorization = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var claims = await jwtService.VerifyJwtOrThrow(authorization);
-        if (!await userDataService.UserExistsAsync(claims.Id))
-            throw new Exception("User does not exist");
-        await taskService.RemoveTaskTag(claims, dto);
+        var requesterId = User.FindFirst(nameof(JwtClaims.Id))!.Value;
+        await taskService.RemoveTaskTag(requesterId, dto);
         return Ok();
     }
 }

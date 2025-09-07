@@ -1,4 +1,3 @@
-using api.Models;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 
@@ -6,129 +5,129 @@ namespace api.Services;
 
 public class TaskService(IUserDataService userDataService, ITaskDataService taskDataService) : ITaskService
 {
-    public async Task<List<TickticktaskDto>> GetMyTasks(TaskFilteringAndSorting parameters, JwtClaims jwtClaims)
+    public async Task<List<TickticktaskDto>> GetMyTasks(TaskFilteringAndSorting parameters, string requesterId)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(jwtClaims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.GetMyTasks(parameters, jwtClaims.Id);
+        return await taskDataService.GetMyTasks(parameters, requesterId);
     }
 
-    public async Task<TickticktaskDto> CreateTask(CreateTaskRequestDto dto, JwtClaims jwtClaims)
+    public async Task<TickticktaskDto> CreateTask(CreateTaskRequestDto dto, string requesterId)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(jwtClaims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.CreateTask(dto, jwtClaims.Id);
+        return await taskDataService.CreateTask(dto, requesterId);
     }
 
-    public async Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, JwtClaims claims)
+    public async Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, string requesterId)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.UpdateTask(dto, claims.Id);
+        return await taskDataService.UpdateTask(dto, requesterId);
     }
 
-    public async Task DeleteTask(string taskId, JwtClaims claims)
+    public async Task DeleteTask(string taskId, string requesterId)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        await taskDataService.DeleteTask(taskId, claims.Id);
+        await taskDataService.DeleteTask(taskId, requesterId);
     }
 
-    public async Task<List<TasklistDto>> GetMyLists(JwtClaims claims)
+    public async Task<List<TasklistDto>> GetMyLists(string requesterId)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.GetMyLists(claims.Id);
+        return await taskDataService.GetMyLists(requesterId);
     }
 
-    public async Task<List<TagDto>> GetMyTags(JwtClaims claims)
+    public async Task<List<TagDto>> GetMyTags(string requesterId)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.GetMyTags(claims.Id);
+        return await taskDataService.GetMyTags(requesterId);
     }
 
-    public async Task<TasklistDto> CreateList(JwtClaims claims, CreateListRequestDto dto)
+    public async Task<TasklistDto> CreateList(string requesterId, CreateListRequestDto dto)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.CreateList(claims.Id, dto);
+        return await taskDataService.CreateList(requesterId, dto);
     }
 
-    public async Task<TagDto> CreateTag(JwtClaims claims, CreateTagRequestDto dto)
+    public async Task<TagDto> CreateTag(string requesterId, CreateTagRequestDto dto)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.CreateTag(claims.Id, dto);
+        return await taskDataService.CreateTag(requesterId, dto);
     }
 
-    public async Task<TasklistDto> UpdateList(JwtClaims claims, UpdateListRequestDto dto)
+    public async Task<TasklistDto> UpdateList(string requesterId, UpdateListRequestDto dto)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.UpdateList(claims.Id, dto);
+        return await taskDataService.UpdateList(requesterId, dto);
     }
 
-    public async Task<TagDto> UpdateTag(JwtClaims claims, UpdateTagRequestDto dto)
+    public async Task<TagDto> UpdateTag(string requesterId, UpdateTagRequestDto dto)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.UpdateTag(claims.Id, dto);
+        return await taskDataService.UpdateTag(requesterId, dto);
     }
 
-    public async Task DeleteListWithAllTasks(string listId, JwtClaims claims)
+    public async Task DeleteListWithAllTasks(string listId, string requesterId)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        await taskDataService.DeleteListWithAllTasks(listId, claims.Id);
+        await taskDataService.DeleteListWithAllTasks(listId, requesterId);
     }
 
-    public async Task DeleteTag(string tagId, JwtClaims claims)
+    public async Task DeleteTag(string tagId, string requesterId)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        await taskDataService.DeleteTag(tagId, claims.Id);
+        await taskDataService.DeleteTag(tagId, requesterId);
     }
 
-    public async Task<TaskTagDto> AddTagToTask(JwtClaims claims, ChangeTaskTagRequestDto dto)
+    public async Task<TaskTagDto> AddTagToTask(string requesterId, ChangeTaskTagRequestDto dto)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        return await taskDataService.AddTagToTask(claims.Id, dto);
+        return await taskDataService.AddTagToTask(requesterId, dto);
     }
 
-    public async Task RemoveTaskTag(JwtClaims claims, ChangeTaskTagRequestDto dto)
+    public async Task RemoveTaskTag(string requesterId, ChangeTaskTagRequestDto dto)
     {
         // Validate user exists
-        if (!await userDataService.UserExistsAsync(claims.Id))
+        if (!await userDataService.UserExistsAsync(requesterId))
             throw new Exception("User does not exist");
             
-        await taskDataService.RemoveTaskTag(claims.Id, dto);
+        await taskDataService.RemoveTaskTag(requesterId, dto);
     }
 }

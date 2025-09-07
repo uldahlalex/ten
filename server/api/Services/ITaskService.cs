@@ -1,4 +1,3 @@
-using api.Models;
 using api.Models.Dtos.Requests;
 using api.Models.Dtos.Responses;
 
@@ -6,19 +5,19 @@ namespace api.Services;
 
 public interface ITaskService
 {
-    public Task<List<TickticktaskDto>> GetMyTasks(TaskFilteringAndSorting parameters, JwtClaims jwtClaims);
-    public Task<TickticktaskDto> CreateTask(CreateTaskRequestDto dto, JwtClaims claims);
-    Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, JwtClaims claims);
-    Task DeleteTask(string taskId, JwtClaims claims);
-    Task<List<TasklistDto>> GetMyLists(JwtClaims claims);
-    Task<List<TagDto>> GetMyTags(JwtClaims claims);
-    Task<TasklistDto> CreateList(JwtClaims claims, CreateListRequestDto dto);
-    Task<TagDto> CreateTag(JwtClaims claims, CreateTagRequestDto dto);
-    Task<TasklistDto> UpdateList(JwtClaims claims, UpdateListRequestDto dto);
-    Task<TagDto> UpdateTag(JwtClaims claims, UpdateTagRequestDto dto);
+    public Task<List<TickticktaskDto>> GetMyTasks(TaskFilteringAndSorting parameters, string requesterId);
+    public Task<TickticktaskDto> CreateTask(CreateTaskRequestDto dto, string requesterId);
+    Task<TickticktaskDto> UpdateTask(UpdateTaskRequestDto dto, string requesterId);
+    Task DeleteTask(string taskId, string requesterId);
+    Task<List<TasklistDto>> GetMyLists(string requesterId);
+    Task<List<TagDto>> GetMyTags(string requesterId);
+    Task<TasklistDto> CreateList(string requesterId, CreateListRequestDto dto);
+    Task<TagDto> CreateTag(string requesterId, CreateTagRequestDto dto);
+    Task<TasklistDto> UpdateList(string requesterId, UpdateListRequestDto dto);
+    Task<TagDto> UpdateTag(string requesterId, UpdateTagRequestDto dto);
 
-    Task DeleteListWithAllTasks(string listId, JwtClaims claims);
-    Task DeleteTag(string tagId, JwtClaims claims);
-    Task<TaskTagDto> AddTagToTask(JwtClaims claims, ChangeTaskTagRequestDto dto);
-    Task RemoveTaskTag(JwtClaims claims, ChangeTaskTagRequestDto dto);
+    Task DeleteListWithAllTasks(string listId, string requesterId);
+    Task DeleteTag(string tagId, string requesterId);
+    Task<TaskTagDto> AddTagToTask(string requesterId, ChangeTaskTagRequestDto dto);
+    Task RemoveTaskTag(string requesterId, ChangeTaskTagRequestDto dto);
 }

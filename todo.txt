@@ -1,0 +1,8 @@
+Swagger refactoring er ude af drift
+
+Auth setup refactoring kriterier:
+- Det skal være muligt at enable/disable authentication
+- Man skal stadig kunne tage requesterens ID og sammenligne med ID'en i queryen når auth er sat til
+    - Når auth er disabled når man vil sammenholde ID'er 
+- Det nuværende setup med at tage ID fra http context brugeren fungerer kun når auth middleware er sat til
+- Overordnet set, hvis service bruger requester ID til noget som helst og det kun kan komme fra JWT claims, må noget skulle laves om.
